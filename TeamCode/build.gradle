@@ -10,7 +10,9 @@
 // Custom definitions may go here
 // Include common definitions from above.
 apply from: '../ftc_app/build.common.gradle'
-
 android {
     buildToolsVersion '26.0.2'
+}
+dependencies {
+    implementation project(':FtcDashboard')
 }

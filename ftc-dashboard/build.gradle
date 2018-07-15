@@ -1,0 +1,29 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '26.0.2'
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 19
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+repositories {
+    flatDir {
+        dirs '../ftc_app/libs'
+    }
+}
+
+dependencies {
+    compile(name: 'RobotCore-release', ext: 'aar')
+
+    compile('org.nanohttpd:nanohttpd-websocket:2.3.1') {
+        exclude module: 'nanohttpd'
+    }
+}
