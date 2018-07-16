@@ -10,16 +10,10 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl;
 
-/**
- * Created by 21maffetone on 7/15/18.
- */
-
 public class REVBlinkin {
-    private Servo rawDevice;
     private ServoImplEx device;
 
     public REVBlinkin(Servo rawDevice) {
-        this.rawDevice = rawDevice;
         device = new ServoImplEx(rawDevice.getController(), rawDevice.getPortNumber());
 
         device.setPwmRange(new PwmControl.PwmRange(1000, 2000));
