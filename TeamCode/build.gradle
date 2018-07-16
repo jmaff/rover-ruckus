@@ -15,4 +15,5 @@ android {
 }
 dependencies {
     implementation project(':FtcDashboard')
+    implementation project(':PixelatedLib')
 }
