@@ -14,10 +14,6 @@ MERGED from [:Analytics-release:] /Users/21maffetone/.gradle/caches/transforms-1
 MERGED from [:WirelessP2p-release:] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/WirelessP2p-release.aar/def16334371297f29848d4e784d396a0/AndroidManifest.xml:2:1-11:12
 MERGED from [:Inspection-release:] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/Inspection-release.aar/97ebe78c5b75e9b032d17f694f3a0c27/AndroidManifest.xml:2:1-32:12
 MERGED from [:Blocks-release:] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/Blocks-release.aar/078d46cb3acc48890091ceb3c4520cdf/AndroidManifest.xml:2:1-41:12
-MERGED from [com.android.support:appcompat-v7:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/appcompat-v7-23.4.0.aar/7caa9ab2354f870e5b5718b316f0ca04/AndroidManifest.xml:17:1-27:12
-MERGED from [com.android.support:animated-vector-drawable:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-23.4.0.aar/f7ff7d76a1d182871702ef662a5aa7bd/AndroidManifest.xml:2:1-9:12
-MERGED from [com.android.support:support-vector-drawable:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-23.4.0.aar/c67ec6f5f0acb8d6d9ece1e65c7515b6/AndroidManifest.xml:2:1-9:12
-MERGED from [com.android.support:support-v4:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/support-v4-23.4.0.aar/0cc36c16fd20337f8b1cd09077b1b1e3/AndroidManifest.xml:17:1-24:12
 INJECTED from /Users/21maffetone/Documents/GitHub/rover-ruckus/TeamCode/src/main/AndroidManifest.xml:8:1-12:12
 INJECTED from /Users/21maffetone/Documents/GitHub/rover-ruckus/TeamCode/src/main/AndroidManifest.xml:8:1-12:12
 INJECTED from /Users/21maffetone/Documents/GitHub/rover-ruckus/TeamCode/src/main/AndroidManifest.xml:8:1-12:12
@@ -49,14 +45,6 @@ MERGED from [:Inspection-release:] /Users/21maffetone/.gradle/caches/transforms-
 MERGED from [:Inspection-release:] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/Inspection-release.aar/97ebe78c5b75e9b032d17f694f3a0c27/AndroidManifest.xml:19:5-30:19
 MERGED from [:Blocks-release:] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/Blocks-release.aar/078d46cb3acc48890091ceb3c4520cdf/AndroidManifest.xml:18:5-39:19
 MERGED from [:Blocks-release:] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/Blocks-release.aar/078d46cb3acc48890091ceb3c4520cdf/AndroidManifest.xml:18:5-39:19
-MERGED from [com.android.support:appcompat-v7:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/appcompat-v7-23.4.0.aar/7caa9ab2354f870e5b5718b316f0ca04/AndroidManifest.xml:25:5-20
-MERGED from [com.android.support:appcompat-v7:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/appcompat-v7-23.4.0.aar/7caa9ab2354f870e5b5718b316f0ca04/AndroidManifest.xml:25:5-20
-MERGED from [com.android.support:animated-vector-drawable:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-23.4.0.aar/f7ff7d76a1d182871702ef662a5aa7bd/AndroidManifest.xml:7:5-20
-MERGED from [com.android.support:animated-vector-drawable:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-23.4.0.aar/f7ff7d76a1d182871702ef662a5aa7bd/AndroidManifest.xml:7:5-20
-MERGED from [com.android.support:support-vector-drawable:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-23.4.0.aar/c67ec6f5f0acb8d6d9ece1e65c7515b6/AndroidManifest.xml:7:5-20
-MERGED from [com.android.support:support-vector-drawable:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-23.4.0.aar/c67ec6f5f0acb8d6d9ece1e65c7515b6/AndroidManifest.xml:7:5-20
-MERGED from [com.android.support:support-v4:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/support-v4-23.4.0.aar/0cc36c16fd20337f8b1cd09077b1b1e3/AndroidManifest.xml:22:5-20
-MERGED from [com.android.support:support-v4:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/support-v4-23.4.0.aar/0cc36c16fd20337f8b1cd09077b1b1e3/AndroidManifest.xml:22:5-20
 	android:label
 		ADDED from [:FtcRobotController] /Users/21maffetone/Documents/GitHub/rover-ruckus/ftc_app/FtcRobotController/build/intermediates/manifests/full/debug/AndroidManifest.xml:17:9-41
 	android:exported
@@ -95,18 +83,8 @@ MERGED from [:Inspection-release:] /Users/21maffetone/.gradle/caches/transforms-
 MERGED from [:Inspection-release:] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/Inspection-release.aar/97ebe78c5b75e9b032d17f694f3a0c27/AndroidManifest.xml:7:5-9:41
 MERGED from [:Blocks-release:] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/Blocks-release.aar/078d46cb3acc48890091ceb3c4520cdf/AndroidManifest.xml:7:5-9:41
 MERGED from [:Blocks-release:] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/Blocks-release.aar/078d46cb3acc48890091ceb3c4520cdf/AndroidManifest.xml:7:5-9:41
-MERGED from [com.android.support:appcompat-v7:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/appcompat-v7-23.4.0.aar/7caa9ab2354f870e5b5718b316f0ca04/AndroidManifest.xml:21:5-23:78
-MERGED from [com.android.support:appcompat-v7:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/appcompat-v7-23.4.0.aar/7caa9ab2354f870e5b5718b316f0ca04/AndroidManifest.xml:21:5-23:78
-MERGED from [com.android.support:animated-vector-drawable:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-23.4.0.aar/f7ff7d76a1d182871702ef662a5aa7bd/AndroidManifest.xml:5:5-44
-MERGED from [com.android.support:animated-vector-drawable:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-23.4.0.aar/f7ff7d76a1d182871702ef662a5aa7bd/AndroidManifest.xml:5:5-44
-MERGED from [com.android.support:support-vector-drawable:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-23.4.0.aar/c67ec6f5f0acb8d6d9ece1e65c7515b6/AndroidManifest.xml:5:5-43
-MERGED from [com.android.support:support-vector-drawable:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-23.4.0.aar/c67ec6f5f0acb8d6d9ece1e65c7515b6/AndroidManifest.xml:5:5-43
-MERGED from [com.android.support:support-v4:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/support-v4-23.4.0.aar/0cc36c16fd20337f8b1cd09077b1b1e3/AndroidManifest.xml:20:5-43
-MERGED from [com.android.support:support-v4:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/support-v4-23.4.0.aar/0cc36c16fd20337f8b1cd09077b1b1e3/AndroidManifest.xml:20:5-43
 INJECTED from /Users/21maffetone/Documents/GitHub/rover-ruckus/TeamCode/src/main/AndroidManifest.xml
 INJECTED from /Users/21maffetone/Documents/GitHub/rover-ruckus/TeamCode/src/main/AndroidManifest.xml
-	tools:overrideLibrary
-		ADDED from [com.android.support:appcompat-v7:23.4.0] /Users/21maffetone/.gradle/caches/transforms-1/files-1.1/appcompat-v7-23.4.0.aar/7caa9ab2354f870e5b5718b316f0ca04/AndroidManifest.xml:23:9-75
 	android:targetSdkVersion
 		INJECTED from /Users/21maffetone/Documents/GitHub/rover-ruckus/TeamCode/src/main/AndroidManifest.xml
 		ADDED from /Users/21maffetone/Documents/GitHub/rover-ruckus/TeamCode/src/main/AndroidManifest.xml

@@ -12,5 +12,4 @@
 apply from: '../ftc_app/build.common.gradle'
 dependencies {
     implementation project(':PixelatedLib')
-    implementation project(':FtcDashboard')
 }
