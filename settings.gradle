@@ -2,4 +2,3 @@ include ':FtcRobotController', ':FtcDashboard', ':PixelatedLib', ':ACMELib', ':T
 project(':FtcRobotController').projectDir = new File('ftc_app/FtcRobotController')
 project(':FtcDashboard').projectDir = new File('ftc-dashboard')
 include ':openCVLibrary342'
-project(':TeamCode').projectDir = new File('ftc_app/TeamCode')

@@ -10,9 +10,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/ACMELib" />
             <option value="$PROJECT_DIR$/PixelatedLib" />
+            <option value="$PROJECT_DIR$/TeamCode" />
             <option value="$PROJECT_DIR$/ftc-dashboard" />
             <option value="$PROJECT_DIR$/ftc_app/FtcRobotController" />
-            <option value="$PROJECT_DIR$/ftc_app/TeamCode" />
             <option value="$PROJECT_DIR$/openCVLibrary342" />
           </set>
         </option>
