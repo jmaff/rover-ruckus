@@ -12,4 +12,13 @@
 apply from: '../ftc_app/build.common.gradle'
 dependencies {
     implementation project(':PixelatedLib')
+    implementation project(':ACMELib')
+    implementation project(':openCVLibrary342')
+    implementation project(':FtcDashboard')
+}
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }

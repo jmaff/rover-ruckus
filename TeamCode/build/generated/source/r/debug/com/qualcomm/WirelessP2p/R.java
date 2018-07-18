@@ -11,7 +11,7 @@ public final class R {
         public static final int bright_red = 0x7f030010;
     }
     public static final class string {
-        public static final int app_name = 0x7f0a0032;
+        public static final int app_name = 0x7f0a0033;
     }
     public static final class style {
         public static final int AppBaseTheme = 0x7f0b0000;

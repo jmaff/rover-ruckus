@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="alliance_colors">
+        <item>Blue</item>
+        <item>Red</item>
+    </string-array>
     <array name="app_theme_colors">
         <item>@color/medium_light_red</item>
         <item>@color/medium_light_green</item>
@@ -31,6 +35,10 @@
         <item>@string/tokenThemePurple</item>
         <item>@string/tokenThemeOrange</item>
         <item>@string/tokenThemeTeal</item>
+    </string-array>
+    <string-array name="balancing_stones">
+        <item>Near</item>
+        <item>Far</item>
     </string-array>
     <string-array name="choice_array_analogInput">
     <item>NOTHING</item>
@@ -91,6 +99,12 @@
     <item>I2C Bus 2|EDIT_I2C_BUS2</item>
     <item>I2C Bus 3|EDIT_I2C_BUS3</item>
   </string-array>
+    <string-array name="match_types">
+        <item>Practice</item>
+        <item>Qualifying</item>
+        <item>Semifinal</item>
+        <item>Final</item>
+    </string-array>
     <string-array name="wifi_direct_channels">
         <item>Auto – device selects channel|0</item>
         <item>Channel  1 – 2.412 GHz|1</item>
@@ -219,9 +233,18 @@
     <color name="very_very_dark_purple">#14012d</color>
     <color name="very_very_dark_red">#2d0104</color>
     <color name="very_very_dark_teal">#01212d</color>
+    <declare-styleable name="CameraBridgeViewBase"><attr format="boolean" name="show_fps"/><attr format="integer" name="camera_id">
+          <enum name="any" value="-1"/>
+          <enum name="back" value="99"/>
+          <enum name="front" value="98"/>
+       </attr></declare-styleable>
     <declare-styleable name="ColorListPreference"><attr format="reference" name="colors"/></declare-styleable>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">5dp</dimen>
+    <dimen name="field_size">300dp</dimen>
+    <dimen name="graph_margin">8dp</dimen>
+    <dimen name="pref_item_margin">8dp</dimen>
+    <dimen name="pref_text_size">18sp</dimen>
     <string name="VUFORIA_INIT_ERROR_DEVICE_NOT_SUPPORTED">Failed to initialize Vuforia. This device is not supported.</string>
     <string name="VUFORIA_INIT_ERROR_NO_CAMERA_ACCESS">Failed to initialize Vuforia. Camera not accessible</string>
     <string name="VUFORIA_INIT_LICENSE_ERROR_CANCELED_KEY">This app license key has been canceled and may no longer be used. Please get a new license key.</string>
@@ -267,6 +290,7 @@
     <string name="alertLynxFirmwareUpdateFailedTitle">Firmware Update Failed</string>
     <string name="alertMessageNoActionGetContent">Your device lacks system support for selecting files.</string>
     <string name="alertTitleRobotControllerConsole">Robot Controller Console</string>
+    <string name="alliance_color_text">Alliance Color</string>
     <string name="appNameDriverStation">Driver Station</string>
     <string name="appNameRobotController">Robot Controller</string>
     <string name="appNameUnknown">Unknown Application</string>
@@ -274,10 +298,12 @@
     <string name="appThemeChangeRestartNotifyRC">App color scheme has changed. The robot controller will restart.</string>
     <string name="app_name">PixelatedLib</string>
     <string name="attached">Attached</string>
+    <string name="auto_transition_text">Auto Transition</string>
     <string name="availableConfigListCaption">Available configurations:</string>
     <string name="availableConfigsInfoMessage">These are the configurations the Hardware Wizard was able to find. You can edit each configuration by clicking the edit button. The \'Activate\' button will set that configuration as the current one, which will be used to start the robot.</string>
     <string name="availableModuleListCaption">Available Expansion Hubs:</string>
     <string name="availableTemplateListCaption">Available templates:</string>
+    <string name="balancing_stone_text">Balancing Stone</string>
     <string name="blocks_activity">Blocks</string>
     <string name="blocks_menu_item">Blocks</string>
     <string name="buttonExitWithoutSaving">Exit Without Saving</string>
@@ -293,6 +319,7 @@
     <string name="buttonNameSave">Save</string>
     <string name="buttonNameScan">Scan</string>
     <string name="buttonNameSwap">Swap</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
     <string name="captionAvailableSwapDevices">Available USB controllers to swap with:</string>
     <string name="captionAvailableUsbDevices">USB Devices in configuration:</string>
     <string name="choice_prompt">Which sensor is attached?</string>
@@ -376,6 +403,7 @@
     <string name="counted_servo_controller_name">Servo Controller %d</string>
     <string name="defaultOpModeName">Stop Robot</string>
     <string name="default_port">0</string>
+    <string name="delay_text">Delay</string>
     <string name="descriptionLynxEmbeddedModule">Embedded Expansion Hub</string>
     <string name="deviceDisplayNameUnknownUSBDevice">unknown USB device [%s]</string>
     <string name="deviceInterfaceModuleName">Device Interface Module</string>
@@ -439,6 +467,7 @@
     <string name="legacy_controller_name">Enter the name for this legacy module here</string>
     <string name="load_menu_item">Load Configuration File</string>
     <string name="log_label">Server log:</string>
+    <string name="log_root">ACME</string>
     <string name="lynxAnalogInputControllerDisplayName">Expansion Hub Analog Input Controller</string>
     <string name="lynxDcMotorControllerDisplayName">Expansion Hub DC Motor Controller</string>
     <string name="lynxDigitalChannelControllerDisplayName">Expansion Hub Digital Channel Controller</string>
@@ -462,6 +491,8 @@
     <string name="lynx_fw_instructions_no_binary">No Expansion Hub firmware update files were found on the robot controller. Please download firmware updates to \"%s\", and try again.</string>
     <string name="lynx_fw_instructions_no_devices">Expansion Hub firmware update file \"%s\" was found, but no Expansion Hubs are connected. Please connect one or more Expansion Hubs, and try again.</string>
     <string name="lynx_fw_instructions_update">Expansion Hub firmware update file \"%1$s\" was found, as were Expansion Hubs with the following serial numbers:\n\n%2$s\nClick on the button below to update the firmware of these Expansion Hubs.</string>
+    <string name="match_number_text">Match Number</string>
+    <string name="match_type_text">Match Type</string>
     <string name="matrix_controller_name">Matrix Controller</string>
     <string name="matrix_controller_name_prompt">Enter the name for this matrix controller here</string>
     <string name="matrix_motor_title">Motors</string>
@@ -519,6 +550,7 @@
     <string name="not_available">&lt;NOT AVAILABLE></string>
     <string name="nxtDcMotorControllerName">Hitechnic DC Motor Controller</string>
     <string name="nxtServoControllerName">Hitechnic Servo Controller</string>
+    <string name="opmode_configuration_title">OpMode Configuration</string>
     <string name="packageName">@string/packageNameRobotController</string>
     <string name="packageNameDriverStation" translatable="false">com.qualcomm.ftcdriverstation</string>
     <string name="packageNameRobotController" translatable="false">com.qualcomm.ftcrobotcontroller</string>
@@ -608,6 +640,7 @@
     <string name="readOnlyConfigFeedback">read-only</string>
     <string name="readOnlyExplanation">Read-only configurations can be edited, but must be saved under a new name.</string>
     <string name="readXML_text">Select an XML file to instantiate a Robot from that file</string>
+    <string name="request_permission">This sample needs camera permission.</string>
     <string name="rescanButton_text">Press the \'Scan\' button to rescan for attached devices</string>
     <string name="restart_robot_menu_item">Restart Robot</string>
     <string name="restore_settings">Restore Saved WiFi Settings</string>
