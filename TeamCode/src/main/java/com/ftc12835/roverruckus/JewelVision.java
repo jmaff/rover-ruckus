@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 
-@TeleOp(name = "Jewel Vision", group = "VISION")
+@TeleOp(name = "JewelVision", group = "VISION")
 public class JewelVision extends LinearOpMode {
     public static final float JEWEL_PLATFORM_ASPECT_RATIO = 2.6f; // width/height
     public static final double COLOR_THRESHOLD = 0.7;
@@ -59,8 +59,8 @@ public class JewelVision extends LinearOpMode {
         canvas.drawRect(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height, paint);
     }
 
-    @Override
-    public void runOpMode() throws InterruptedException {
+    @Override public void runOpMode() throws InterruptedException {
+
         final Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5.0f);
@@ -229,7 +229,7 @@ public class JewelVision extends LinearOpMode {
 
                         // make sure to release mats afterward; memory leaks are bad and annoying
                         rgb.release();
-                        raw.release();;
+                        raw.release();
                     }
                 }
                 frame.close();
