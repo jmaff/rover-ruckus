@@ -1,10 +1,26 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/21maffetone/Documents/GitHub/rover-ruckus/TeamCode/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v14/values-v14.xml",
+            "outputFile": "C:\\Users\\Linkm\\Documents\\GitHub\\rover-ruckus\\TeamCode\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v14\\values-v14.xml",
             "map": [
                 {
-                    "source": "/Users/21maffetone/.gradle/caches/transforms-1/files-1.1/RobotCore-release.aar/977b8138415bd58a5d15942605c2d384/res/values-v14/values-v14.xml",
+                    "source": "C:\\Users\\Linkm\\.gradle\\caches\\transforms-1\\files-1.1\\RobotCore-release.aar\\bd657ecd5c4f79ddfa2e5a6efeb34862\\res\\values-v14\\values-v14.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "201"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "C:\\Users\\21maffetone\\Documents\\GitHub\\rover-ruckus\\TeamCode\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v14\\values-v14.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\21maffetone\\.gradle\\caches\\transforms-1\\files-1.1\\RobotCore-release.aar\\977b8138415bd58a5d15942605c2d384\\res\\values-v14\\values-v14.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
