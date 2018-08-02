@@ -1,4 +1,4 @@
-package com.ftc12835.roverruckus;
+package com.ftc12835.roverruckus.opmodes.vision;
 
 import com.acmerobotics.library.vision.FpsTracker;
 import com.acmerobotics.library.vision.OpenCVCamera;

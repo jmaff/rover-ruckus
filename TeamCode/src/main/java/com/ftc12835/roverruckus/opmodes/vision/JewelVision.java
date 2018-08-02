@@ -1,4 +1,4 @@
-package com.ftc12835.roverruckus;
+package com.ftc12835.roverruckus.opmodes.vision;
 
 import android.app.Activity;
 import android.graphics.Canvas;
@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 
 import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.ftc12835.roverruckus.VisionConstants;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

@@ -1,4 +1,4 @@
-package com.ftc12835.roverruckus;
+package com.ftc12835.roverruckus.opmodes.test;
 
 import com.ftc12835.library.hardware.REVBlinkin;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
