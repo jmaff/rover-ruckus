@@ -73,8 +73,8 @@ public class DynamicBlockTracker extends Tracker {
     public static int CLOSE_KERNEL_SIZE = 13;
 
     // yellow HSV range
-    public static int YELLOW_LOWER_HUE = 60, YELLOW_LOWER_SAT = 80, YELLOW_LOWER_VALUE = 80;
-    public static int YELLOW_UPPER_HUE = 37, YELLOW_UPPER_SAT = 255, YELLOW_UPPER_VALUE = 255;
+    public static int YELLOW_LOWER_HUE = 50, YELLOW_LOWER_SAT = 80, YELLOW_LOWER_VALUE = 80;
+    public static int YELLOW_UPPER_HUE = 38, YELLOW_UPPER_SAT = 255, YELLOW_UPPER_VALUE = 255;
 
     public static int TARGET_AREA = 5200; // px^2
     public static int MIN_AREA = 500;
