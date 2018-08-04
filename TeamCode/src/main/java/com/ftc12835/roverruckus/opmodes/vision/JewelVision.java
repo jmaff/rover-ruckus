@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.ftc12835.roverruckus.VisionConstants;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -39,6 +40,7 @@ import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 
+@Disabled
 @TeleOp(name = "JewelVision", group = "VISION")
 public class JewelVision extends LinearOpMode {
     public static final float JEWEL_PLATFORM_ASPECT_RATIO = 2.6f; // width/height

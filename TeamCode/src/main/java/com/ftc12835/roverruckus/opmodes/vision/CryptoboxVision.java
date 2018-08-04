@@ -5,6 +5,7 @@ import com.acmerobotics.library.vision.VisionCamera;
 import com.acmerobotics.library.vision.VuforiaCamera;
 import com.acmerobotics.relicrecovery.configuration.AllianceColor;
 import com.acmerobotics.relicrecovery.vision.CryptoboxTracker;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Created by 21maffetone on 7/18/18.
  */
 
+@Disabled
 @TeleOp(name = "CryptoboxVision", group = "VISION")
 public class CryptoboxVision extends OpMode {
         private VisionCamera camera;

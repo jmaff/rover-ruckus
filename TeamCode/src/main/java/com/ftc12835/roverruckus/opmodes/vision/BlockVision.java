@@ -2,9 +2,11 @@ package com.ftc12835.roverruckus.opmodes.vision;
 
 import com.acmerobotics.library.vision.VuforiaCamera;
 import com.ftc12835.roverruckus.vision.DynamicBlockTracker;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@Disabled
 @TeleOp(name = "BlockVision", group = "VISION")
 public class BlockVision extends OpMode {
     private VuforiaCamera camera;

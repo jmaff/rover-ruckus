@@ -6,11 +6,13 @@ import com.acmerobotics.library.vision.VisionCamera;
 import com.acmerobotics.library.vision.VuforiaCamera;
 import com.acmerobotics.relicrecovery.vision.DynamicJewelTracker;
 import com.acmerobotics.relicrecovery.vision.FixedJewelTracker;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.opencv.android.OpenCVLoader;
 
+@Disabled
 @TeleOp(name = "JewelVisionComplex", group = "VISION")
 public class JewelVisionComplex extends OpMode {
     private VuforiaCamera camera;

@@ -1,10 +1,12 @@
 package com.ftc12835.roverruckus.opmodes.test;
 
 import com.ftc12835.library.hardware.REVBlinkin;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Disabled
 @TeleOp(name = "Blinkin Test", group = "TEST")
 public class REVBlinkinTest extends OpMode {
 
