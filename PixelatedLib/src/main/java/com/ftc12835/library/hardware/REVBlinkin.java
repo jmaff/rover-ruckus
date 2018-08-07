@@ -5,17 +5,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class REVBlinkin {
-    private ServoImplEx device;
+    private ServoImplEx delegate;
 
-    public REVBlinkin(Servo rawDevice) {
-        device = new ServoImplEx(rawDevice.getController(), rawDevice.getPortNumber());
+    public REVBlinkin(Servo delegate) {
+        this.delegate = new ServoImplEx(delegate.getController(), delegate.getPortNumber());
 
-        device.setPwmRange(new PwmControl.PwmRange(1000, 2000));
-
+        this.delegate.setPwmRange(new PwmControl.PwmRange(1000, 2000));
     }
 
     public void setRaw(double value) {
-        device.setPosition(value);
+        delegate.setPosition(value);
     }
 
     public void setStripPattern(StripPattern pattern) {

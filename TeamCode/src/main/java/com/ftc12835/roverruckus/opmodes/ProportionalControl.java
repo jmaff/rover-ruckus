@@ -1,4 +1,4 @@
-package com.ftc12835.roverruckus;
+package com.ftc12835.roverruckus.opmodes;
 
 import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 @Autonomous(name = "Proportional Control", group = "PID")
 public class ProportionalControl extends LinearOpMode {
-    public static final double kP = 0.1;
+    public static double kP = 0.1;
 
     private ElapsedTime timer = new ElapsedTime();
     private RobotDashboard dashboard;
