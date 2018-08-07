@@ -10,11 +10,17 @@
 // Custom definitions may go here
 // Include common definitions from above.
 apply from: '../ftc_app/build.common.gradle'
+repositories {
+    // other repositories
+    jcenter()
+    mavenLocal()
+}
 dependencies {
     implementation project(':PixelatedLib')
     implementation project(':ACMELib')
     implementation project(':openCVLibrary342')
     implementation project(':FtcDashboard')
+    compile 'com.acmerobotics.roadrunner:core:0.1-SNAPSHOT'
 }
 android {
     compileOptions {
