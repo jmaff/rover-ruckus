@@ -38,7 +38,7 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
     public final OpModeConfiguration config;
 
     // Subsystems
-    public MecanumDrive drive;
+    public ACMEMecanumDrive drive;
 
     private List<Subsystem> subsystems;
     private List<Subsystem> subsystemsWithProblems;
@@ -141,7 +141,7 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
 
         // Instantiate all subsystems
         try {
-            drive = new MecanumDrive(opMode.hardwareMap);
+            drive = new ACMEMecanumDrive(opMode.hardwareMap);
             subsystemLogs.put(drive, new CSVWriter(new File(logRoot, "Drive.csv")));
             subsystems.add(drive);
         } catch (IllegalArgumentException e) {

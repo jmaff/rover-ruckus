@@ -1,12 +1,12 @@
 package com.ftc12835.roverruckus.subsystems;
 
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.library.hardware.CachingDcMotorEx;
 import com.acmerobotics.library.hardware.LynxOptimizedI2cFactory;
+import com.acmerobotics.library.hardware.MaxSonarEZ1UltrasonicSensor;
 import com.acmerobotics.library.localization.Angle;
 import com.acmerobotics.library.localization.Pose2d;
 import com.acmerobotics.library.localization.Vector2d;
@@ -18,6 +18,7 @@ import com.acmerobotics.library.path.TrajectoryBuilder;
 import com.acmerobotics.library.path.TrajectoryFollower;
 import com.acmerobotics.library.telemetry.TelemetryUtil;
 import com.acmerobotics.library.util.DrawingUtil;
+import com.ftc12835.roverruckus.localization.DeadReckoningLocalizer;
 import com.ftc12835.roverruckus.localization.Localizer;
 import com.ftc12835.roverruckus.opmodes.auto.AutoOpMode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -31,6 +32,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
@@ -39,28 +41,31 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Tried to base a differential drive off of ACME's mecanum drive subsystem, but a lot of the cooler
- * things don't work with a non-holonomic drive, so RIP. (also the localizer is broken now so
- * don't try to use it)
- *
- * Differential drive kinematics paper: http://www.cs.columbia.edu/~allen/F15/NOTES/icckinematics.pdf
+ * 100% ACME's mech drive class (minus the proximity/ultrasonic sensor stuff), not trying to claim
+ * it as my own or anything. Great implementation of a lot of the features in their lib (duh), the
+ * most useful being MP, localization, and other, advanced motion stuff. Drivetrains are pretty
+ * universal, so this class could be used for a mech that we build and we'd just have to tune PID
+ * as well as add any extra sensors/hardware that we choose to use (unlike any of their any stuff,
+ * plus copying is lame).
  *
  * Wheel layout (top view):
  *
  *        FRONT
- * (1)||---------||(3)
+ * (1)\\---------//(4)
  *      |       |
  *      |       |
  *      |       |
  *      |       |
- * (2)||---------||(4)
+ * (2)//---------\\(3)
  *
+ * the paper: http://www.chiefdelphi.com/media/papers/download/2722 (see doc/Mecanum_Kinematic_Analysis_100531.pdf)
  */
+
 @Config
-public class DifferentialDrive extends Subsystem {
+public class ACMEMecanumDrive implements Subsystem {
     public static final int IMU_PORT = 0;
 
-    public static final int TRACKING_ENCODER_TICKS_PER_REV = 2000;
+    public static int TRACKING_ENCODER_TICKS_PER_REV = 2000;
 
     public static final PIDCoefficients NORMAL_VELOCITY_PID = new PIDCoefficients(20, 8, 12);
     public static final PIDCoefficients SLOW_VELOCITY_PID = new PIDCoefficients(10, 3, 1);
@@ -72,6 +77,18 @@ public class DifferentialDrive extends Subsystem {
     public static PIDFCoefficients AXIAL_PIDF = new PIDFCoefficients(-0.05, 0, 0, 0.0177, 0);
     public static PIDFCoefficients LATERAL_PIDF = new PIDFCoefficients(-0.05, 0, 0, 0.0179, 0);
 
+    // units in cm
+    public static PIDCoefficients COLUMN_ALIGN_PID = new PIDCoefficients(-0.06, 0, -0.01);
+    public static double COLUMN_ALIGN_SETPOINT = 7;
+    public static double COLUMN_ALIGN_ALLOWED_ERROR = 0.5;
+
+    public static double PROXIMITY_SMOOTHING_COEFF = 0.5;
+    public static double PROXIMITY_SWIVEL_EXTEND = 0;
+    public static double PROXIMITY_SWIVEL_RETRACT = 0.64;
+
+    public static double ULTRASONIC_SWIVEL_EXTEND = 0.2;
+    public static double ULTRASONIC_SWIVEL_RETRACT = 0.75;
+
     public static PIDCoefficients MAINTAIN_HEADING_PID = new PIDCoefficients(-2, 0, -0.01);
 
     public enum Mode {
@@ -79,7 +96,7 @@ public class DifferentialDrive extends Subsystem {
         FOLLOW_PATH
     }
 
-    public static final String[] MOTOR_NAMES = {"frontLeft", "rearLeft", "frontRight", "rearRight"};
+    public static final String[] MOTOR_NAMES = {"frontLeft", "rearLeft", "rearRight", "frontRight"};
 
     public static final double WHEELBASE_WIDTH = 18;
     public static final double WHEELBASE_HEIGHT = 18;
@@ -92,7 +109,7 @@ public class DifferentialDrive extends Subsystem {
     /**
      * wheel radius (in)
      */
-    public static final double RADIUS = 4;
+    public static final double RADIUS = 2;
 
     private DcMotorEx[] motors;
 
@@ -108,6 +125,14 @@ public class DifferentialDrive extends Subsystem {
     private int[] cachedTrackingEncoderPositions;
 
     private BNO055IMU imu;
+
+    private MaxSonarEZ1UltrasonicSensor ultrasonicSensor;
+
+    private Servo proximitySwivel;
+    private boolean proximitySwivelExtended;
+
+    private Servo ultrasonicSwivel;
+    private boolean ultrasonicSwivelExtended;
 
     private boolean useCachedOrientation;
     private Orientation cachedOrientation;
@@ -152,11 +177,20 @@ public class DifferentialDrive extends Subsystem {
 
         public double pathAxialError;
         public double pathAxialUpdate;
+        public double pathLateralError;
+        public double pathLateralUpdate;
         public double pathHeadingError;
         public double pathHeadingUpdate;
+
+        public double proximityDistance;
+        public double columnAlignError;
+        public double columnAlignUpdate;
+
+        public boolean proximitySwivelExtended;
+        public boolean ultrasonicSwivelExtended;
     }
 
-    public DifferentialDrive(HardwareMap map) {
+    public ACMEMecanumDrive(HardwareMap map) {
         this.telemetryData = new TelemetryData();
 
         frontHub = map.get(LynxModule.class, "frontHub");
@@ -208,11 +242,11 @@ public class DifferentialDrive extends Subsystem {
             motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+        motors[2].setDirection(DcMotorSimple.Direction.REVERSE);
         motors[3].setDirection(DcMotorSimple.Direction.REVERSE);
-        motors[4].setDirection(DcMotorSimple.Direction.REVERSE);
         setVelocityPIDCoefficients(NORMAL_VELOCITY_PID);
 
-//        localizer = new DeadReckoningLocalizer(this);
+        localizer = new DeadReckoningLocalizer(this);
         setEstimatedPose(estimatedPose);
 
         trajectoryFollower = new TrajectoryFollower(HEADING_PIDF, AXIAL_PIDF, LATERAL_PIDF);
@@ -248,6 +282,10 @@ public class DifferentialDrive extends Subsystem {
         return motors;
     }
 
+    public void enableHeadingCorrection() {
+        enableHeadingCorrection(getHeading());
+    }
+
     public void enableHeadingCorrection(double desiredHeading) {
         maintainHeading = true;
         this.maintainHeadingController.setSetpoint(desiredHeading);
@@ -278,8 +316,6 @@ public class DifferentialDrive extends Subsystem {
         headingOffset = -getRawHeading() + heading;
     }
 
-    // Diff. drive doesn't allow for lateral movement, so the x value of the velocity vector is
-    // useless, but idc enough to refactor this
     public void setVelocity(Vector2d vel, double omega) {
         internalSetVelocity(vel, omega);
         mode = Mode.OPEN_LOOP;
@@ -290,11 +326,23 @@ public class DifferentialDrive extends Subsystem {
         this.targetOmega = omega;
     }
 
+    /**
+     * not as pretty but the exactly same result as the other version
+     * [W] is wheel rotations
+     * [V] = [vX, vY, vOmega]'
+     * [R] = [1, -1, -K]
+     *       [1,  1, -K]
+     *       [1, -1,  K]
+     *       [1,  1,  K]
+     *
+     * [W] = [V][R]
+     */
+    // removed K's to circumvent scaling issues
     private void updatePowers() {
-        powers[0] = targetVel.y() - targetOmega;
-        powers[1] = targetVel.y() - targetOmega;
-        powers[2] = targetVel.y() + targetOmega;
-        powers[3] = targetVel.y() + targetOmega;
+        powers[0] = targetVel.x() - targetVel.y() - targetOmega;
+        powers[1] = targetVel.x() + targetVel.y() - targetOmega;
+        powers[2] = targetVel.x() - targetVel.y() + targetOmega;
+        powers[3] = targetVel.x() + targetVel.y() + targetOmega;
 
         double max = Collections.max(Arrays.asList(1.0, Math.abs(powers[0]),
                 Math.abs(powers[1]), Math.abs(powers[2]), Math.abs(powers[3])));
@@ -319,8 +367,6 @@ public class DifferentialDrive extends Subsystem {
      *
      * [V] = (r)[W][F]
      *
-     * im 99% sure this won't work with a diff drive btw
-     *
      * @param rot rotation of each wheel, in radians
      * @return movement of robot
      */
@@ -330,7 +376,7 @@ public class DifferentialDrive extends Subsystem {
         }
         double x = RADIUS * ( rot[0] + rot[1] + rot[2] + rot[3]) / 4;
         double y = RADIUS * (-rot[0] + rot[1] - rot[2] + rot[3]) / 4;
-        double h = RADIUS * (-rot[0] - rot[1] + rot[2] + rot[3]) / (4 * DifferentialDrive.K);
+        double h = RADIUS * (-rot[0] - rot[1] + rot[2] + rot[3]) / (4 * ACMEMecanumDrive.K);
         return new Pose2d(x, y, h);
     }
 
@@ -459,7 +505,7 @@ public class DifferentialDrive extends Subsystem {
 
     public void followTrajectory(Trajectory trajectory) {
         if (!positionEstimationEnabled) {
-            throw new IllegalStateException("Position estimation must be enable for path following");
+            throw new IllegalStateException("Position estimation must be enabled for path following");
         }
         trajectoryFollower.follow(trajectory);
         setMode(Mode.FOLLOW_PATH);
@@ -516,6 +562,7 @@ public class DifferentialDrive extends Subsystem {
         useCachedTrackingEncoderPositions = false;
     }
 
+
     public void setVelocityPIDCoefficients(PIDCoefficients pidCoefficients) {
         for (int i = 0; i < 4; i++) {
             motors[i].setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidCoefficients);
@@ -526,8 +573,7 @@ public class DifferentialDrive extends Subsystem {
         return new TrajectoryBuilder(pose, AXIAL_CONSTRAINTS, POINT_TURN_CONSTRAINTS);
     }
 
-    @Override
-    public Map<String, Object> update(@Nullable Canvas fieldOverlay) {
+    public Map<String, Object> update(Canvas fieldOverlay) {
         invalidateCaches();
 
         telemetryData.driveMode = mode;
@@ -550,6 +596,8 @@ public class DifferentialDrive extends Subsystem {
 
                     telemetryData.pathAxialError = trajectoryFollower.getAxialError();
                     telemetryData.pathAxialUpdate = trajectoryFollower.getAxialUpdate();
+                    telemetryData.pathLateralError = trajectoryFollower.getLateralError();
+                    telemetryData.pathLateralUpdate = trajectoryFollower.getLateralUpdate();
                     telemetryData.pathHeadingError = trajectoryFollower.getHeadingError();
                     telemetryData.pathHeadingUpdate = trajectoryFollower.getHeadingUpdate();
                 } else {
@@ -582,6 +630,20 @@ public class DifferentialDrive extends Subsystem {
         telemetryData.rearRightPower = powers[2];
         telemetryData.frontRightPower = powers[3];
 
+        // proximity swivel
+        if (proximitySwivelExtended) {
+            proximitySwivel.setPosition(PROXIMITY_SWIVEL_EXTEND);
+        } else {
+            proximitySwivel.setPosition(PROXIMITY_SWIVEL_RETRACT);
+        }
+        telemetryData.proximitySwivelExtended = proximitySwivelExtended;
+
+        if (ultrasonicSwivelExtended) {
+            ultrasonicSwivel.setPosition(ULTRASONIC_SWIVEL_EXTEND);
+        } else {
+            ultrasonicSwivel.setPosition(ULTRASONIC_SWIVEL_RETRACT);
+        }
+        telemetryData.ultrasonicSwivelExtended = ultrasonicSwivelExtended;
 
         telemetryData.estimatedX = estimatedPose.x();
         telemetryData.estimatedY = estimatedPose.y();

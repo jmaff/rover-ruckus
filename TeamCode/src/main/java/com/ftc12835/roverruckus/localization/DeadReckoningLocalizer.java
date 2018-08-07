@@ -1,16 +1,15 @@
 package com.ftc12835.roverruckus.localization;
 
 import com.acmerobotics.library.localization.Vector2d;
-import com.ftc12835.roverruckus.subsystems.DifferentialDrive;
-import com.ftc12835.roverruckus.subsystems.MecanumDrive;
+import com.ftc12835.roverruckus.subsystems.ACMEMecanumDrive;
 
 public class DeadReckoningLocalizer implements Localizer {
-    protected MecanumDrive drive;
+    protected ACMEMecanumDrive drive;
 
     protected Vector2d estimatedPosition;
     private double[] lastRotations;
 
-    public DeadReckoningLocalizer(MecanumDrive drive) {
+    public DeadReckoningLocalizer(ACMEMecanumDrive drive) {
         this.drive = drive;
     }
 

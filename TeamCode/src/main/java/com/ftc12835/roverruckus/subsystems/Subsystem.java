@@ -6,9 +6,9 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 
 import java.util.Map;
 
-public abstract class Subsystem {
+public interface Subsystem {
     /**
      * Run control code (e.g., read sensors and update motors) and return telemetry.
      */
-    public abstract Map<String, Object> update(@Nullable Canvas fieldOverlay);
+    Map<String, Object> update(@Nullable Canvas fieldOverlay);
 }
