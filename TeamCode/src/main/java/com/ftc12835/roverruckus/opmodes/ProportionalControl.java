@@ -2,6 +2,8 @@ package com.ftc12835.roverruckus.opmodes;
 
 import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.library.util.CSVWriter;
+import com.acmerobotics.library.util.LoggingUtil;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,6 +12,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.io.File;
 
 @Config
 @Autonomous(name = "Proportional Control", group = "PID")
@@ -54,6 +58,10 @@ public class ProportionalControl extends LinearOpMode {
 
         Telemetry dashboardTelemetry = RobotDashboard.getInstance().getTelemetry();
 
+        File logRoot = LoggingUtil.getLogRoot(this);
+        String prefix = "ProportionalControl" + System.currentTimeMillis();
+        CSVWriter writer = new CSVWriter(new File(logRoot, prefix + ".csv"));
+
         waitForStart();
         timer.reset();
 
@@ -69,11 +77,18 @@ public class ProportionalControl extends LinearOpMode {
             right1.setPower(-output);
             right2.setPower(-output);
 
+            writer.put("timer", timer.seconds());
+            writer.put("error", error);
+            writer.put("output", output);
+            writer.put("heading", imu.getAngularOrientation().firstAngle);
+
             dashboardTelemetry.addData("time", timer.seconds());
             dashboardTelemetry.addData("error", error);
             dashboardTelemetry.addData("output", output);
             dashboardTelemetry.addData("heading", imu.getAngularOrientation().firstAngle);
             dashboardTelemetry.update();
         }
+
+        writer.close();
     }
 }
