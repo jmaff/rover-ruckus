@@ -32,12 +32,8 @@ public class SplineFollowTest extends LinearOpMode {
 
         waitForStart();
 
-        List<Vector2d> targetPositions = new ArrayList<>();
-        List<Vector2d> actualPositions = new ArrayList<>();
-
         double startTime = System.nanoTime() / 1e9;
         drive.getTrajectoryFollower().followTrajectory(trajectory);
-
         while (opModeIsActive() && drive.getTrajectoryFollower().isFollowing()) {
             double time = System.nanoTime() / 1e9;
             Pose2d currentPose = drive.getPoseEstimate();
@@ -52,13 +48,8 @@ public class SplineFollowTest extends LinearOpMode {
             writer.put("currentHeading", currentPose.getHeading());
             writer.write();
 
-            targetPositions.add(targetPose.pos());
-            actualPositions.add(currentPose.pos());
-
             drive.getTrajectoryFollower().update(currentPose);
             drive.updatePoseEstimate();
         }
-
-        writer.close();
     }
 }

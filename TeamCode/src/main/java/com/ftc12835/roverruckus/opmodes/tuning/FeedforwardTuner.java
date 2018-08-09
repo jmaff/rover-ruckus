@@ -6,7 +6,7 @@ import com.ftc12835.roverruckus.subsystems.MecanumDrive;
 
 public class FeedforwardTuner extends FeedforwardTuningOpMode {
     public FeedforwardTuner() {
-        super(72.0, MecanumDrive.MOTOR_CONFIG.getMaxRPM(), 4.0);
+        super(100.0, MecanumDrive.MOTOR_CONFIG.getMaxRPM(), 4.0);
     }
 
     @Override

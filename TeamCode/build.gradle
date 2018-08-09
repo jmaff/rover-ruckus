@@ -13,14 +13,16 @@ apply from: '../ftc_app/build.common.gradle'
 repositories {
     // other repositories
     jcenter()
-    mavenLocal()
+    maven {
+        url  "https://dl.bintray.com/acmerobotics/maven"
+    }
 }
 dependencies {
     implementation project(':PixelatedLib')
     implementation project(':ACMELib')
     implementation project(':openCVLibrary342')
     implementation project(':FtcDashboard')
-    implementation 'com.acmerobotics.roadrunner:core:0.1-SNAPSHOT'
+    implementation 'com.acmerobotics.roadrunner:core:0.1.0'
 }
 android {
     compileOptions {
