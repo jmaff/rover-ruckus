@@ -1,4 +1,4 @@
-package com.ftc12835.roverruckus.subsystems;
+package com.ftc12835.roverruckus.subsystems.external;
 
 import android.util.Log;
 
@@ -21,6 +21,7 @@ import com.acmerobotics.library.util.DrawingUtil;
 import com.ftc12835.roverruckus.localization.DeadReckoningLocalizer;
 import com.ftc12835.roverruckus.localization.Localizer;
 import com.ftc12835.roverruckus.opmodes.auto.AutoOpMode;
+import com.ftc12835.roverruckus.subsystems.Subsystem;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
 import com.qualcomm.hardware.lynx.LynxModule;
