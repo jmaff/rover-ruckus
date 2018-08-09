@@ -20,11 +20,14 @@ dependencies {
     implementation project(':ACMELib')
     implementation project(':openCVLibrary342')
     implementation project(':FtcDashboard')
-    compile 'com.acmerobotics.roadrunner:core:0.1-SNAPSHOT'
+    implementation 'com.acmerobotics.roadrunner:core:0.1-SNAPSHOT'
 }
 android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    defaultConfig {
+        multiDexEnabled true
     }
 }

@@ -22,7 +22,7 @@ public class DeadReckoningLocalizer implements Localizer {
                 rotationDeltas[i] = rotations[i] - lastRotations[i];
             }
 
-            Vector2d robotPoseDelta = DifferentialDrive.getPoseDelta(rotationDeltas).pos();
+            Vector2d robotPoseDelta = ACMEMecanumDrive.getPoseDelta(rotationDeltas).pos();
             Vector2d fieldPoseDelta = robotPoseDelta.rotated(drive.getHeading());
 
             estimatedPosition = estimatedPosition.added(fieldPoseDelta);
