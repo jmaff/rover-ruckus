@@ -5,6 +5,7 @@ import com.acmerobotics.library.util.LoggingUtil;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.ftc12835.roverruckus.roadrunner.AssetsTrajectoryLoader;
 import com.ftc12835.roverruckus.subsystems.MecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

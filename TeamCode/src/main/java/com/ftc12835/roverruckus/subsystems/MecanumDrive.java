@@ -5,10 +5,8 @@ import android.support.annotation.Nullable;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.followers.MecanumPIDVAFollower;
+import com.ftc12835.library.hardware.REVHub;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.lynx.LynxNackException;
-import com.qualcomm.hardware.lynx.commands.core.LynxGetBulkInputDataCommand;
-import com.qualcomm.hardware.lynx.commands.core.LynxGetBulkInputDataResponse;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -37,7 +35,7 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
     private static final double kA = 0;
     private static final double kStatic = 0;
 
-    private LynxModule frontHub;
+    private REVHub frontHub;
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private MecanumPIDVAFollower trajectoryFollower;
 
@@ -45,7 +43,7 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
         // lateral distance between pairs of wheels on different sides of the robot
         super(6.28);
 
-        frontHub = hardwareMap.get(LynxModule.class, "frontHub");
+        frontHub = new REVHub(hardwareMap.get(LynxModule.class, "frontHub"));
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
@@ -88,21 +86,14 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
     @NotNull
     @Override
     public List<Double> getWheelPositions() {
-        LynxGetBulkInputDataCommand command = new LynxGetBulkInputDataCommand(frontHub);
+        frontHub.pull();
         List<Double> positions = new ArrayList<>();
-        try {
-            LynxGetBulkInputDataResponse response = command.sendReceive();
-            positions.add(encoderTicksToInches(response.getEncoder(0)));
-            positions.add(encoderTicksToInches(response.getEncoder(1)));
-            positions.add(-encoderTicksToInches(response.getEncoder(2)));
-            positions.add(-encoderTicksToInches(response.getEncoder(3)));
-            return positions;
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } catch (LynxNackException e) {
-            // do something idk
-        }
-        return Arrays.asList(0.0, 0.0, 0.0, 0.0);
+        positions.add(encoderTicksToInches(frontHub.getEncoder(0)));
+        positions.add(encoderTicksToInches(frontHub.getEncoder(1)));
+        positions.add(-encoderTicksToInches(frontHub.getEncoder(2)));
+        positions.add(-encoderTicksToInches(frontHub.getEncoder(3)));
+
+        return positions;
     }
 
     @Override
