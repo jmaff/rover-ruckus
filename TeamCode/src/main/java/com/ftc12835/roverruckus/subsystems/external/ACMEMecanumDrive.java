@@ -62,7 +62,6 @@ import java.util.Map;
  * the paper: http://www.chiefdelphi.com/media/papers/download/2722 (see doc/Mecanum_Kinematic_Analysis_100531.pdf)
  */
 
-@Config
 public class ACMEMecanumDrive implements Subsystem {
     public static final int IMU_PORT = 0;
 

@@ -12,7 +12,6 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-@Config
 public class FixedJewelTracker extends Tracker {
     public static final String TAG = "FixedJewelTracker";
 

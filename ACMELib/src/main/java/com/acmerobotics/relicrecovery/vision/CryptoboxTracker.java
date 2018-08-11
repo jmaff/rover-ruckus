@@ -23,7 +23,6 @@ import java.util.List;
 
 import static com.acmerobotics.relicrecovery.vision.OldCryptoboxTracker.getMeanRailGap;
 
-@Config
 public class CryptoboxTracker extends Tracker {
     public interface Listener {
         void onCryptoboxDetection(List<Double> rails, double timestamp);

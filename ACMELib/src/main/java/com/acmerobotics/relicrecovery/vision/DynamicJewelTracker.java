@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-@Config
 public class DynamicJewelTracker extends Tracker {
     public static double DISTANCE_RATIO = 6.0 / 1.875; // distance between centers / radius
 

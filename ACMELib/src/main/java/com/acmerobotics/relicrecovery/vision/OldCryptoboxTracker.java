@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-@Config
 public class OldCryptoboxTracker extends Tracker {
     public static final String TAG = "OldCryptoboxTracker";
 

@@ -4,25 +4,24 @@ import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.library.util.CSVWriter;
 import com.acmerobotics.library.util.LoggingUtil;
+import com.ftc12835.library.control.DerivativeController;
 import com.ftc12835.library.control.ProportionalController;
 import com.ftc12835.library.localization.Angle;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.io.File;
 
-@Autonomous(name = "Proportional Control", group = "PID")
+@Autonomous(name = "Derivative Control", group = "PID")
 @Config
-public class ProportionalControl extends LinearOpMode {
-    public static double kP = 0.1;
-    public static ProportionalController controller;
+public class DerivativeControl extends LinearOpMode{
+    public static double kD = 0.1;
+    public static DerivativeController controller;
 
     private ElapsedTime timer = new ElapsedTime();
     private RobotDashboard dashboard;
@@ -66,7 +65,7 @@ public class ProportionalControl extends LinearOpMode {
         String prefix = "ProportionalControl" + System.currentTimeMillis();
         CSVWriter writer = new CSVWriter(new File(logRoot, prefix + ".csv"));
 
-        controller = new ProportionalController(kP);
+        controller = new DerivativeController(kD);
         controller.setSetpoint(90.0);
 
         waitForStart();
