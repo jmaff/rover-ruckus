@@ -7,6 +7,7 @@ import com.acmerobotics.library.util.LoggingUtil;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,8 +16,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.io.File;
 
+
+@TeleOp(name = "Proportional Control", group = "PID")
 @Config
-@Autonomous(name = "Proportional Control", group = "PID")
 public class ProportionalControl extends LinearOpMode {
     public static double kP = 0.1;
 
@@ -65,11 +67,8 @@ public class ProportionalControl extends LinearOpMode {
         waitForStart();
         timer.reset();
 
-        error = setpoint - imu.getAngularOrientation().firstAngle;
-        output = kP * error;
-
-        while (output != 0.0 && opModeIsActive()) {
-            error = setpoint - imu.getAngularOrientation().firstAngle;
+        while (opModeIsActive()) {
+            error = setpoint - getHeading();
             output = kP * error;
 
             left1.setPower(output);
@@ -80,15 +79,28 @@ public class ProportionalControl extends LinearOpMode {
             writer.put("timer", timer.seconds());
             writer.put("error", error);
             writer.put("output", output);
-            writer.put("heading", imu.getAngularOrientation().firstAngle);
+            writer.put("heading", getHeading());
+            writer.write();
 
             dashboardTelemetry.addData("time", timer.seconds());
             dashboardTelemetry.addData("error", error);
             dashboardTelemetry.addData("output", output);
-            dashboardTelemetry.addData("heading", imu.getAngularOrientation().firstAngle);
+            dashboardTelemetry.addData("heading", getHeading());
             dashboardTelemetry.update();
         }
 
+        left1.setPower(0);
+        left2.setPower(0);
+        right1.setPower(0);
+        right2.setPower(0);
         writer.close();
+    }
+
+    public double getHeading() {
+        if (imu.getAngularOrientation().firstAngle < 0) {
+            return 360.0 + imu.getAngularOrientation().firstAngle;
+        }
+        return imu.getAngularOrientation().firstAngle;
+
     }
 }
