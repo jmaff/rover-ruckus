@@ -1,4 +1,4 @@
-package com.ftc12835.library.hardware;
+package com.ftc12835.library.hardware.devices;
 
 import android.util.Log;
 

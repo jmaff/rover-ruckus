@@ -1,4 +1,4 @@
-package com.ftc12835.library.hardware;
+package com.ftc12835.library.hardware.devices;
 
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;

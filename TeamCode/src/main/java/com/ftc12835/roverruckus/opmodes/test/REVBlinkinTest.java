@@ -1,6 +1,6 @@
 package com.ftc12835.roverruckus.opmodes.test;
 
-import com.ftc12835.library.hardware.REVBlinkin;
+import com.ftc12835.library.hardware.devices.REVBlinkin;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

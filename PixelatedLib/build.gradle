@@ -12,7 +12,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -32,10 +32,16 @@ repositories {
     flatDir {
         dirs '../ftc_app/libs'
     }
+    jcenter()
+    maven {
+        url  "https://dl.bintray.com/acmerobotics/maven"
+    }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
     implementation project(':ACMELib')
     implementation project(':openCVLibrary342')
+    implementation project(':FtcDashboard')
+    implementation 'com.acmerobotics.roadrunner:core:0.1.0'
 }

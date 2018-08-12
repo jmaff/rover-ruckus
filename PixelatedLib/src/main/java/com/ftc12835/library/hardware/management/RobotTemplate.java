@@ -1,15 +1,15 @@
-package com.ftc12835.roverruckus.subsystems;
+package com.ftc12835.library.hardware.management;
 
 import android.app.Activity;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.library.util.CSVWriter;
-import com.acmerobotics.library.util.LoggingUtil;
 import com.acmerobotics.library.util.TimestampedData;
 import com.acmerobotics.relicrecovery.configuration.OpModeConfiguration;
-import com.ftc12835.roverruckus.subsystems.external.ACMEMecanumDrive;
+import com.ftc12835.library.hardware.devices.REVHub;
+import com.ftc12835.library.util.CSVWriter;
+import com.ftc12835.library.util.LoggingUtil;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier;
 import com.qualcomm.robotcore.util.GlobalWarningSource;
@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -28,7 +29,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
-public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarningSource {
+public abstract class RobotTemplate implements OpModeManagerNotifier.Notifications, GlobalWarningSource {
     public static final String TAG = "Robot";
 
     public interface Listener {
@@ -38,11 +39,9 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
     public RobotDashboard dashboard;
     public final OpModeConfiguration config;
 
-    // Subsystems
-    public ACMEMecanumDrive drive;
-
     private List<Subsystem> subsystems;
     private List<Subsystem> subsystemsWithProblems;
+    private LinkedList<REVHub> revHubs;
     private List<CountDownLatch> cycleLatches;
     private Map<Subsystem, CSVWriter> subsystemLogs;
     private CSVWriter robotLog;
@@ -59,6 +58,10 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
             TelemetryPacket telemetryPacket = new TelemetryPacket();
             try {
                 double startTimestamp = TimestampedData.getCurrentTime();
+                for (REVHub revHub : revHubs) {
+                    if (revHub == null) continue;
+                    revHub.pull();
+                }
                 for (Subsystem subsystem : subsystems) {
                     if (subsystem == null) continue;
                     try {
@@ -123,13 +126,13 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
+
         }
     };
 
-    public Robot(OpMode opMode) {
+    public RobotTemplate(OpMode opMode) {
         dashboard = RobotDashboard.getInstance();
         config = new OpModeConfiguration(opMode.hardwareMap.appContext);
-//        config.setAutoTransition("TeleOp name here");
 
         listeners = new ArrayList<>();
 
@@ -140,14 +143,7 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
         subsystems = new ArrayList<>();
         subsystemLogs = new HashMap<>();
 
-        // Instantiate all subsystems
-        try {
-            drive = new ACMEMecanumDrive(opMode.hardwareMap);
-            subsystemLogs.put(drive, new CSVWriter(new File(logRoot, "Drive.csv")));
-            subsystems.add(drive);
-        } catch (IllegalArgumentException e) {
-            Log.w(TAG, "Skipping MecanumDrive");
-        }
+        initSubsystems();
 
         Activity activity = (Activity) opMode.hardwareMap.appContext;
         opModeManager = OpModeManagerImpl.getOpModeManagerOfActivity(activity);
@@ -165,6 +161,8 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
 
         cycleLatches = new ArrayList<>();
     }
+
+    abstract void initSubsystems();
 
     public void addListener(Listener listener) {
         listeners.add(listener);
@@ -204,12 +202,26 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
         }
     }
 
+    public void waitOneFullCycle() {
+        CountDownLatch latch = new CountDownLatch(2);
+        synchronized (cycleLatches) {
+            cycleLatches.add(latch);
+        }
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     @Override
     public void onOpModePreInit(OpMode opMode) {
+
     }
 
     @Override
     public void onOpModePreStart(OpMode opMode) {
+
     }
 
     @Override
@@ -234,6 +246,7 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
 
     @Override
     public void suppressGlobalWarning(boolean suppress) {
+
     }
 
     @Override
@@ -250,9 +263,10 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
 
     public void sleep(double seconds) {
         try {
-            Thread.sleep(Math.round(1000*seconds));
+            Thread.sleep(Math.round(1000 * seconds));
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     }
+
 }
