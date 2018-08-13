@@ -67,7 +67,7 @@ public class ProportionalControl extends LinearOpMode {
         CSVWriter writer = new CSVWriter(new File(logRoot, prefix + ".csv"));
 
         controller = new ProportionalController(kP);
-        controller.setSetpoint(90.0);
+        controller.setSetpoint(Angle.normalize(90.0));
 
         waitForStart();
         timer.reset();
@@ -78,8 +78,8 @@ public class ProportionalControl extends LinearOpMode {
             output = controller.update(error);
 
             left1.setPower(output);
-            left2.setPower(output);
-            right1.setPower(-output);
+            left2.setPower(-output);
+            right1.setPower(output);
             right2.setPower(-output);
 
             writer.put("timer", timer.seconds());
@@ -93,7 +93,7 @@ public class ProportionalControl extends LinearOpMode {
             dashboardTelemetry.addData("output", output);
             dashboardTelemetry.addData("heading", currentAngle);
             dashboardTelemetry.update();
-        } while (opModeIsActive() && Math.abs(error) <= 0.05);
+        } while (opModeIsActive());
 
         left1.setPower(0);
         left2.setPower(0);

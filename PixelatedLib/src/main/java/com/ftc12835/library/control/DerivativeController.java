@@ -7,6 +7,7 @@ package com.ftc12835.library.control;
 public class DerivativeController {
     private final double kD;
     private double setpoint;
+    private double previousError = 0;
 
     public DerivativeController(double kD) {
         this.kD = kD;
@@ -20,8 +21,9 @@ public class DerivativeController {
         return actual - setpoint;
     }
 
-    // TODO: implement D control
     public double update(double error) {
-        return 0.0;
+        double deltaError = error - previousError;
+        previousError = error;
+        return kD * deltaError;
     }
 }

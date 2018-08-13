@@ -3,6 +3,7 @@ package com.ftc12835.library.control;
 public class IntegralController {
     private final double kI;
     private double setpoint;
+    private double sum = 0;
 
     public IntegralController(double kI) {
         this.kI = kI;
@@ -16,8 +17,8 @@ public class IntegralController {
         return actual - setpoint;
     }
 
-    // TODO: implement I control
     public double update(double error) {
-        return 0.0;
+        sum += error;
+        return kI * sum;
     }
 }

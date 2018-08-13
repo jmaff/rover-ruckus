@@ -62,11 +62,11 @@ public class DerivativeControl extends LinearOpMode{
         Telemetry dashboardTelemetry = RobotDashboard.getInstance().getTelemetry();
 
         File logRoot = LoggingUtil.getLogRoot(this);
-        String prefix = "ProportionalControl" + System.currentTimeMillis();
+        String prefix = "DerivativeControl" + System.currentTimeMillis();
         CSVWriter writer = new CSVWriter(new File(logRoot, prefix + ".csv"));
 
         controller = new DerivativeController(kD);
-        controller.setSetpoint(90.0);
+        controller.setSetpoint(Angle.normalize(90.0));
 
         waitForStart();
         timer.reset();
@@ -77,8 +77,8 @@ public class DerivativeControl extends LinearOpMode{
             output = controller.update(error);
 
             left1.setPower(output);
-            left2.setPower(output);
-            right1.setPower(-output);
+            left2.setPower(-output);
+            right1.setPower(output);
             right2.setPower(-output);
 
             writer.put("timer", timer.seconds());
@@ -92,7 +92,7 @@ public class DerivativeControl extends LinearOpMode{
             dashboardTelemetry.addData("output", output);
             dashboardTelemetry.addData("heading", currentAngle);
             dashboardTelemetry.update();
-        } while (opModeIsActive() && Math.abs(error) <= 0.05);
+        } while (opModeIsActive());
 
         left1.setPower(0);
         left2.setPower(0);
