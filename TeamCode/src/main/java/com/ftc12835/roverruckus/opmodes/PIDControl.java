@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.library.util.CSVWriter;
 import com.acmerobotics.library.util.LoggingUtil;
+import com.ftc12835.library.control.DerivativeController;
 import com.ftc12835.library.control.IntegralController;
 import com.ftc12835.library.control.ProportionalController;
 import com.ftc12835.library.localization.Angle;
@@ -18,11 +19,16 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.io.File;
 
-@Autonomous(name = "Integral Control", group = "PID")
+@Autonomous(name = "PID Control", group = "PID")
 @Config
-public class IntegralControl extends LinearOpMode {
-    public static double kI = 0.1;
-    public static IntegralController controller;
+public class PIDControl extends LinearOpMode{
+    public static double kP = 0.04;
+    public static double kI = 0.0;
+    public static double kD = 0.07;
+
+    public static ProportionalController pController;
+    public static IntegralController iController;
+    public static DerivativeController dController;
 
     private ElapsedTime timer = new ElapsedTime();
     private RobotDashboard dashboard;
@@ -65,19 +71,20 @@ public class IntegralControl extends LinearOpMode {
         Telemetry dashboardTelemetry = RobotDashboard.getInstance().getTelemetry();
 
         File logRoot = LoggingUtil.getLogRoot(this);
-        String prefix = "IntegralControl" + System.currentTimeMillis();
+        String prefix = "DerivativeControl" + System.currentTimeMillis();
         CSVWriter writer = new CSVWriter(new File(logRoot, prefix + ".csv"));
 
-        controller = new IntegralController(kI);
-        controller.setSetpoint(90.0);
+       pController = new ProportionalController(kP);
+       iController = new IntegralController(kI);
+       dController = new DerivativeController(kD);
 
         waitForStart();
         timer.reset();
 
         do {
             currentAngle = getIntegratedZAxis();
-            error = controller.getError(currentAngle);
-            output = controller.update(error);
+            error = currentAngle - 90.0;
+            output = pController.update(error) + iController.update(error) + dController.update(error);
 
             left1.setPower(-output);
             left2.setPower(output);
@@ -86,7 +93,6 @@ public class IntegralControl extends LinearOpMode {
 
             writer.put("timer", timer.seconds());
             writer.put("error", error);
-            writer.put("totalError", controller.getSum());
             writer.put("output", output);
             writer.put("heading", currentAngle);
             writer.write();
@@ -95,7 +101,6 @@ public class IntegralControl extends LinearOpMode {
             dashboardTelemetry.addData("error", error);
             dashboardTelemetry.addData("output", output);
             dashboardTelemetry.addData("heading", currentAngle);
-            dashboardTelemetry.addData("totalError", controller.getSum());
             dashboardTelemetry.update();
         } while (opModeIsActive());
 

@@ -7,6 +7,7 @@ import com.acmerobotics.library.util.LoggingUtil;
 import com.ftc12835.library.control.ProportionalController;
 import com.ftc12835.library.localization.Angle;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,6 +16,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import java.io.File;
 
@@ -37,6 +41,8 @@ public class ProportionalControl extends LinearOpMode {
     private double currentAngle;
     private double error;
     private double output;
+    private double lastHeading = 0;
+    private double integratedZAxis = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -47,15 +53,16 @@ public class ProportionalControl extends LinearOpMode {
         center = hardwareMap.get(DcMotor.class, "C");
         arm = hardwareMap.get(Servo.class, "ARM");
 
-        left1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        left2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        right1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        right2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         imu.initialize(parameters);
+
+
+        left1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        left2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        right1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        right2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         dashboard = RobotDashboard.getInstance();
         dashboard.updateConfig();
@@ -67,20 +74,20 @@ public class ProportionalControl extends LinearOpMode {
         CSVWriter writer = new CSVWriter(new File(logRoot, prefix + ".csv"));
 
         controller = new ProportionalController(kP);
-        controller.setSetpoint(Angle.normalize(90.0));
+        controller.setSetpoint(90.0);
 
         waitForStart();
         timer.reset();
 
         do {
-            currentAngle = Angle.normalize(imu.getAngularOrientation().firstAngle);
+            currentAngle = getIntegratedZAxis();
             error = controller.getError(currentAngle);
             output = controller.update(error);
 
-            left1.setPower(output);
-            left2.setPower(-output);
-            right1.setPower(output);
-            right2.setPower(-output);
+            left1.setPower(-output);
+            left2.setPower(output);
+            right1.setPower(-output);
+            right2.setPower(output);
 
             writer.put("timer", timer.seconds());
             writer.put("error", error);
@@ -100,5 +107,19 @@ public class ProportionalControl extends LinearOpMode {
         right1.setPower(0);
         right2.setPower(0);
         writer.close();
+    }
+
+    double getIntegratedZAxis() {
+        double newHeading = imu.getAngularOrientation().firstAngle;
+        double deltaHeading = newHeading - lastHeading;
+        if (deltaHeading < -180) {
+            deltaHeading += 360;
+        } else if(deltaHeading >= 180) {
+            deltaHeading -= 360;
+        }
+
+        integratedZAxis += deltaHeading;
+        lastHeading = newHeading;
+        return integratedZAxis;
     }
 }

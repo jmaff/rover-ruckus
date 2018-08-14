@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp(name = "Demo Bot TeleOp", group = "PID")
 public class DemoBotTeleOp extends OpMode {
@@ -23,6 +27,9 @@ public class DemoBotTeleOp extends OpMode {
     DcMotor right2;
     DcMotor center;
     Servo arm;
+
+    private double integratedZAxis = 0;
+    private double lastHeading = 0;
 
     @Override
     public void init() {
@@ -37,6 +44,8 @@ public class DemoBotTeleOp extends OpMode {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         imu.initialize(parameters);
+
+        telemetry.log().clear(); telemetry.log().add("Gyro Calibrated. Press Start.");
 
         dashboard = RobotDashboard.getInstance();
         dashboard.updateConfig();
@@ -85,7 +94,22 @@ public class DemoBotTeleOp extends OpMode {
 
         Telemetry dashboardTelemetry = RobotDashboard.getInstance().getTelemetry();
         dashboardTelemetry.addData("time", timer.seconds());
-        dashboardTelemetry.addData("heading", imu.getAngularOrientation().firstAngle);
+        dashboardTelemetry.addData("heading", getIntegratedZAxis());
+        dashboardTelemetry.addData("raw heading", imu.getAngularOrientation().firstAngle);
         dashboardTelemetry.update();
+    }
+
+    double getIntegratedZAxis() {
+        double newHeading = imu.getAngularOrientation().firstAngle;
+        double deltaHeading = newHeading - lastHeading;
+        if (deltaHeading < -180) {
+            deltaHeading += 360;
+        } else if(deltaHeading >= 180) {
+            deltaHeading -= 360;
+        }
+
+        integratedZAxis += deltaHeading;
+        lastHeading = newHeading;
+        return integratedZAxis;
     }
 }

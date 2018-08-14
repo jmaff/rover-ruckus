@@ -21,4 +21,8 @@ public class IntegralController {
         sum += error;
         return kI * sum;
     }
+
+    public double getSum() {
+        return sum;
+    }
 }

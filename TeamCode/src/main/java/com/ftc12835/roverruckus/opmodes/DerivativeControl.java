@@ -36,6 +36,8 @@ public class DerivativeControl extends LinearOpMode{
     private double currentAngle;
     private double error;
     private double output;
+    private double lastHeading = 0;
+    private double integratedZAxis = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -72,14 +74,14 @@ public class DerivativeControl extends LinearOpMode{
         timer.reset();
 
         do {
-            currentAngle = Angle.normalize(imu.getAngularOrientation().firstAngle);
+            currentAngle = getIntegratedZAxis();
             error = controller.getError(currentAngle);
             output = controller.update(error);
 
-            left1.setPower(output);
-            left2.setPower(-output);
-            right1.setPower(output);
-            right2.setPower(-output);
+            left1.setPower(-output);
+            left2.setPower(output);
+            right1.setPower(-output);
+            right2.setPower(output);
 
             writer.put("timer", timer.seconds());
             writer.put("error", error);
@@ -99,5 +101,19 @@ public class DerivativeControl extends LinearOpMode{
         right1.setPower(0);
         right2.setPower(0);
         writer.close();
+    }
+
+    double getIntegratedZAxis() {
+        double newHeading = imu.getAngularOrientation().firstAngle;
+        double deltaHeading = newHeading - lastHeading;
+        if (deltaHeading < -180) {
+            deltaHeading += 360;
+        } else if(deltaHeading >= 180) {
+            deltaHeading -= 360;
+        }
+
+        integratedZAxis += deltaHeading;
+        lastHeading = newHeading;
+        return integratedZAxis;
     }
 }
