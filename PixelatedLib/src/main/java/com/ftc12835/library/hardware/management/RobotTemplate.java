@@ -250,8 +250,8 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
     }
 
     @Override
-    public boolean setGlobalWarning(String warning) {
-        return false;
+    public void setGlobalWarning(String warning) {
+
     }
 
     @Override

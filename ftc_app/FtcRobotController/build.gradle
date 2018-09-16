@@ -9,16 +9,11 @@ android {
         targetSdkVersion 19
     }
 
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 23
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    lintOptions {
-        abortOnError false
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 repositories {
@@ -30,5 +25,4 @@ apply from: 'build.release.gradle'
 
 dependencies {
     implementation project(':FtcDashboard')
-    implementation project(':openCVLibrary342')
 }

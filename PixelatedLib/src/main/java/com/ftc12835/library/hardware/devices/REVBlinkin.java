@@ -2,15 +2,20 @@ package com.ftc12835.library.hardware.devices;
 
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoControllerEx;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.ServoConfigurationType;
 
+@Deprecated
 public class REVBlinkin {
     private ServoImplEx delegate;
 
     public REVBlinkin(Servo delegate) {
-        this.delegate = new ServoImplEx(delegate.getController(), delegate.getPortNumber());
 
-        this.delegate.setPwmRange(new PwmControl.PwmRange(1000, 2000));
+//        this.delegate = new ServoImplEx(new ServoControllerEx(), delegate.getPortNumber(), ServoConfigurationType.getStandardServoType());
+//
+//
+//        this.delegate.setPwmRange(new PwmControl.PwmRange(1000, 2000));
     }
 
     public void setRaw(double value) {
