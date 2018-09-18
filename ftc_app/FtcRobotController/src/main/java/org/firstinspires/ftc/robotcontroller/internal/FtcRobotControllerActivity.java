@@ -338,7 +338,8 @@ public class FtcRobotControllerActivity extends Activity
       initWifiMute(true);
     }
 
-    RobotDashboard.start();
+//    RobotDashboard.start();
+
   }
 
   protected UpdateUI createUpdateUI() {
@@ -419,7 +420,7 @@ public class FtcRobotControllerActivity extends Activity
     preferencesHelper.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(sharedPreferencesListener);
     RobotLog.cancelWriteLogcatToDisk();
 
-    RobotDashboard.stop();
+//    RobotDashboard.stop();
   }
 
   protected void bindToService() {
@@ -634,7 +635,7 @@ public class FtcRobotControllerActivity extends Activity
 
     passReceivedUsbAttachmentsToEventLoop();
 
-    RobotDashboard.attachEventLoop(eventLoop);
+//    RobotDashboard.attachEventLoop(eventLoop);
   }
 
   protected OpModeRegister createOpModeRegister() {

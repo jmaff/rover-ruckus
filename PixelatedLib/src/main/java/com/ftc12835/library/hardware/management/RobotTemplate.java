@@ -162,7 +162,7 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
         cycleLatches = new ArrayList<>();
     }
 
-    abstract void initSubsystems();
+    protected abstract void initSubsystems();
 
     public void addListener(Listener listener) {
         listeners.add(listener);
