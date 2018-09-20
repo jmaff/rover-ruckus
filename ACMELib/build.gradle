@@ -1,12 +1,14 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 23
     buildToolsVersion '26.0.2'
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 23
+        multiDexEnabled true
     }
 
     compileOptions {
@@ -23,17 +25,17 @@ repositories {
     flatDir {
         dirs '../ftc_app/libs'
     }
+    mavenCentral()
 }
 
 dependencies {
-    implementation(name: 'RobotCore-release', ext: 'aar')
-    implementation(name: 'Hardware-release', ext: 'aar')
-    implementation(name: 'FtcCommon-release', ext: 'aar')
-    implementation(name: 'Analytics-release', ext: 'aar')
-    implementation(name: 'WirelessP2p-release', ext: 'aar')
+    implementation (name: 'RobotCore-release', ext: 'aar')
+    implementation (name: 'Hardware-release', ext: 'aar')
+    implementation (name: 'FtcCommon-release', ext: 'aar')
+    implementation (name:'WirelessP2p-release', ext:'aar')
 
     implementation project(':FtcDashboard')
-    implementation project(':openCVLibrary342')
+    implementation project(':openCVLibrary3')
 
     implementation('org.nanohttpd:nanohttpd-websocket:2.3.1') {
         exclude module: 'nanohttpd'
@@ -44,4 +46,5 @@ dependencies {
     }
 
     testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }

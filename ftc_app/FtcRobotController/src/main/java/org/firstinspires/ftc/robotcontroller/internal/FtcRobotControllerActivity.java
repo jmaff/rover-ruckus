@@ -50,6 +50,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -291,6 +292,7 @@ public class FtcRobotControllerActivity extends Activity
 
     ClassManagerFactory.registerFilters();
     ClassManagerFactory.processAllClasses();
+
     cfgFileMgr = new RobotConfigFileManager(this);
 
     // Clean up 'dirty' status after a possible crash

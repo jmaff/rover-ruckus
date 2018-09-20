@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 23
 
 
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 19
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
 
@@ -45,7 +45,9 @@ repositories {
 dependencies {
     implementation project(':FtcRobotController')
     implementation project(':ACMELib')
-    implementation project(':openCVLibrary342')
+    implementation project(':openCVLibrary3')
     implementation project(':FtcDashboard')
     implementation 'com.acmerobotics.roadrunner:core:0.1.0'
+    implementation project(':endercv')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }

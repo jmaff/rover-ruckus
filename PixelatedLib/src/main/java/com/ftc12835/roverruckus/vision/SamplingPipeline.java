@@ -1,7 +1,6 @@
 package com.ftc12835.roverruckus.vision;
 
-import com.ftc12835.library.vision.Pipeline;
-
+import org.corningrobotics.enderbots.endercv.OpenCVPipeline;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -12,53 +11,49 @@ import org.opencv.core.Size;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.File;
+public class SamplingPipeline extends WebcamPipeline {
 
-public class SamplingPipeline implements Pipeline {
+    private Mat blurOutput = new Mat();
+    private BlurType blurType = BlurType.get("Gaussian Blur");
+    private double blurRadius = 7.547169811320756;
 
-    private static final double[] hsvThresholdHue = {0.0, 63.87096774193549};
-    private static final double[] hsvThresholdSaturation = {137.58992805755395, 255.0};
-    private static final double[] hsvThresholdValue = {34.39748201438849, 255.0};
+    private final double[] hsvThresholdHue = {0.0, 63.87096774193549};
+    private final double[] hsvThresholdSaturation = {137.58992805755395, 255.0};
+    private final double[] hsvThresholdValue = {34.39748201438849, 255.0};
 
-    private MatOfKeyPoint findBlobsOutput;
+    private Mat hsvThresholdOutput = new Mat();
+
+    private Mat cvErodeOutput = new Mat();
+    private Mat cvErodeKernel = new Mat();
+    private Point cvErodeAnchor = new Point(-1, -1);
+    private double cvErodeIterations = 1.0;
+    private int cvErodeBordertype = Core.BORDER_CONSTANT;
+    private Scalar cvErodeBordervalue = new Scalar(-1);
+
+    private Mat maskOutput = new Mat();
+
+    private double findBlobsMinArea = 1.0;
+    private double[] findBlobsCircularity = {0.0, 1.0};
+    private boolean findBlobsDarkBlobs = false;
+
+    private MatOfKeyPoint findBlobsOutput = new MatOfKeyPoint();
 
     @Override
-    public Mat process(Mat frame) {
+    public void processFrame(Mat frame) {
         // Step Blur0:
-        Mat blurOutput = new Mat();
-        BlurType blurType = BlurType.get("Gaussian Blur");
-        double blurRadius = 7.547169811320756;
         blur(frame, blurType, blurRadius, blurOutput);
 
         // Step HSV_Threshold0:
-        Mat hsvThresholdOutput = new Mat();
         hsvThreshold(blurOutput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
         // Step CV_erode0:
-        Mat cvErodeOutput = new Mat();
-        Mat cvErodeKernel = new Mat();
-        Point cvErodeAnchor = new Point(-1, -1);
-        double cvErodeIterations = 1.0;
-        int cvErodeBordertype = Core.BORDER_CONSTANT;
-        Scalar cvErodeBordervalue = new Scalar(-1);
         cvErode(hsvThresholdOutput, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue, cvErodeOutput);
 
         // Step Mask0:
-        Mat maskInput = blurOutput;
-        Mat maskMask = cvErodeOutput;
-
-        Mat maskOutput = new Mat();
-        mask(blurOutput, maskMask, maskOutput);
+        mask(blurOutput, cvErodeOutput, maskOutput);
 
         // Step Find_Blobs0:
-        Mat findBlobsInput = maskOutput;
-        double findBlobsMinArea = 1.0;
-        double[] findBlobsCircularity = {0.0, 1.0};
-        boolean findBlobsDarkBlobs = false;
-
-        findBlobsOutput = new MatOfKeyPoint();
-        findBlobs(findBlobsInput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, findBlobsOutput);
-        return findBlobsOutput;
+        findBlobs(maskOutput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, findBlobsOutput);
     }
 
     public MatOfKeyPoint getBlobs() {

@@ -1,22 +1,20 @@
 package com.ftc12835.roverruckus.opmodes.vision;
 
-import com.acmerobotics.library.vision.VuforiaCamera;
-import com.ftc12835.roverruckus.subsystems.SamplingCamera;
-import com.ftc12835.roverruckus.vision.DynamicBlockTracker;
 import com.ftc12835.roverruckus.vision.SamplingPipeline;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
+
 @TeleOp(name = "BlockVision", group = "VISION")
 public class BlockVision extends OpMode {
-    private SamplingCamera samplingCamera;
+    private SamplingPipeline samplingPipeline;
 
     @Override
     public void init() {
-        samplingCamera = new SamplingCamera(hardwareMap);
-        samplingCamera.attachPipeline(new SamplingPipeline());
-        samplingCamera.init();
+        samplingPipeline = new SamplingPipeline();
+        samplingPipeline.init(hardwareMap, CameraViewDisplay.getInstance());
+        samplingPipeline.enable();
     }
 
     @Override
@@ -25,7 +23,6 @@ public class BlockVision extends OpMode {
 
     @Override
     public void stop() {
-        super.stop();
-        samplingCamera.close();
+        samplingPipeline.disable();
     }
 }

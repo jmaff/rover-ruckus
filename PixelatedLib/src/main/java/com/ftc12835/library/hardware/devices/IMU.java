@@ -3,6 +3,7 @@ package com.ftc12835.library.hardware.devices;
 import android.support.annotation.NonNull;
 
 import com.acmerobotics.library.hardware.LynxOptimizedI2cFactory;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;

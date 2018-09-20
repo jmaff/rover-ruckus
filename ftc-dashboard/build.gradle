@@ -1,12 +1,14 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 23
     buildToolsVersion '26.0.2'
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 19
+        targetSdkVersion 23
+        multiDexEnabled true
     }
 
     lintOptions {
@@ -22,6 +24,7 @@ repositories {
     flatDir {
         dirs '../ftc_app/libs'
     }
+    mavenCentral()
 }
 
 dependencies {
@@ -29,4 +32,5 @@ dependencies {
     compile('org.nanohttpd:nanohttpd-websocket:2.3.1') {
         exclude module: 'nanohttpd'
     }
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
