@@ -28,6 +28,8 @@ repositories {
         dirs '../libs'
     }
     google()
+    mavenCentral()
+    jcenter()
 }
 
 apply from: 'build.release.gradle'

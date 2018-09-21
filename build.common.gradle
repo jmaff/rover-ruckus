@@ -107,6 +107,7 @@ repositories {
         dirs rootProject.file('libs')
     }
     jcenter()
+    mavenCentral()
     maven {
         url  "https://dl.bintray.com/acmerobotics/maven"
     }
