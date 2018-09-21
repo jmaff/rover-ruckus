@@ -1,0 +1,35 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '27.0.3'
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 23
+        multiDexEnabled true
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+repositories {
+    flatDir {
+        dirs '../libs'
+    }
+    mavenCentral()
+    google()
+}
+
+dependencies {
+    compile(name: 'RobotCore-release', ext: 'aar')
+    compile('org.nanohttpd:nanohttpd-websocket:2.3.1') {
+        exclude module: 'nanohttpd'
+    }
+}

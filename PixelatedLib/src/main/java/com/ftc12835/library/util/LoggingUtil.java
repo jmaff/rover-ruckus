@@ -3,8 +3,6 @@ package com.ftc12835.library.util;
 import android.content.Context;
 import android.os.Environment;
 
-import com.acmerobotics.relicrecovery.configuration.MatchType;
-import com.acmerobotics.relicrecovery.configuration.OpModeConfiguration;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import java.io.File;
@@ -14,7 +12,7 @@ import java.io.File;
  */
 public class LoggingUtil {
     public static File getLogRoot(Context context) {
-        String dirName = context.getResources().getString(com.acmerobotics.library.R.string.log_root);
+        String dirName = "Pixelated";
         File dir = new File(Environment.getExternalStorageDirectory(), dirName);
         dir.mkdirs();
         return dir;
@@ -37,24 +35,14 @@ public class LoggingUtil {
         removeRecursive(getLogRoot(context));
     }
 
-    private static String getLogBaseName(OpMode opMode, OpModeConfiguration configuration) {
-        MatchType matchType = configuration.getMatchType();
+    private static String getLogBaseName(OpMode opMode) {
         String filenameSuffix;
-        if (matchType == MatchType.PRACTICE) {
-            filenameSuffix = matchType + "-" + System.currentTimeMillis();
-        } else {
-            filenameSuffix = matchType + "-" + configuration.getMatchNumber();
-        }
-        return opMode.getClass().getSimpleName() + "-" + filenameSuffix;
+
+        return opMode.getClass().getSimpleName() + "-";
     }
 
-    public static File getLogFile(OpMode opMode, OpModeConfiguration configuration) {
-        return new File(getLogRoot(opMode), getLogBaseName(opMode, configuration) + ".csv");
+    public static File getLogFile(OpMode opMode) {
+        return new File(getLogRoot(opMode), getLogBaseName(opMode) + ".csv");
     }
 
-    public static File getLogDir(OpMode opMode, OpModeConfiguration configuration) {
-        File dir = new File(getLogRoot(opMode), getLogBaseName(opMode, configuration));
-        dir.mkdirs();
-        return dir;
-    }
 }

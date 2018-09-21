@@ -5,8 +5,6 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.library.util.TimestampedData;
-import com.acmerobotics.relicrecovery.configuration.OpModeConfiguration;
 import com.ftc12835.library.hardware.devices.REVHub;
 import com.ftc12835.library.util.CSVWriter;
 import com.ftc12835.library.util.LoggingUtil;
@@ -37,7 +35,6 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
     }
 
     public RobotDashboard dashboard;
-    public final OpModeConfiguration config;
 
     private List<Subsystem> subsystems;
     private List<Subsystem> subsystemsWithProblems;
@@ -57,7 +54,6 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
         while (!Thread.currentThread().isInterrupted()) {
             TelemetryPacket telemetryPacket = new TelemetryPacket();
             try {
-                double startTimestamp = TimestampedData.getCurrentTime();
                 for (REVHub revHub : revHubs) {
                     if (revHub == null) continue;
                     revHub.pull();
@@ -88,8 +84,6 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
                 for (Listener listener : listeners) {
                     listener.onPostUpdate();
                 }
-                double postSubsystemUpdateTimestamp = TimestampedData.getCurrentTime();
-                robotLog.put("subsystemUpdateTime", postSubsystemUpdateTimestamp - startTimestamp);
                 robotLog.write();
                 while (telemetryPacketQueue.remainingCapacity() == 0) {
                     Thread.sleep(1);
@@ -132,11 +126,10 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
 
     public RobotTemplate(OpMode opMode) {
         dashboard = RobotDashboard.getInstance();
-        config = new OpModeConfiguration(opMode.hardwareMap.appContext);
 
         listeners = new ArrayList<>();
 
-        File logRoot = LoggingUtil.getLogDir(opMode, config);
+        File logRoot = LoggingUtil.getLogRoot(opMode);
 
         robotLog = new CSVWriter(new File(logRoot, "Robot.csv"));
 

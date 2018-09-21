@@ -1,8 +1,12 @@
 package com.ftc12835.roverruckus.vision;
 
-import org.corningrobotics.enderbots.endercv.OpenCVPipeline;
+import com.ftc12835.library.vision.CanvasOverlay;
+import com.ftc12835.library.vision.Pipeline;
+import com.ftc12835.library.vision.VisionCamera;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
+import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Point;
@@ -11,7 +15,7 @@ import org.opencv.core.Size;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgproc.Imgproc;
 
-public class SamplingPipeline extends WebcamPipeline {
+public class SamplingPipeline extends Pipeline {
 
     private Mat blurOutput = new Mat();
     private BlurType blurType = BlurType.get("Gaussian Blur");
@@ -39,6 +43,10 @@ public class SamplingPipeline extends WebcamPipeline {
     private MatOfKeyPoint findBlobsOutput = new MatOfKeyPoint();
 
     @Override
+    public void init(VisionCamera camera) {
+    }
+
+    @Override
     public void processFrame(Mat frame) {
         // Step Blur0:
         blur(frame, blurType, blurRadius, blurOutput);
@@ -56,9 +64,18 @@ public class SamplingPipeline extends WebcamPipeline {
         findBlobs(maskOutput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, findBlobsOutput);
     }
 
+    @Override
+    public void drawOverlay(CanvasOverlay overlay, int imageWidth, int imageHeight) {
+        KeyPoint[] blobs = getBlobs().toArray();
+        for (KeyPoint blob: blobs) {
+            overlay.strokeCircle(blob.pt, blob.size, new Scalar(255, 255, 255), 5);
+        }
+    }
+
     public MatOfKeyPoint getBlobs() {
         return findBlobsOutput;
     }
+
 
     /**
      * Code used for CV_flip.

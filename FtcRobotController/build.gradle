@@ -1,0 +1,33 @@
+//
+// build.gradle in FtcRobotController
+//
+apply plugin: 'com.android.library'
+
+android {
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 19
+        multiDexEnabled true
+    }
+
+    compileSdkVersion 23
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+repositories {
+    flatDir {
+        dirs '../libs'
+    }
+    google()
+}
+
+apply from: 'build.release.gradle'

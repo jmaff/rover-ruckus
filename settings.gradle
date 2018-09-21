@@ -1,3 +1,2 @@
-include ':FtcRobotController', ':FtcDashboard', ':PixelatedLib', ':ACMELib', ':TeamCode', ':openCVLibrary3', ':endercv'
-project(':FtcRobotController').projectDir = new File('ftc_app/FtcRobotController')
-project(':FtcDashboard').projectDir = new File('ftc-dashboard')
+include ':FtcRobotController', ':endercv', ':FtcDashboard', ':PixelatedLib', ':openCVLibrary3'
+include ':TeamCode'

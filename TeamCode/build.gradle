@@ -9,32 +9,10 @@
 // before doing so.
 // Custom definitions may go here
 // Include common definitions from above.
-apply from: '../ftc_app/build.common.gradle'
-repositories {
-    // other repositories
-    jcenter()
-    maven {
-        url  "https://dl.bintray.com/acmerobotics/maven"
-    }
-}
+apply from: '../build.common.gradle'
+
 dependencies {
-    implementation project(':PixelatedLib')
-    implementation project(':ACMELib')
-    implementation project(':openCVLibrary3')
     implementation project(':FtcDashboard')
-    implementation 'com.acmerobotics.roadrunner:core:0.1.0'
+    implementation project(':openCVLibrary3')
     implementation project(':endercv')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-}
-android {
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    defaultConfig {
-        multiDexEnabled true
-    }
-    lintOptions {
-        abortOnError false
-    }
 }
