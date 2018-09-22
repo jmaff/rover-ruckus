@@ -9,8 +9,8 @@ import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
 import org.firstinspires.ftc.teamcode.VisionConstants;
 import org.opencv.core.KeyPoint;
 
-@TeleOp(name = "BlockVision", group = "VISION")
-public class BlockVision extends OpMode {
+@TeleOp(name = "GoldVision", group = "VISION")
+public class GoldVision extends OpMode {
     private VisionCamera camera;
     private SamplingPipeline samplingPipeline;
 
@@ -24,10 +24,23 @@ public class BlockVision extends OpMode {
 
     @Override
     public void loop() {
-        if (samplingPipeline.getBlobs().toArray().length > 0) {
-            telemetry.addData("x", samplingPipeline.getBlobs().toArray()[0].pt.x);
-            telemetry.addData("x", samplingPipeline.getBlobs().toArray()[0].pt.y);
+        telemetry.addData("x", samplingPipeline.getGoldPoint().x);
+        telemetry.addData("y", samplingPipeline.getGoldPoint().y);
+
+        String position;
+        switch (samplingPipeline.getGoldPosition()) {
+            case LEFT:
+                position = "LEFT";
+            case CENTER:
+                position = "CENTER";
+            case RIGHT:
+                position = "RIGHT";
+            default:
+            case UNKNOWN:
+                position = "UNKNOWN";
         }
+
+        telemetry.addData("Gold Position", position);
     }
 
     @Override

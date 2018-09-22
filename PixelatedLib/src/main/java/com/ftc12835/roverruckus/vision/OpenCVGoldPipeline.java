@@ -1,39 +1,41 @@
 package com.ftc12835.roverruckus.vision;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.ftc12835.library.vision.CanvasOverlay;
-import com.ftc12835.library.vision.Pipeline;
-import com.ftc12835.library.vision.VisionCamera;
+import com.ftc12835.library.vision.ColorBlobDetector;
 
+import org.corningrobotics.enderbots.endercv.OpenCVPipeline;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.osgi.OpenCVInterface;
+
+import java.util.List;
 
 @Config
-public class SamplingPipeline extends Pipeline {
-
-    // TODO tune these
-    public static final double LEFT_MAX_THRESHOLD = 100;
-    public static final double RIGHT_MIN_THRESHOLD = 400;
+public class OpenCVGoldPipeline extends OpenCVPipeline {
+    public static double LEFT_MIN_THRESHOLD = 400;
+    public static double RIGHT_MAX_THRESHOLD = 100;
 
     private Mat blurOutput = new Mat();
-    private BlurType blurType = BlurType.get("Gaussian Blur");
+    private SamplingPipeline.BlurType blurType = SamplingPipeline.BlurType.get("Gaussian Blur");
     private double blurRadius = 7.547169811320756;
 
-    public static double hueMin = 0.0;
-    public static double hueMax = 64;
+    public static double hueMin = 80;
+    public static double hueMax = 110;
 
-    public static double satMin = 110;
+    public static double satMin = 200;
     public static double satMax = 255;
 
-    public static double valueMin = 34;
+    public static double valueMin = 100;
     public static double valueMax = 255;
 
     private Mat hsvThresholdOutput = new Mat();
@@ -51,16 +53,12 @@ public class SamplingPipeline extends Pipeline {
     private double[] findBlobsCircularity = {0.0, 1.0};
     private boolean findBlobsDarkBlobs = false;
 
-    private MatOfKeyPoint findBlobsOutput = new MatOfKeyPoint();
+    private List<MatOfPoint> findBlobsOutput;
 
     @Override
-    public void init(VisionCamera camera) {
-    }
-
-    @Override
-    public void processFrame(Mat frame) {
+    public Mat processFrame(Mat rgba, Mat gray) {
         // Step Blur0:
-        blur(frame, blurType, blurRadius, blurOutput);
+        blur(rgba, blurType, blurRadius, blurOutput);
 
         double[] hsvThresholdHue = {hueMin, hueMax};
         double[] hsvThresholdSaturation = {satMin, satMax};
@@ -75,44 +73,34 @@ public class SamplingPipeline extends Pipeline {
         mask(blurOutput, cvErodeOutput, maskOutput);
 
         // Step Find_Blobs0:
-        findBlobs(maskOutput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, findBlobsOutput);
-    }
+        findBlobsOutput = findBlobs(maskOutput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs);
 
-    @Override
-    public void drawOverlay(CanvasOverlay overlay, int imageWidth, int imageHeight) {
-        KeyPoint[] blobs = getBlobs().toArray();
-        for (KeyPoint blob: blobs) {
-            overlay.strokeCircle(blob.pt, blob.size, new Scalar(255, 255, 255), 5);
+        for (MatOfPoint matOfPoint : findBlobsOutput) {
+            Rect box = Imgproc.boundingRect(matOfPoint);
+            Imgproc.rectangle(rgba, box.tl(), box.br(), new Scalar(0,255,0));
         }
-    }
 
-    public MatOfKeyPoint getBlobs() {
-        return findBlobsOutput;
-    }
-
-    public boolean isGoldFound() {
-        return getBlobs().toArray().length > 0;
+        return rgba;
     }
 
     public Point getGoldPoint() {
-        if (isGoldFound()) {
-            return getBlobs().toArray()[0].pt;
+        if (!findBlobsOutput.isEmpty()) {
+            Rect box = Imgproc.boundingRect(findBlobsOutput.get(0));
+            return new Point(box.x, box.y);
         } else {
             return new Point(0, 0);
         }
     }
 
     public GoldPosition getGoldPosition() {
-        double goldX = getGoldPoint().x;
+        double goldY = getGoldPoint().y;
 
-        if (!isGoldFound()) return GoldPosition.UNKNOWN;
-
-        if (goldX < LEFT_MAX_THRESHOLD) {
-            return GoldPosition.LEFT;
-        } else if (goldX < RIGHT_MIN_THRESHOLD) {
+        if (goldY < RIGHT_MAX_THRESHOLD) {
+            return GoldPosition.RIGHT;
+        } else if (goldY < LEFT_MIN_THRESHOLD) {
             return GoldPosition.CENTER;
         } else {
-            return GoldPosition.RIGHT;
+            return GoldPosition.LEFT;
         }
     }
 
@@ -138,7 +126,7 @@ public class SamplingPipeline extends Pipeline {
      * @param flipcode FlipCode of which direction to flip.
      * @param dst flipped version of the Image.
      */
-    private void cvFlip(Mat src, FlipCode flipcode, Mat dst) {
+    private void cvFlip(Mat src, SamplingPipeline.FlipCode flipcode, Mat dst) {
         Core.flip(src, dst, flipcode.value);
     }
 
@@ -197,7 +185,7 @@ public class SamplingPipeline extends Pipeline {
      * @param doubleRadius The radius for the blur.
      * @param output The image in which to store the output.
      */
-    private void blur(Mat input, BlurType type, double doubleRadius,
+    private void blur(Mat input, SamplingPipeline.BlurType type, double doubleRadius,
                       Mat output) {
         int radius = (int)(doubleRadius + 0.5);
         int kernelSize;
@@ -278,11 +266,15 @@ public class SamplingPipeline extends Pipeline {
      * @param minArea The minimum size of a blob that will be found
      * @param circularity The minimum and maximum circularity of blobs that will be found
      * @param darkBlobs The boolean that determines if light or dark blobs are found.
-     * @param blobList The output where the MatOfKeyPoint is stored.
      */
-    private void findBlobs(Mat input, double minArea, double[] circularity,
-                           Boolean darkBlobs, MatOfKeyPoint blobList) {
-        FeatureDetector blobDet = FeatureDetector.create(FeatureDetector.SIMPLEBLOB);
-        blobDet.detect(input, blobList);
+    private List<MatOfPoint> findBlobs(Mat input, double minArea, double[] circularity,
+                           Boolean darkBlobs) {
+
+//        FeatureDetector blobDet = FeatureDetector.create(FeatureDetector.SIMPLEBLOB);
+//        blobDet.detect(input, blobList);
+
+        ColorBlobDetector detector = new ColorBlobDetector();
+        detector.process(input);
+        return detector.getContours();
     }
 }
