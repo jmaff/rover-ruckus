@@ -92,6 +92,14 @@ public class OpenCVGoldPipeline extends OpenCVPipeline {
         }
     }
 
+    public Rect getGoldBoundingBox() {
+        if (!findBlobsOutput.isEmpty()) {
+            return Imgproc.boundingRect(findBlobsOutput.get(0));
+        } else {
+            return new Rect(0, 0, 0, 0);
+        }
+    }
+
     public GoldPosition getGoldPosition() {
         double goldY = getGoldPoint().y;
 

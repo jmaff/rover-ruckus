@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.vision;
 
+import com.ftc12835.roverruckus.vision.GoldPosition;
 import com.ftc12835.roverruckus.vision.OpenCVGoldPipeline;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,19 +21,22 @@ public class OpenCVVision extends OpMode {
     public void loop() {
         telemetry.addData("x", goldPipeline.getGoldPoint().x);
         telemetry.addData("y", goldPipeline.getGoldPoint().y);
+        telemetry.addData("area", goldPipeline.getGoldBoundingBox().area());
 
         String position;
-        switch (goldPipeline.getGoldPosition()) {
-            case LEFT:
-                position = "LEFT";
-            case CENTER:
-                position = "CENTER";
-            case RIGHT:
-                position = "RIGHT";
-            default:
-            case UNKNOWN:
-                position = "UNKNOWN";
+        double goldY = goldPipeline.getGoldPoint().y;
+        if (goldY < 140) {
+            position = "RIGHT";
+        } else if (goldY < 400) {
+            position = "CENTER";
+        } else {
+            position = "LEFT";
         }
+
+        if (goldY == 0) {
+            position = "UNKNOWN";
+        }
+
         telemetry.addData("Position", position);
     }
 
