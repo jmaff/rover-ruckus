@@ -2,6 +2,7 @@ package com.ftc12835.roverruckus.vision;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.ftc12835.library.vision.CanvasOverlay;
+import com.ftc12835.library.vision.ColorBlobDetector;
 import com.ftc12835.library.vision.Pipeline;
 import com.ftc12835.library.vision.VisionCamera;
 
@@ -10,11 +11,15 @@ import org.opencv.core.CvType;
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.List;
 
 @Config
 public class SamplingPipeline extends Pipeline {
@@ -51,14 +56,14 @@ public class SamplingPipeline extends Pipeline {
     private double[] findBlobsCircularity = {0.0, 1.0};
     private boolean findBlobsDarkBlobs = false;
 
-    private MatOfKeyPoint findBlobsOutput = new MatOfKeyPoint();
+    private List<MatOfPoint> findBlobsOutput;
 
     @Override
     public void init(VisionCamera camera) {
     }
 
     @Override
-    public void processFrame(Mat frame) {
+    public Mat processFrame(Mat frame) {
         // Step Blur0:
         blur(frame, blurType, blurRadius, blurOutput);
 
@@ -75,44 +80,39 @@ public class SamplingPipeline extends Pipeline {
         mask(blurOutput, cvErodeOutput, maskOutput);
 
         // Step Find_Blobs0:
-        findBlobs(maskOutput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, findBlobsOutput);
+        findBlobsOutput = findBlobs(maskOutput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs);
+
+        return frame;
     }
 
     @Override
     public void drawOverlay(CanvasOverlay overlay, int imageWidth, int imageHeight) {
-        KeyPoint[] blobs = getBlobs().toArray();
-        for (KeyPoint blob: blobs) {
-            overlay.strokeCircle(blob.pt, blob.size, new Scalar(255, 255, 255), 5);
+        if (findBlobsOutput != null) {
+            for (MatOfPoint matOfPoint : findBlobsOutput) {
+                Rect box = Imgproc.boundingRect(matOfPoint);
+                overlay.strokeRect(box, new Scalar(0, 255, 0), 6);
+            }
         }
     }
 
-    public MatOfKeyPoint getBlobs() {
+    public List<MatOfPoint> getBlobs() {
         return findBlobsOutput;
     }
 
-    public boolean isGoldFound() {
-        return getBlobs().toArray().length > 0;
-    }
-
     public Point getGoldPoint() {
-        if (isGoldFound()) {
-            return getBlobs().toArray()[0].pt;
+        if (findBlobsOutput != null && !findBlobsOutput.isEmpty()) {
+            Rect box = Imgproc.boundingRect(findBlobsOutput.get(0));
+            return new Point(box.x, box.y);
         } else {
             return new Point(0, 0);
         }
     }
 
-    public GoldPosition getGoldPosition() {
-        double goldX = getGoldPoint().x;
-
-        if (!isGoldFound()) return GoldPosition.UNKNOWN;
-
-        if (goldX < LEFT_MAX_THRESHOLD) {
-            return GoldPosition.LEFT;
-        } else if (goldX < RIGHT_MIN_THRESHOLD) {
-            return GoldPosition.CENTER;
+    public Rect getGoldBoundingBox() {
+        if (findBlobsOutput != null && !findBlobsOutput.isEmpty()) {
+            return Imgproc.boundingRect(findBlobsOutput.get(0));
         } else {
-            return GoldPosition.RIGHT;
+            return new Rect(0, 0, 0, 0);
         }
     }
 
@@ -278,11 +278,11 @@ public class SamplingPipeline extends Pipeline {
      * @param minArea The minimum size of a blob that will be found
      * @param circularity The minimum and maximum circularity of blobs that will be found
      * @param darkBlobs The boolean that determines if light or dark blobs are found.
-     * @param blobList The output where the MatOfKeyPoint is stored.
      */
-    private void findBlobs(Mat input, double minArea, double[] circularity,
-                           Boolean darkBlobs, MatOfKeyPoint blobList) {
-        FeatureDetector blobDet = FeatureDetector.create(FeatureDetector.SIMPLEBLOB);
-        blobDet.detect(input, blobList);
+    private List<MatOfPoint> findBlobs(Mat input, double minArea, double[] circularity,
+                           Boolean darkBlobs) {
+        ColorBlobDetector detector = new ColorBlobDetector();
+        detector.process(input);
+        return detector.getContours();
     }
 }

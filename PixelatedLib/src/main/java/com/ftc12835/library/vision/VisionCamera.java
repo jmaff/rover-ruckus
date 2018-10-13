@@ -2,23 +2,37 @@ package com.ftc12835.library.vision;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.annotation.IdRes;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ThreadPool;
+import com.qualcomm.robotcore.util.WeakReferenceSet;
 import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
 
 import org.corningrobotics.enderbots.endercv.OpenCVLoader;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.internal.camera.names.WebcamNameImpl;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,17 +77,21 @@ public class VisionCamera {
         this(new Parameters());
     }
 
-    private static final String VUFORIA_KEY = "AewtRPv/////AAAAGaMgsjVBM0V1iXsVvoHp5Kc2blrjOLIShY51FJwWHUQxHCUVqArnjqxr42iuWIIxZInZ4b2yZ7C+AQ5qixTVnBWu0ledKQii3pegzJlBVPUwaofmB3hWcqLJ6dObSS4Tg5tRIMKVZFmXwgVs9DrVBFXu7Jm5IHHZRVEtQOB07+fhNyiOfNAJ164Ygl/xT5AVVCt+59ksxsvUOi5IA5fymu9VSFqmFnbx5FC1ruFBmEtlEiV4e7pCuOvjqC2Di3kEaVnMcvYbKGe/vE/nivARFU0J0F5liOLtSa4Y4b1PXamJQYe6jDYJlj6W0rcB/rZH4rzs9sf6qkL1LI/Tb065BwMQ0yFvvgecl+U2fOjMGPey";
+    private static final String VUFORIA_KEY = "AfqJicT/////AAABmV0Cv8mz10n/joVc93wk6uxXh5eJuApDAXck9Oc1MWCIiRkjrE47UP6ODjidREdy5b3zc1HGJT3/B82inSlLRCa4WpjzbZvHl5FOslDg1EfWtHJH7BhXW8hVVXZJvSSwwmEP8jRWXFudvIMF5QxvVUxcj60RaL1amo00qbROMK5OOJrfDIj4Knbox6pJX17d0WDwJ66XqPbtCQstlPyHSr/iGH81fxLa0cr2Gvk5YiWHNUI4drOz7yPvFzR5Ja7J+MUagIbqtCWmWeUjgEcKqIZw0C4rfJbBsVAJ+Zx58q96hng3GgbXqZLJMcnK1kqOgNXm874Mm+XUQLMWsIIhwBMoMzg0hp5jlDxI0+2XDYGL";
 
     private VuforiaLocalizer vuforia;
     private FrameLayout cameraLayout;
     private OverlayView overlayView;
+    private ImageView imageView;
     private ExecutorService frameConsumerExecutor;
 
-    public void init() {
-        VuforiaLocalizer.Parameters vuforiaParams = new VuforiaLocalizer.Parameters(parameters.cameraMonitorViewId);
+    BitmapWorkerTask bitmapTask;
+
+    public void init(HardwareMap hardwareMap) {
+        VuforiaLocalizer.Parameters vuforiaParams = new VuforiaLocalizer.Parameters();
         vuforiaParams.vuforiaLicenseKey = VUFORIA_KEY;
-        vuforiaParams.cameraDirection = parameters.cameraDirection;
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "SAMPLING_CAMERA");
+        vuforiaParams.cameraName = webcamName;
         vuforia = ClassFactory.getInstance().createVuforia(vuforiaParams);
 
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB888, true);
@@ -81,16 +99,23 @@ public class VisionCamera {
 
         if (parameters.cameraMonitorViewId != 0) {
             this.overlayView = new OverlayView(activity);
+            this.imageView = new ImageView(activity);
 
             for (Pipeline pipeline : pipelines) {
                 overlayView.attachPipeline(pipeline);
             }
 
             final Activity activity = appUtil.getActivity();
+
             activity.runOnUiThread(() -> {
                 LinearLayout cameraMonitorView = activity.findViewById(parameters.cameraMonitorViewId);
                 cameraLayout = (FrameLayout) cameraMonitorView.getParent();
-                cameraLayout.addView(overlayView);
+//                cameraLayout.addView(overlayView);
+
+                cameraLayout.addView(imageView);
+
+                bitmapTask = new BitmapWorkerTask(imageView);
+                bitmapTask.execute(imageView.getId());
             });
         }
 
@@ -125,11 +150,11 @@ public class VisionCamera {
     }
 
     public void onFrame(Mat frame) {
-        synchronized (pipelines) {
-            for (Pipeline pipeline : pipelines) {
-                pipeline.internalProcessFrame(frame);
-            }
-        }
+        Mat m = Mat.zeros(100, 400, CvType.CV_8UC3);
+        Imgproc.putText(m, "oof", new Point(30,80), Core.FONT_HERSHEY_SIMPLEX, 2.2, new Scalar(200, 200, 0), 2);
+
+        bitmapTask.setCurrentFrame(m);
+        bitmapTask.execute();
 
         if (overlayView != null) {
             overlayView.postInvalidate();
@@ -147,6 +172,37 @@ public class VisionCamera {
         if (frameConsumerExecutor != null) {
             frameConsumerExecutor.shutdownNow();
             frameConsumerExecutor = null;
+        }
+    }
+
+    private class BitmapWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+        private int data = 0;
+        private Mat currentFrame = new Mat(1080, 1920, CvType.CV_8UC3);
+
+        public BitmapWorkerTask(ImageView imageView) {
+            imageViewReference = new WeakReference<ImageView>(imageView);
+        }
+
+        public void setCurrentFrame(Mat frame) {
+            currentFrame = frame;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Integer... integers) {
+            Bitmap bm = Bitmap.createBitmap(currentFrame.cols(), currentFrame.rows(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(currentFrame, bm);
+            return bm;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (imageViewReference != null && bitmap != null) {
+                final ImageView imageView = imageViewReference.get();
+                if (imageView != null) {
+                    imageView.setImageBitmap(bitmap);
+                }
+            }
         }
     }
 

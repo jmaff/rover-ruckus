@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 
 import com.ftc12835.library.util.CSVWriter;
 import com.ftc12835.library.util.LoggingUtil;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.roadrunner.AssetsTrajectoryLoader;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Disabled
 public class SplineFollowTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

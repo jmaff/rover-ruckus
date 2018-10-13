@@ -1,27 +1,36 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.test;
 
 import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.ftc12835.library.control.DerivativeController;
+import com.ftc12835.library.control.IntegralController;
 import com.ftc12835.library.control.ProportionalController;
 import com.ftc12835.library.localization.Angle;
 import com.ftc12835.library.util.CSVWriter;
 import com.ftc12835.library.util.LoggingUtil;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.io.File;
 
-@Autonomous(name = "Derivative Control", group = "PID")
+@Disabled
+@Autonomous(name = "PID Control", group = "PID")
 @Config
-public class DerivativeControl extends LinearOpMode{
-    public static double kD = 0.1;
-    public static DerivativeController controller;
+public class PIDControl extends LinearOpMode{
+    public static double kP = 0.04;
+    public static double kI = 0.0;
+    public static double kD = 0.07;
+
+    public static ProportionalController pController;
+    public static IntegralController iController;
+    public static DerivativeController dController;
 
     private ElapsedTime timer = new ElapsedTime();
     private RobotDashboard dashboard;
@@ -67,16 +76,17 @@ public class DerivativeControl extends LinearOpMode{
         String prefix = "DerivativeControl" + System.currentTimeMillis();
         CSVWriter writer = new CSVWriter(new File(logRoot, prefix + ".csv"));
 
-        controller = new DerivativeController(kD);
-        controller.setSetpoint(Angle.normalize(90.0));
+       pController = new ProportionalController(kP);
+       iController = new IntegralController(kI);
+       dController = new DerivativeController(kD);
 
         waitForStart();
         timer.reset();
 
         do {
             currentAngle = getIntegratedZAxis();
-            error = controller.getError(currentAngle);
-            output = controller.update(error);
+            error = currentAngle - 90.0;
+            output = pController.update(error) + iController.update(error) + dController.update(error);
 
             left1.setPower(-output);
             left2.setPower(output);

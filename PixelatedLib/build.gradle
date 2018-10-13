@@ -47,7 +47,7 @@ repositories {
 dependencies {
     implementation project(':FtcRobotController')
     implementation project(':FtcDashboard')
-    implementation 'com.acmerobotics.roadrunner:core:0.1.0'
+    implementation 'com.acmerobotics.roadrunner:core:0.2.0'
     implementation project(':endercv')
     implementation project(':openCVLibrary3')
 }

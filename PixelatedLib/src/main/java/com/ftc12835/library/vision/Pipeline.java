@@ -20,10 +20,11 @@ public abstract class Pipeline {
     }
     private boolean enabled = true;
 
-    public void internalProcessFrame(Mat frame) {
+    public Mat internalProcessFrame(Mat frame) {
         if (enabled) {
-            processFrame(frame);
+            return processFrame(frame);
         }
+        return new Mat();
     }
 
     public void enable() {
@@ -39,6 +40,6 @@ public abstract class Pipeline {
     }
 
     public abstract void init(VisionCamera camera);
-    public abstract void processFrame(Mat frame);
+    public abstract Mat processFrame(Mat frame);
     public abstract void drawOverlay(CanvasOverlay overlay, int imageWidth, int imageHeight);
 }

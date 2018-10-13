@@ -68,7 +68,6 @@ public class OverlayView extends View {
         // draw
         CanvasOverlay overlay = new CanvasOverlay(canvas);
         for (Pipeline pipeline : pipelines) {
-            if (!pipeline.isEnabled()) continue;
 
             canvas.save();
 

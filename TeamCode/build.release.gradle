@@ -7,5 +7,5 @@ dependencies {
     implementation project(':PixelatedLib')
     implementation project(':openCVLibrary3')
     implementation project(':FtcDashboard')
-    implementation 'com.acmerobotics.roadrunner:core:0.1.0'
+    implementation 'com.acmerobotics.roadrunner:core:0.2.0'
 }
