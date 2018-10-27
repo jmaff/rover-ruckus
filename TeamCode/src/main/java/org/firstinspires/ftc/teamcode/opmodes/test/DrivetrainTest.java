@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,6 +25,7 @@ public class DrivetrainTest extends OpMode {
     private DcMotor backLeft;
     private DcMotor frontRight;
     private DcMotor backRight;
+    private DcMotor lift;
 
     @Override
     public void init() {
@@ -31,9 +33,11 @@ public class DrivetrainTest extends OpMode {
         frontRight = hardwareMap.get(DcMotor.class, "FR");
         backLeft = hardwareMap.get(DcMotor.class, "BL");
         backRight = hardwareMap.get(DcMotor.class, "BR");
+        lift = hardwareMap.get(DcMotor.class, "LATCHING_LIFT");
 
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 
@@ -56,6 +60,14 @@ public class DrivetrainTest extends OpMode {
         frontRight.setPower(v2);
         backLeft.setPower(v3);
         backRight.setPower(v4);
+
+        if (gamepad1.y) {
+            lift.setPower(1.0);
+        } else if (gamepad1.a) {
+            lift.setPower(-1.0);
+        } else {
+            lift.setPower(0.0);
+        }
 
 //        if (gamepad1.a) {
 //            frontLeft.setPower(1);

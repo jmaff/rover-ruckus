@@ -2,6 +2,7 @@ package com.ftc12835.roverruckus.vision;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.ftc12835.library.vision.ColorBlobDetector;
+import com.ftc12835.library.vision.VuforiaPipeline;
 
 import org.corningrobotics.enderbots.endercv.OpenCVPipeline;
 import org.opencv.core.Core;
@@ -21,7 +22,7 @@ import org.opencv.osgi.OpenCVInterface;
 import java.util.List;
 
 @Config
-public class OpenCVGoldPipeline extends OpenCVPipeline {
+public class OpenCVGoldPipeline extends VuforiaPipeline {
     public static double LEFT_MIN_THRESHOLD = 400;
     public static double RIGHT_MAX_THRESHOLD = 100;
 
@@ -84,7 +85,7 @@ public class OpenCVGoldPipeline extends OpenCVPipeline {
     }
 
     public Point getGoldPoint() {
-        if (!findBlobsOutput.isEmpty()) {
+        if (findBlobsOutput != null && !findBlobsOutput.isEmpty()) {
             Rect box = Imgproc.boundingRect(findBlobsOutput.get(0));
             return new Point(box.x, box.y);
         } else {
@@ -93,7 +94,7 @@ public class OpenCVGoldPipeline extends OpenCVPipeline {
     }
 
     public Rect getGoldBoundingBox() {
-        if (!findBlobsOutput.isEmpty()) {
+        if (findBlobsOutput != null && !findBlobsOutput.isEmpty()) {
             return Imgproc.boundingRect(findBlobsOutput.get(0));
         } else {
             return new Rect(0, 0, 0, 0);

@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.followers.MecanumPIDVAFollower;
 import com.ftc12835.library.hardware.devices.REVHub;
 import com.ftc12835.library.hardware.management.Subsystem;
+import com.ftc12835.library.util.TelemetryUtil;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -36,28 +37,38 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
     private static final double kA = 0;
     private static final double kStatic = 0;
 
-    private REVHub frontHub;
+    public REVHub frontHub;
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private double[] powers = new double[4];
     private MecanumPIDVAFollower trajectoryFollower;
+
+    private TelemetryData telemetryData;
+
+    private class TelemetryData {
+        public double leftFrontPower;
+        public double rightFrontPower;
+        public double leftRearPower;
+        public double rightRearPower;
+    }
 
     public MecanumDrive(HardwareMap hardwareMap) {
         // lateral distance between pairs of wheels on different sides of the robot
         super(6.28);
 
-        frontHub = new REVHub(hardwareMap.get(LynxModule.class, "frontHub"));
+        frontHub = new REVHub(hardwareMap.get(LynxModule.class, "mainHub"));
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "FL");
+        leftRear = hardwareMap.get(DcMotorEx.class, "BL");
+        rightRear = hardwareMap.get(DcMotorEx.class, "BR");
+        rightFront = hardwareMap.get(DcMotorEx.class, "FR");
 
         for (DcMotorEx motor : Arrays.asList(leftFront, leftRear, rightRear, rightFront)) {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor.setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, NORMAL_VELOCITY_PID);
         }
 
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         trajectoryFollower = new MecanumPIDVAFollower(
                 this,
@@ -78,10 +89,10 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+        powers[0] = v;
+        powers[1] = v1;
+        powers[2] = v2;
+        powers[3] = v3;
     }
 
     @NotNull
@@ -99,7 +110,15 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
 
     @Override
     public Map<String, Object> update(@Nullable Canvas fieldOverlay) {
-        // TODO: Implement overlay to Dashboard
-        return null;
+        leftFront.setPower(powers[0]);
+        rightFront.setPower(powers[1]);
+        leftRear.setPower(powers[2]);
+        rightRear.setPower(powers[4]);
+
+        telemetryData.leftFrontPower = powers[0];
+        telemetryData.rightFrontPower = powers[1];
+        telemetryData.leftRearPower = powers[2];
+        telemetryData.rightRearPower = powers[3];
+        return TelemetryUtil.objectToMap(telemetryData);
     }
 }

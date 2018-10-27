@@ -54,10 +54,10 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
         while (!Thread.currentThread().isInterrupted()) {
             TelemetryPacket telemetryPacket = new TelemetryPacket();
             try {
-                for (REVHub revHub : revHubs) {
-                    if (revHub == null) continue;
-                    revHub.pull();
-                }
+//                for (REVHub revHub : revHubs) {
+//                    if (revHub == null) continue;
+//                    revHub.pull();
+//                }
                 for (Subsystem subsystem : subsystems) {
                     if (subsystem == null) continue;
                     try {
@@ -134,9 +134,10 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
         robotLog = new CSVWriter(new File(logRoot, "Robot.csv"));
 
         subsystems = new ArrayList<>();
+        revHubs = new LinkedList<>();
         subsystemLogs = new HashMap<>();
 
-        initSubsystems();
+        initSubsystems(opMode);
 
         Activity activity = (Activity) opMode.hardwareMap.appContext;
         opModeManager = OpModeManagerImpl.getOpModeManagerOfActivity(activity);
@@ -155,7 +156,7 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
         cycleLatches = new ArrayList<>();
     }
 
-    protected abstract void initSubsystems();
+    protected abstract void initSubsystems(OpMode opMode);
 
     public void addListener(Listener listener) {
         listeners.add(listener);
@@ -205,6 +206,14 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    protected void addSubsystem(Subsystem subsystem) {
+        subsystems.add(subsystem);
+    }
+
+    protected void addRevHub(REVHub revHub) {
+        revHubs.add(revHub);
     }
 
     @Override

@@ -156,9 +156,6 @@ public class VisionCamera {
         bitmapTask.setCurrentFrame(m);
         bitmapTask.execute();
 
-        if (overlayView != null) {
-            overlayView.postInvalidate();
-        }
     }
 
     public void close() {
