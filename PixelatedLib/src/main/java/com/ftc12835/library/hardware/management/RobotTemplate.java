@@ -88,6 +88,7 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
                 while (telemetryPacketQueue.remainingCapacity() == 0) {
                     Thread.sleep(1);
                 }
+
                 telemetryPacketQueue.add(telemetryPacket);
                 synchronized (cycleLatches) {
                     int i = 0;

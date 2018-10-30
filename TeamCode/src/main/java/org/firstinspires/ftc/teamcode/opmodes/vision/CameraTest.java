@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.vision;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -7,10 +8,7 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
-/**
- * Created by 21maffetone on 10/12/18.
- */
-
+@Disabled
 @TeleOp(name = "Camera Test", group = "VISION")
 public class CameraTest extends OpMode {
     WebcamName webcam;

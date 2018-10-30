@@ -23,110 +23,80 @@ import org.opencv.imgproc.Imgproc;
 import java.util.concurrent.BlockingQueue;
 
 public class VuforiaCamera extends VuforiaLocalizerImpl {
-    VuforiaPipeline pipeline;
-    DrawViewSource displayView;
-    boolean dogeCVEnabled;
-    boolean showDebug = false;
+    private VuforiaPipeline pipeline;
+    private DrawViewSource displayView;
 
-    Thread workerThread;
-    Bitmap outputImage;
-    Bitmap bitmap;
-    Mat inputMat;
-    Mat outMat;
-    BlockingQueue<CloseableFrame> frames;
+    private Thread workerThread;
+    private Bitmap outputImage;
+    private Bitmap bitmap;
+    private Mat inputMat;
+    private Mat outMat;
+
+    private boolean enabled = false;
 
     public VuforiaCamera(Parameters parameters) {
         super(parameters);
     }
 
-    public void setDogeCVDetector(VuforiaPipeline pipeline){
+    public void setPipeline(VuforiaPipeline pipeline){
         this.pipeline = pipeline;
         pipeline.enable();
+
         displayView = pipeline.getRawView();
         setMonitorViewParent(displayView.getId());
 
         setFrameQueueCapacity(1);
     }
 
-    public void start(){
-        workerThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(!workerThread.isInterrupted()){
-                    render();
-                }
+    public void enable() { enabled = true; }
+
+    public void disable() { enabled = false; }
+
+    public void start() {
+        workerThread = new Thread(() -> {
+            while(!workerThread.isInterrupted()){
+                render();
             }
         });
 
-        workerThread.setName("Dogeforia Thread");
+        workerThread.setName("Vuforia Camera Thread");
         workerThread.start();
 
-        Log.d("DogeCV", workerThread.getState().toString());
+        Log.d("Vuforia Camera", workerThread.getState().toString());
     }
 
-    public void enableDogeCV(){
-
-        dogeCVEnabled = true;
-    }
-
-    public void disableDogeCV(){
-        dogeCVEnabled = false;
-    }
-    public void enableTrack(){
-        startTracker();
-    }
-
-    public void disableTrack() {
-        stopTracker();
-    }
-    public void showDebug(){
-        showDebug = true;
-
-    }
-
-    public void processFrame(Frame frame){
+    private void processFrame(Frame frame){
         if(frame != null) {
-//            inputMat = new Mat(bitmap.getWidth(), bitmap.getHeight(), CvType.CV_8UC1);
-//            Utils.bitmapToMat(bitmap, inputMat);
-
             inputMat = convertFrame(frame);
-
             outMat = pipeline.processFrame(inputMat, null);
 
             if (outMat != null && !outMat.empty()) {
-
                 bitmap = Bitmap.createBitmap(outMat.width(), outMat.height(), Bitmap.Config.RGB_565);
                 Utils.matToBitmap(outMat, bitmap);
 
-
-                //height = <user-chosen width> * original height / original width
                 double adjustedHieght = displayView.getWidth() * outMat.height() / outMat.width();
                 outputImage = Bitmap.createScaledBitmap(bitmap, displayView.getWidth(), (int) adjustedHieght, false);
 
-                ((Activity) displayView.getContext()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        displayView.onFrame(outputImage);
-                        displayView.invalidate();
-                    }
+                ((Activity) displayView.getContext()).runOnUiThread(() -> {
+                    displayView.onFrame(outputImage);
+                    displayView.invalidate();
                 });
 
             } else {
-                Log.w("DogeCV", "MAT BITMAP MISMATCH OR EMPTY ERROR");
+                Log.w("Vuforia Camera", "MAT BITMAP MISMATCH OR EMPTY ERROR");
             }
 
 
         } else {
-            Log.d("DogeCV", "No Frame!");
+            Log.w("Vuforia Camera", "No Frame!");
         }
 
     }
 
-    public void render() {
-         Log.d("DogeCV", "Rendering Frame");
-        // super.onRenderFrame()
+    private void render() {
+         Log.d("Vuforia Camera", "Rendering Frame");
 
-        if(pipeline != null && dogeCVEnabled){
+        if(pipeline != null && enabled) {
 
             if(!getFrameQueue().isEmpty()){
                 try {
@@ -135,7 +105,7 @@ public class VuforiaCamera extends VuforiaLocalizerImpl {
                     e.printStackTrace();
                 }
             } else {
-                Log.w("DogeCV", "Frame is empty: " + getFrameQueueCapacity());
+                Log.w("Vuforia Camera", "Frame is empty: " + getFrameQueueCapacity());
             }
         }
 
@@ -156,13 +126,12 @@ public class VuforiaCamera extends VuforiaLocalizerImpl {
 
     private Mat convertFrame(Frame frame) {
         Image rgb = null;
+
         // basically get the number of formats for this frame
         long numImages = frame.getNumImages();
-        Log.d("Vuforia_Camera", "num images: " + numImages);
 
         // set rgb object if one of the formats is RGB565
         for(int i = 0; i < numImages; i++) {
-            Log.d("Vuforia_Camera", "pixel format: " + frame.getImage(i).getFormat());
             if(frame.getImage(i).getFormat() == PIXEL_FORMAT.RGB565) {
                 rgb = frame.getImage(i);
                 break;
@@ -181,9 +150,6 @@ public class VuforiaCamera extends VuforiaLocalizerImpl {
         // construct an OpenCV mat from the bitmap using Utils.bitmapToMat()
         Mat mat = new Mat(bm.getWidth(), bm.getHeight(), CvType.CV_8UC4);
         Utils.bitmapToMat(bm, mat);
-
-        // convert to BGR before returning
-//        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2BGR);
 
         return mat;
     }

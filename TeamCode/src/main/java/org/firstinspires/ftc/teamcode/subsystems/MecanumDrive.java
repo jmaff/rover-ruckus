@@ -33,6 +33,8 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
     private static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     private static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
+    private Mode mode;
+
     private static final double kV = 0;
     private static final double kA = 0;
     private static final double kStatic = 0;
@@ -49,6 +51,11 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
         public double rightFrontPower;
         public double leftRearPower;
         public double rightRearPower;
+    }
+
+    private enum Mode {
+        OPEN_LOOP,
+        TRAJECTORY_FOLLOWING
     }
 
     public MecanumDrive(HardwareMap hardwareMap) {
@@ -100,10 +107,10 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
     public List<Double> getWheelPositions() {
         frontHub.pull();
         List<Double> positions = new ArrayList<>();
-        positions.add(encoderTicksToInches(frontHub.getEncoder(0)));
-        positions.add(encoderTicksToInches(frontHub.getEncoder(1)));
-        positions.add(-encoderTicksToInches(frontHub.getEncoder(2)));
-        positions.add(-encoderTicksToInches(frontHub.getEncoder(3)));
+        positions.add(encoderTicksToInches(leftFront.getCurrentPosition()));
+        positions.add(encoderTicksToInches(rightFront.getCurrentPosition()));
+        positions.add(-encoderTicksToInches(leftRear.getCurrentPosition()));
+        positions.add(-encoderTicksToInches(rightRear.getCurrentPosition()));
 
         return positions;
     }

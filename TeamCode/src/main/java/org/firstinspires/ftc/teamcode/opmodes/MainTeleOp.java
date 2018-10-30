@@ -4,12 +4,16 @@ import com.ftc12835.library.util.StickyGamepad;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 @TeleOp(name = "Main TeleOp", group = "COMPETITION")
 public class MainTeleOp extends OpMode {
     private StickyGamepad stickyGamepad1, stickyGamepad2;
     private Robot robot;
+
+    private boolean extenderReadyRoutineRunning = false;
+    private boolean extenderStowRoutineRunning = false;
 
     @Override
     public void init() {
@@ -47,6 +51,34 @@ public class MainTeleOp extends OpMode {
             robot.latchingLift.setLiftPower(-1.0);
         } else {
             robot.latchingLift.setLiftPower(0.0);
+        }
+
+        // ready routine
+        if (gamepad1.left_bumper && !extenderReadyRoutineRunning) {
+            extenderReadyRoutineRunning = true;
+            robot.intake.setExtenderSetpoint(Intake.EXTENDER_READY_POSITION);
+        }
+
+        if (extenderReadyRoutineRunning && !robot.intake.isExtending()) {
+            robot.intake.setIntakeSetpoint(Intake.IntakePosition.DEPLOY);
+        }
+
+        if (extenderReadyRoutineRunning && !robot.intake.isExtending() && !robot.intake.isDeploying()) {
+            extenderReadyRoutineRunning = false;
+        }
+
+        // stow routine
+        if (gamepad1.right_bumper && !extenderStowRoutineRunning) {
+            extenderReadyRoutineRunning = true;
+            robot.intake.setIntakeSetpoint(Intake.IntakePosition.RAISED);
+        }
+
+        if (extenderStowRoutineRunning && !robot.intake.isDeploying()) {
+            robot.intake.setExtenderSetpoint(Intake.EXTENDER_STOW_POSITION);
+        }
+
+        if (extenderStowRoutineRunning && !robot.intake.isDeploying() && !robot.intake.isExtending()) {
+            extenderReadyRoutineRunning = false;
         }
     }
 }

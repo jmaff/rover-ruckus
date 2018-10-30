@@ -1,11 +1,10 @@
 package com.ftc12835.roverruckus.vision;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.ftc12835.library.vision.CanvasOverlay;
 import com.ftc12835.library.vision.ColorBlobDetector;
-import com.ftc12835.library.vision.Pipeline;
-import com.ftc12835.library.vision.VisionCamera;
+import com.ftc12835.library.vision.VuforiaPipeline;
 
+import org.corningrobotics.enderbots.endercv.OpenCVPipeline;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.KeyPoint;
@@ -18,27 +17,26 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.osgi.OpenCVInterface;
 
 import java.util.List;
 
 @Config
-public class SamplingPipeline extends Pipeline {
-
-    // TODO tune these
-    public static final double LEFT_MAX_THRESHOLD = 100;
-    public static final double RIGHT_MIN_THRESHOLD = 400;
+public class SamplingPipeline extends VuforiaPipeline {
+    public static double LEFT_MIN_THRESHOLD = 400;
+    public static double RIGHT_MAX_THRESHOLD = 100;
 
     private Mat blurOutput = new Mat();
     private BlurType blurType = BlurType.get("Gaussian Blur");
     private double blurRadius = 7.547169811320756;
 
-    public static double hueMin = 0.0;
-    public static double hueMax = 64;
+    public static double hueMin = 80;
+    public static double hueMax = 110;
 
-    public static double satMin = 110;
+    public static double satMin = 200;
     public static double satMax = 255;
 
-    public static double valueMin = 34;
+    public static double valueMin = 100;
     public static double valueMax = 255;
 
     private Mat hsvThresholdOutput = new Mat();
@@ -59,13 +57,9 @@ public class SamplingPipeline extends Pipeline {
     private List<MatOfPoint> findBlobsOutput;
 
     @Override
-    public void init(VisionCamera camera) {
-    }
-
-    @Override
-    public Mat processFrame(Mat frame) {
+    public Mat processFrame(Mat rgba, Mat gray) {
         // Step Blur0:
-        blur(frame, blurType, blurRadius, blurOutput);
+        blur(rgba, blurType, blurRadius, blurOutput);
 
         double[] hsvThresholdHue = {hueMin, hueMax};
         double[] hsvThresholdSaturation = {satMin, satMax};
@@ -82,21 +76,12 @@ public class SamplingPipeline extends Pipeline {
         // Step Find_Blobs0:
         findBlobsOutput = findBlobs(maskOutput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs);
 
-        return frame;
-    }
-
-    @Override
-    public void drawOverlay(CanvasOverlay overlay, int imageWidth, int imageHeight) {
-        if (findBlobsOutput != null) {
-            for (MatOfPoint matOfPoint : findBlobsOutput) {
-                Rect box = Imgproc.boundingRect(matOfPoint);
-                overlay.strokeRect(box, new Scalar(0, 255, 0), 6);
-            }
+        for (MatOfPoint matOfPoint : findBlobsOutput) {
+            Rect box = Imgproc.boundingRect(matOfPoint);
+            Imgproc.rectangle(rgba, box.tl(), box.br(), new Scalar(0,255,0));
         }
-    }
 
-    public List<MatOfPoint> getBlobs() {
-        return findBlobsOutput;
+        return rgba;
     }
 
     public Point getGoldPoint() {
@@ -113,6 +98,18 @@ public class SamplingPipeline extends Pipeline {
             return Imgproc.boundingRect(findBlobsOutput.get(0));
         } else {
             return new Rect(0, 0, 0, 0);
+        }
+    }
+
+    public GoldPosition getGoldPosition() {
+        double goldY = getGoldPoint().y;
+
+        if (goldY < RIGHT_MAX_THRESHOLD) {
+            return GoldPosition.RIGHT;
+        } else if (goldY < LEFT_MIN_THRESHOLD) {
+            return GoldPosition.CENTER;
+        } else {
+            return GoldPosition.LEFT;
         }
     }
 
