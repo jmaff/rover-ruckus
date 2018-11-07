@@ -12,6 +12,6 @@ public class FeedforwardTuner extends FeedforwardTuningOpMode {
 
     @Override
     protected Drive initDrive() {
-        return new MecanumDrive(hardwareMap);
+        return null;
     }
 }

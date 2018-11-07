@@ -40,21 +40,21 @@ public class SplineFollowTest extends LinearOpMode {
         double startTime = System.nanoTime() / 1e9;
         drive.getTrajectoryFollower().followTrajectory(trajectory);
         while (opModeIsActive() && drive.getTrajectoryFollower().isFollowing()) {
-            double time = System.nanoTime() / 1e9;
-            Pose2d currentPose = drive.getPoseEstimate();
-            Pose2d targetPose = trajectory.get(time - startTime);
-
-            writer.put("time", time - startTime);
-            writer.put("targetX", targetPose.getX());
-            writer.put("targetY", targetPose.getY());
-            writer.put("targetHeading", targetPose.getHeading());
-            writer.put("currentX", currentPose.getX());
-            writer.put("currentY", currentPose.getY());
-            writer.put("currentHeading", currentPose.getHeading());
-            writer.write();
-
-            drive.getTrajectoryFollower().update(currentPose);
-            drive.updatePoseEstimate();
+//            double time = System.nanoTime() / 1e9;
+//            Pose2d currentPose = drive.getPoseEstimate();
+//            Pose2d targetPose = trajectory.get(time - startTime);
+//
+//            writer.put("time", time - startTime);
+//            writer.put("targetX", targetPose.getX());
+//            writer.put("targetY", targetPose.getY());
+//            writer.put("targetHeading", targetPose.getHeading());
+//            writer.put("currentX", currentPose.getX());
+//            writer.put("currentY", currentPose.getY());
+//            writer.put("currentHeading", currentPose.getHeading());
+//            writer.write();
+//
+//            drive.getTrajectoryFollower().update(currentPose);
+//            drive.updatePoseEstimate();
         }
     }
 }

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 public class TrackWidthCalibrator extends TrackWidthCalibrationOpMode {
     @Override
     protected Drive initDrive() {
-        return new MecanumDrive(hardwareMap);
+        return null;
     }
 
     // TODO fix this

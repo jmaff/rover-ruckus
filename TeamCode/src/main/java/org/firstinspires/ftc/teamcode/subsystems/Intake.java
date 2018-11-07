@@ -36,8 +36,8 @@ public class Intake implements Subsystem {
 
     private DcMotor extenderMotor;
     private DcMotor intakeMotor;
-    private Servo pivotServoLeft;
-    private Servo pivotServoRight;
+    public Servo pivotServoLeft;
+    public Servo pivotServoRight;
     private DigitalChannel innerLimitSwitch;
 
     private double extenderPower;
@@ -140,43 +140,43 @@ public class Intake implements Subsystem {
             extenderMotor.setPower(extenderPower);
         }
 
-        // time to move the thing
-        if (intakeSetpoint != intakePosition && !deploying) {
-            deploying = true;
-            startPivotTime = System.currentTimeMillis();
-
-            switch (intakeSetpoint) {
-                case STOW:
-                    pivotServoLeft.setPosition(LEFT_PIVOT_STOW_FULL);
-                    pivotServoRight.setPosition(RIGHT_PIVOT_STOW_FULL);
-                    break;
-                case DEPLOY:
-                    pivotServoLeft.setPosition(LEFT_PIVOT_DEPLOY_FULL);
-                    pivotServoRight.setPosition(RIGHT_PIVOT_DEPLOY_FULL);
-                    break;
-                case RAISED:
-                    pivotServoLeft.setPosition(LEFT_PIVOT_STOW_FULL);
-                    pivotServoRight.setPosition(RIGHT_PIVOT_STOW_FULL);
-                    break;
-            }
-        } else if (deploying) {
-            if (System.currentTimeMillis() - startPivotTime >= TIME_TO_RAISED && intakeSetpoint == IntakePosition.RAISED) {
-                pivotServoLeft.setPosition(LEFT_PIVOT_RAISED);
-                pivotServoRight.setPosition(RIGHT_PIVOT_RAISED);
-                deploying = false;
-                intakePosition = intakeSetpoint;
-            } else if (System.currentTimeMillis() - startPivotTime >= TIME_TO_STOW && intakeSetpoint == IntakePosition.STOW) {
-                pivotServoLeft.setPosition(LEFT_PIVOT_STOW_IDLE);
-                pivotServoRight.setPosition(RIGHT_PIVOT_STOW_IDLE);
-                deploying = false;
-                intakePosition = intakeSetpoint;
-            } else if (System.currentTimeMillis() - startPivotTime >= TIME_TO_DEPLOY && intakeSetpoint == IntakePosition.DEPLOY) {
-                pivotServoLeft.setPosition(LEFT_PIVOT_DEPLOY_IDLE);
-                pivotServoRight.setPosition(RIGHT_PIVOT_DEPLOY_IDLE);
-                deploying = false;
-                intakePosition = intakeSetpoint;
-            }
-        }
+//        // time to move the thing
+//        if (intakeSetpoint != intakePosition && !deploying) {
+//            deploying = true;
+//            startPivotTime = System.currentTimeMillis();
+//
+//            switch (intakeSetpoint) {
+//                case STOW:
+//                    pivotServoLeft.setPosition(LEFT_PIVOT_STOW_FULL);
+//                    pivotServoRight.setPosition(RIGHT_PIVOT_STOW_FULL);
+//                    break;
+//                case DEPLOY:
+//                    pivotServoLeft.setPosition(LEFT_PIVOT_DEPLOY_FULL);
+//                    pivotServoRight.setPosition(RIGHT_PIVOT_DEPLOY_FULL);
+//                    break;
+//                case RAISED:
+//                    pivotServoLeft.setPosition(LEFT_PIVOT_STOW_FULL);
+//                    pivotServoRight.setPosition(RIGHT_PIVOT_STOW_FULL);
+//                    break;
+//            }
+//        } else if (deploying) {
+//            if (System.currentTimeMillis() - startPivotTime >= TIME_TO_RAISED && intakeSetpoint == IntakePosition.RAISED) {
+//                pivotServoLeft.setPosition(LEFT_PIVOT_RAISED);
+//                pivotServoRight.setPosition(RIGHT_PIVOT_RAISED);
+//                deploying = false;
+//                intakePosition = intakeSetpoint;
+//            } else if (System.currentTimeMillis() - startPivotTime >= TIME_TO_STOW && intakeSetpoint == IntakePosition.STOW) {
+//                pivotServoLeft.setPosition(LEFT_PIVOT_STOW_IDLE);
+//                pivotServoRight.setPosition(RIGHT_PIVOT_STOW_IDLE);
+//                deploying = false;
+//                intakePosition = intakeSetpoint;
+//            } else if (System.currentTimeMillis() - startPivotTime >= TIME_TO_DEPLOY && intakeSetpoint == IntakePosition.DEPLOY) {
+//                pivotServoLeft.setPosition(LEFT_PIVOT_DEPLOY_IDLE);
+//                pivotServoRight.setPosition(RIGHT_PIVOT_DEPLOY_IDLE);
+//                deploying = false;
+//                intakePosition = intakeSetpoint;
+//            }
+//        }
 
         intakeMotor.setPower(intakePower);
 
