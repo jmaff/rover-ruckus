@@ -56,6 +56,18 @@ public class MecanumDrive implements Subsystem {
         powers[3] = v3;
     }
 
+    public void cartesianDrive(double x, double y, double turn) {
+        double r = Math.hypot(x, y);
+        double robotAngle = Math.atan2(y, x) - Math.PI / 4;
+
+        double v1 = r * Math.cos(robotAngle) + turn;
+        double v2 = r * Math.sin(robotAngle) - turn;
+        double v3 = r * Math.sin(robotAngle) + turn;
+        double v4 = r * Math.cos(robotAngle) - turn;
+
+        setMotorPowers(v1, v2, v3, v4);
+    }
+
     public List<Double> getWheelPositions() {
         List<Double> positions = new ArrayList<>();
         positions.add(encoderTicksToInches(leftFront.getCurrentPosition()));

@@ -22,10 +22,10 @@ public class Robot {
 
     private boolean enabled;
 
-
     public MecanumDrive mecanumDrive;
     public LatchingLift latchingLift;
     public Intake intake;
+    public Outtake outtake;
 
     public Robot(OpMode opMode) {
         subsystems = new ArrayList<>();
@@ -35,10 +35,12 @@ public class Robot {
         mecanumDrive = new MecanumDrive(opMode.hardwareMap);
         latchingLift = new LatchingLift(opMode.hardwareMap);
         intake = new Intake(opMode.hardwareMap);
+        outtake = new Outtake(opMode.hardwareMap);
 
         subsystems.add(mecanumDrive);
         subsystems.add(latchingLift);
         subsystems.add(intake);
+        subsystems.add(outtake);
     }
 
     public void update() {
