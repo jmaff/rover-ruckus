@@ -5,21 +5,21 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
+import org.yaml.snakeyaml.events.Event;
 
 @TeleOp(name = "Testing TeleOp", group = "TEST")
 public class TestTeleOp extends OpMode {
+    public static double LEFT_DOWN = 1.0;
+    public static double RIGHT_DOWN = 0.0;
+    public static double LEFT_UP = 0.0;
+    public static double RIGHT_UP = 1.0;
+    public static double IDLE = 0.5;
     Robot robot;
 
     @Override
     public void init() {
         robot = new Robot(this);
-        robot.intake.setMode(Intake.Mode.OPEN_LOOP);
-    }
-
-    @Override
-    public void start() {
         robot.start();
-        super.start();
     }
 
     @Override
@@ -47,14 +47,6 @@ public class TestTeleOp extends OpMode {
             robot.intake.setExtenderPower(0.0);
         }
 
-        if (gamepad1.y) {
-            robot.intake.pivotServoLeft.setPosition(0.0);
-            robot.intake.pivotServoRight.setPosition(1.0);
-        } else if (gamepad1.a) {
-            robot.intake.pivotServoLeft.setPosition(1.0);
-            robot.intake.pivotServoRight.setPosition(0.0);
-        }
-
         if (gamepad1.right_bumper) {
             robot.intake.setIntakePower(1.0);
         } else if (gamepad1.left_bumper) {
@@ -62,5 +54,26 @@ public class TestTeleOp extends OpMode {
         } else {
             robot.intake.setIntakePower(0.0);
         }
+
+        if (gamepad1.y) {
+            robot.latchingLift.setLiftPower(1.0);
+        } else if (gamepad1.a) {
+            robot.latchingLift.setLiftPower(-1.0);
+        } else {
+            robot.latchingLift.setLiftPower(0.0);
+        }
+
+        if (gamepad1.x) {
+            robot.intake.setLeftPosition(LEFT_DOWN);
+            robot.intake.setRightPosition(RIGHT_DOWN);
+        } else if (gamepad1.b) {
+            robot.intake.setLeftPosition(LEFT_UP);
+            robot.intake.setRightPosition(RIGHT_UP);
+        } else if (gamepad1.dpad_left) {
+            robot.intake.setLeftPosition(IDLE);
+            robot.intake.setRightPosition(IDLE);
+        }
+
+        robot.update();
     }
 }

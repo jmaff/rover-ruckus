@@ -27,29 +27,8 @@ public class MecanumDrive implements Subsystem {
     public static final MotorConfigurationType MOTOR_CONFIG = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
-    private Mode mode;
-
-    private static final double kV = 0;
-    private static final double kA = 0;
-    private static final double kStatic = 0;
-
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private double[] powers = new double[4];
-    private MecanumPIDVAFollower trajectoryFollower;
-
-    private TelemetryData telemetryData;
-
-    private class TelemetryData {
-        public double leftFrontPower;
-        public double rightFrontPower;
-        public double leftRearPower;
-        public double rightRearPower;
-    }
-
-    private enum Mode {
-        OPEN_LOOP,
-        TRAJECTORY_FOLLOWING
-    }
 
     public MecanumDrive(HardwareMap hardwareMap) {
 
@@ -70,10 +49,6 @@ public class MecanumDrive implements Subsystem {
         return 4 * Math.PI * ticks / TICKS_PER_REV;
     }
 
-    public MecanumPIDVAFollower getTrajectoryFollower() {
-        return trajectoryFollower;
-    }
-
     public void setMotorPowers(double v, double v1, double v2, double v3) {
         powers[0] = v;
         powers[1] = v1;
@@ -81,7 +56,6 @@ public class MecanumDrive implements Subsystem {
         powers[3] = v3;
     }
 
-    @NotNull
     public List<Double> getWheelPositions() {
         List<Double> positions = new ArrayList<>();
         positions.add(encoderTicksToInches(leftFront.getCurrentPosition()));
@@ -93,16 +67,10 @@ public class MecanumDrive implements Subsystem {
     }
 
     @Override
-    public Map<String, Object> update(@Nullable Canvas fieldOverlay) {
+    public void update() {
         leftFront.setPower(powers[0]);
         rightFront.setPower(powers[1]);
         leftRear.setPower(powers[2]);
-        rightRear.setPower(powers[4]);
-
-        telemetryData.leftFrontPower = powers[0];
-        telemetryData.rightFrontPower = powers[1];
-        telemetryData.leftRearPower = powers[2];
-        telemetryData.rightRearPower = powers[3];
-        return TelemetryUtil.objectToMap(telemetryData);
+        rightRear.setPower(powers[3]);
     }
 }

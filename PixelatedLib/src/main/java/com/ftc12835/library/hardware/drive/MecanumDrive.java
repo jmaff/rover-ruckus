@@ -43,7 +43,6 @@ public abstract class MecanumDrive extends com.acmerobotics.roadrunner.drive.Mec
     }
 
     @Override
-    public Map<String, Object> update(@Nullable Canvas fieldOverlay) {
-        return null;
+    public void update() {
     }
 }

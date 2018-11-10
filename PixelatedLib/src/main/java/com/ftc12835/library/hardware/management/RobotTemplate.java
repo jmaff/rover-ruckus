@@ -61,11 +61,7 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
                 for (Subsystem subsystem : subsystems) {
                     if (subsystem == null) continue;
                     try {
-                        Map<String, Object> telemetry = subsystem.update(telemetryPacket.fieldOverlay());
                         CSVWriter subsystemLog = subsystemLogs.get(subsystem);
-                        subsystemLog.putAll(telemetry);
-                        subsystemLog.write();
-                        telemetryPacket.putAll(telemetry);
                         synchronized (subsystemsWithProblems) {
                             if (subsystemsWithProblems.contains(subsystem)) {
                                 subsystemsWithProblems.remove(subsystem);

@@ -38,8 +38,7 @@ public class SplineFollowTest extends LinearOpMode {
         waitForStart();
 
         double startTime = System.nanoTime() / 1e9;
-        drive.getTrajectoryFollower().followTrajectory(trajectory);
-        while (opModeIsActive() && drive.getTrajectoryFollower().isFollowing()) {
+        while (opModeIsActive()) {
 //            double time = System.nanoTime() / 1e9;
 //            Pose2d currentPose = drive.getPoseEstimate();
 //            Pose2d targetPose = trajectory.get(time - startTime);
