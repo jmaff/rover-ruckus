@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.ftc12835.library.hardware.devices.REVHub;
 import com.ftc12835.library.util.CSVWriter;
 import com.ftc12835.library.util.LoggingUtil;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -19,7 +18,6 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -38,7 +36,6 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
 
     private List<Subsystem> subsystems;
     private List<Subsystem> subsystemsWithProblems;
-    private LinkedList<REVHub> revHubs;
     private List<CountDownLatch> cycleLatches;
     private Map<Subsystem, CSVWriter> subsystemLogs;
     private CSVWriter robotLog;
@@ -131,7 +128,6 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
         robotLog = new CSVWriter(new File(logRoot, "Robot.csv"));
 
         subsystems = new ArrayList<>();
-        revHubs = new LinkedList<>();
         subsystemLogs = new HashMap<>();
 
         initSubsystems(opMode);
@@ -207,10 +203,6 @@ public abstract class RobotTemplate implements OpModeManagerNotifier.Notificatio
 
     protected void addSubsystem(Subsystem subsystem) {
         subsystems.add(subsystem);
-    }
-
-    protected void addRevHub(REVHub revHub) {
-        revHubs.add(revHub);
     }
 
     @Override

@@ -1,16 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import android.support.annotation.Nullable;
-
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.ftc12835.library.hardware.management.Subsystem;
-import com.ftc12835.library.util.TelemetryUtil;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import java.util.Map;
 
 public class Intake implements Subsystem {
 
@@ -24,11 +17,15 @@ public class Intake implements Subsystem {
     private double leftPosition;
     private double rightPosition;
 
-    public Intake(HardwareMap hardwareMap) {
-        extenderMotor = hardwareMap.get(DcMotor.class, "EXTENDER");
-        intakeMotor = hardwareMap.get(DcMotor.class, "INTAKE");
-        pivotServoLeft = hardwareMap.get(Servo.class, "PIVOT_LEFT");
-        pivotServoRight = hardwareMap.get(Servo.class, "PIVOT_RIGHT");
+    private OpMode opMode;
+
+    public Intake(OpMode opMode) {
+        this.opMode = opMode;
+
+        extenderMotor = opMode.hardwareMap.get(DcMotor.class, "EXTENDER");
+        intakeMotor = opMode.hardwareMap.get(DcMotor.class, "INTAKE");
+        pivotServoLeft = opMode.hardwareMap.get(Servo.class, "PIVOT_LEFT");
+        pivotServoRight = opMode.hardwareMap.get(Servo.class, "PIVOT_RIGHT");
     }
 
     public void setExtenderPower(double extenderPower) {

@@ -27,15 +27,6 @@ public class MainTeleOp extends OpMode {
 
     private Robot robot;
 
-    /**
-     * -2: STOW IDLE
-     * -1: STOW MOVE
-     * 0: NEUTRAL
-     * 1: DEPLOYED MOVE
-     * 2: DEPLOYED IDLE
-     */
-    private int intakeState = -2;
-
     @Override
     public void init() {
         robot = new Robot(this);
@@ -76,45 +67,16 @@ public class MainTeleOp extends OpMode {
 
         // intake state controls
         if (gamepad2.b) {
-            if (intakeState == -2) {
-                intakeState += 2;
-            } else {
-                intakeState++;
-            }
+            robot.intake.setLeftPosition(0.00);
+            robot.intake.setRightPosition(1.00);
         } else if (gamepad2.x) {
-            if (intakeState == 2) {
-                intakeState -= 2;
-            } else {
-                intakeState--;
-            }
+            robot.intake.setLeftPosition(1.00);
+            robot.intake.setRightPosition(0.00);
+        } else if (gamepad2.left_stick_button) {
+            robot.intake.setLeftPosition(0.50);
+            robot.intake.setRightPosition(0.50);
         }
 
-        // set intake position based on state
-        if (intakeState < -2) intakeState = -2;
-        if (intakeState > 2) intakeState = 2;
-
-        switch (intakeState) {
-            case -2:
-                robot.intake.setLeftPosition(LEFT_UP_IDLE);
-                robot.intake.setRightPosition(RIGHT_UP_IDLE);
-                break;
-            case -1:
-                robot.intake.setLeftPosition(LEFT_UP_FULL);
-                robot.intake.setRightPosition(RIGHT_UP_FULL);
-                break;
-            case 0:
-                robot.intake.setLeftPosition(NEUTRAL);
-                robot.intake.setRightPosition(NEUTRAL);
-                break;
-            case 1:
-                robot.intake.setLeftPosition(LEFT_DOWN_FULL);
-                robot.intake.setRightPosition(RIGHT_DOWN_FULL);
-                break;
-            case 2:
-                robot.intake.setLeftPosition(LEFT_DOWN_IDLE);
-                robot.intake.setRightPosition(RIGHT_DOWN_IDLE);
-                break;
-        }
 
         // outtake controls
         if (gamepad2.dpad_up) {
@@ -127,9 +89,9 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.right_bumper) {
             robot.latchingLift.setLiftPower(1.0);
         } else if (gamepad1.left_bumper) {
-            robot.intake.setExtenderPower(-1.0);
+            robot.latchingLift.setLiftPower(1.0);
         } else {
-            robot.intake.setExtenderPower(0.0);
+            robot.latchingLift.setLiftPower(0.0);
         }
 
         robot.update();

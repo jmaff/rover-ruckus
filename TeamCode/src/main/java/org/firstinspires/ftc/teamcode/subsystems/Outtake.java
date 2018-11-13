@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.ftc12835.library.hardware.management.Subsystem;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,9 +13,9 @@ public class Outtake implements Subsystem {
     private double liftPower;
     private double outtakePosition;
 
-    public Outtake(HardwareMap hardwareMap) {
-        mineralLift = hardwareMap.get(DcMotor.class, "MINERAL_LIFT");
-        outtakePivot = hardwareMap.get(Servo.class, "OUTTAKE");
+    public Outtake(OpMode opMode) {
+        mineralLift = opMode.hardwareMap.get(DcMotor.class, "MINERAL_LIFT");
+        outtakePivot = opMode.hardwareMap.get(Servo.class, "OUTTAKE");
     }
 
     public void setLiftPower(double liftPower) {

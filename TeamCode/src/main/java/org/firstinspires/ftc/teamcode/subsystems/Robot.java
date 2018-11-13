@@ -2,23 +2,15 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import android.util.Log;
 
-import com.acmerobotics.dashboard.RobotDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ThreadPool;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
 
 public class Robot {
     public static final String TAG = "Robot";
     private List<Subsystem> subsystems;
-    private ExecutorService subsystemUpdateExecutor;
 
     private boolean enabled;
 
@@ -30,12 +22,10 @@ public class Robot {
     public Robot(OpMode opMode) {
         subsystems = new ArrayList<>();
 
-        subsystemUpdateExecutor = ThreadPool.newSingleThreadExecutor("subsystem update");
-
-        mecanumDrive = new MecanumDrive(opMode.hardwareMap);
-        latchingLift = new LatchingLift(opMode.hardwareMap);
-        intake = new Intake(opMode.hardwareMap);
-        outtake = new Outtake(opMode.hardwareMap);
+        mecanumDrive = new MecanumDrive(opMode);
+        latchingLift = new LatchingLift(opMode);
+        intake = new Intake(opMode);
+        outtake = new Outtake(opMode);
 
         subsystems.add(mecanumDrive);
         subsystems.add(latchingLift);
@@ -62,10 +52,7 @@ public class Robot {
     }
 
     public void stop() {
-        if (subsystemUpdateExecutor != null) {
-            subsystemUpdateExecutor.shutdownNow();
-            subsystemUpdateExecutor = null;
-        }
+        enabled = false;
     }
 
 
