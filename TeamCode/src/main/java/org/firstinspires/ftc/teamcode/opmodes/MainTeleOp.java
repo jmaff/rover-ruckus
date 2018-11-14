@@ -89,7 +89,7 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.right_bumper) {
             robot.latchingLift.setLiftPower(1.0);
         } else if (gamepad1.left_bumper) {
-            robot.latchingLift.setLiftPower(1.0);
+            robot.latchingLift.setLiftPower(-1.0);
         } else {
             robot.latchingLift.setLiftPower(0.0);
         }
