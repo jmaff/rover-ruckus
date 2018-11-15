@@ -27,7 +27,7 @@ public class LatchingLift implements Subsystem {
     public LatchingLift(OpMode opMode) {
         this.opMode = opMode;
         liftMotor = opMode.hardwareMap.get(DcMotor.class, "LATCHING_LIFT");
-        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        resetEncoder();
     }
 
     public void setLiftPower(double power) {
@@ -59,5 +59,6 @@ public class LatchingLift implements Subsystem {
     @Override
     public void update() {
         liftMotor.setPower(liftPower);
+        opMode.telemetry.addData("Lift Count", getEncoderCounts());
     }
 }

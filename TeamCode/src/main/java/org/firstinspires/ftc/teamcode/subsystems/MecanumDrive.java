@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.ftc12835.library.hardware.management.Subsystem;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -20,29 +21,31 @@ public class MecanumDrive implements Subsystem {
     public static final MotorConfigurationType MOTOR_CONFIG = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private DcMotor leftFront, leftRear, rightRear, rightFront;
+    private BNO055IMU imu;
     private double[] powers = new double[4];
 
     private OpMode opMode;
 
+    private double lastHeading = 0;
+    private double integratedZAxis = 0;
+
     public MecanumDrive(OpMode opMode) {
         this.opMode = opMode;
 
-        leftFront = opMode.hardwareMap.get(DcMotorEx.class, "FL");
-        leftRear = opMode.hardwareMap.get(DcMotorEx.class, "BL");
-        rightRear = opMode.hardwareMap.get(DcMotorEx.class, "BR");
-        rightFront = opMode.hardwareMap.get(DcMotorEx.class, "FR");
+        leftFront = opMode.hardwareMap.get(DcMotor.class, "FL");
+        leftRear = opMode.hardwareMap.get(DcMotor.class, "BL");
+        rightRear = opMode.hardwareMap.get(DcMotor.class, "BR");
+        rightFront = opMode.hardwareMap.get(DcMotor.class, "FR");
+        imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
 
-        for (DcMotorEx motor : Arrays.asList(leftFront, leftRear, rightRear, rightFront)) {
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        for (DcMotor motor : Arrays.asList(leftFront, leftRear, rightRear, rightFront)) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-
-    private static double encoderTicksToInches(int ticks) {
-        return 4 * Math.PI * ticks / TICKS_PER_REV;
     }
 
     public void setMotorPowers(double v, double v1, double v2, double v3) {
@@ -69,9 +72,11 @@ public class MecanumDrive implements Subsystem {
         cartesianDrive(x, y, turn);
 
         while (linearOpMode.opModeIsActive()) {
-            for (double position : getWheelPositions()) {
+
+            for (int position : getWheelPositions()) {
                 if (Math.abs(position) > counts) {
-                    break;
+                    stop();
+                    return;
                 }
             }
         }
@@ -79,12 +84,12 @@ public class MecanumDrive implements Subsystem {
         stop();
     }
 
-    public List<Double> getWheelPositions() {
-        List<Double> positions = new ArrayList<>();
-        positions.add(encoderTicksToInches(leftFront.getCurrentPosition()));
-        positions.add(encoderTicksToInches(rightFront.getCurrentPosition()));
-        positions.add(-encoderTicksToInches(leftRear.getCurrentPosition()));
-        positions.add(-encoderTicksToInches(rightRear.getCurrentPosition()));
+    public List<Integer> getWheelPositions() {
+        List<Integer> positions = new ArrayList<>();
+        positions.add(leftFront.getCurrentPosition());
+        positions.add(rightFront.getCurrentPosition());
+        positions.add(leftRear.getCurrentPosition());
+        positions.add(rightRear.getCurrentPosition());
 
         return positions;
     }
@@ -93,12 +98,42 @@ public class MecanumDrive implements Subsystem {
         setMotorPowers(0 , 0, 0, 0);
     }
 
+    void updateIntegratedZAxis() {
+        double newHeading = imu.getAngularOrientation().firstAngle;
+        double deltaHeading = newHeading - lastHeading;
+        if (deltaHeading < -180) {
+            deltaHeading += 360;
+        } else if(deltaHeading >= 180) {
+            deltaHeading -= 360;
+        }
+
+        integratedZAxis += deltaHeading;
+        lastHeading = newHeading;
+    }
+
+    public double getHeading() {
+        return integratedZAxis;
+    }
+
     @Override
     public void update() {
         leftFront.setPower(powers[0]);
         rightFront.setPower(powers[1]);
         leftRear.setPower(powers[2]);
         rightRear.setPower(powers[3]);
+
+        double updateIntegratedZAxis() {
+            double newHeading = imu.getAngularOrientation().firstAngle;
+            double deltaHeading = newHeading - lastHeading;
+            if (deltaHeading < -180) {
+                deltaHeading += 360;
+            } else if(deltaHeading >= 180) {
+                deltaHeading -= 360;
+            }
+
+            integratedZAxis += deltaHeading;
+            lastHeading = newHeading;
+        }
 
         Telemetry telemetry = opMode.telemetry;
         telemetry.addData("FL", leftFront.getCurrentPosition());

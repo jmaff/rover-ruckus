@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
+@Config
+@Autonomous(name = "Depot Auto")
 public class DepotAuto extends LinearOpMode {
+    public static int LIFT_DOWN = 14200;
+    public static int LEG_1 = 190;
     private Robot robot;
 
     private Runnable updateRunnable = () -> {
@@ -21,10 +27,13 @@ public class DepotAuto extends LinearOpMode {
         waitForStart();
         robot.start();
         updateThread.start();
+        robot.vision.enable();
 
-        // do auto stuff here
+        robot.latchingLift.runLiftToPosition(1.0, LIFT_DOWN);
+        robot.mecanumDrive.encoderDrive(0.8, 0, 0, LEG_1);
 
-        // drive forward 200 counts (probably wont work lol)
-        robot.mecanumDrive.encoderDrive(0, 1, 0, 200);
+        while (opModeIsActive()) {
+            // pass to display telemetry
+        }
     }
 }

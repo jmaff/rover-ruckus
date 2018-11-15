@@ -18,19 +18,31 @@ public class Robot {
     public LatchingLift latchingLift;
     public Intake intake;
     public Outtake outtake;
+    public Vision vision;
 
-    public Robot(OpMode opMode) {
+    private OpMode opMode;
+    private boolean auto;
+
+    public Robot(OpMode opMode, boolean auto) {
+        this.opMode = opMode;
+        this.auto = auto;
         subsystems = new ArrayList<>();
 
         mecanumDrive = new MecanumDrive(opMode);
         latchingLift = new LatchingLift(opMode);
         intake = new Intake(opMode);
         outtake = new Outtake(opMode);
+        vision = new Vision(opMode);
 
         subsystems.add(mecanumDrive);
         subsystems.add(latchingLift);
         subsystems.add(intake);
         subsystems.add(outtake);
+        subsystems.add(vision);
+    }
+
+    public Robot(OpMode opMode) {
+        this(opMode, false);
     }
 
     public void update() {
@@ -39,6 +51,8 @@ public class Robot {
                 if (subsystem == null) continue;
                 try {
                     subsystem.update();
+                    opMode.telemetry.update();
+
                 } catch (Throwable t) {
                     Log.w(TAG, "Subsystem update failed for " + subsystem.toString());
                     Log.w(TAG, t);
