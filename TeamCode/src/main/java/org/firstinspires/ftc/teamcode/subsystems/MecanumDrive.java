@@ -122,18 +122,7 @@ public class MecanumDrive implements Subsystem {
         leftRear.setPower(powers[2]);
         rightRear.setPower(powers[3]);
 
-        double updateIntegratedZAxis() {
-            double newHeading = imu.getAngularOrientation().firstAngle;
-            double deltaHeading = newHeading - lastHeading;
-            if (deltaHeading < -180) {
-                deltaHeading += 360;
-            } else if(deltaHeading >= 180) {
-                deltaHeading -= 360;
-            }
-
-            integratedZAxis += deltaHeading;
-            lastHeading = newHeading;
-        }
+        updateIntegratedZAxis();
 
         Telemetry telemetry = opMode.telemetry;
         telemetry.addData("FL", leftFront.getCurrentPosition());
