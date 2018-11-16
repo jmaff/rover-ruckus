@@ -31,6 +31,7 @@ public class MainTeleOp extends OpMode {
     public void init() {
         robot = new Robot(this);
         robot.start();
+        robot.mecanumDrive.brakeMode(false);
     }
 
     @Override

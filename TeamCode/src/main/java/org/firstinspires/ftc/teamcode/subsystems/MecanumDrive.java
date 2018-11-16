@@ -39,10 +39,11 @@ public class MecanumDrive implements Subsystem {
         rightFront = opMode.hardwareMap.get(DcMotor.class, "FR");
         imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
 
-        for (DcMotor motor : Arrays.asList(leftFront, leftRear, rightRear, rightFront)) {
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        imu.initialize(parameters);
+
+        resetEncoders();
 
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -53,6 +54,25 @@ public class MecanumDrive implements Subsystem {
         powers[1] = v1;
         powers[2] = v2;
         powers[3] = v3;
+    }
+
+    public void resetEncoders() {
+        for (DcMotor motor : Arrays.asList(leftFront, leftRear, rightRear, rightFront)) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+    }
+
+    public void brakeMode(boolean on) {
+        if (on) {
+            for (DcMotor motor : Arrays.asList(leftFront, leftRear, rightRear, rightFront)) {
+                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
+        } else {
+            for (DcMotor motor : Arrays.asList(leftFront, leftRear, rightRear, rightFront)) {
+                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            }
+        }
     }
 
     public void cartesianDrive(double x, double y, double turn) {
@@ -69,6 +89,7 @@ public class MecanumDrive implements Subsystem {
 
     public void encoderDrive(double x, double y, double turn, int counts) {
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
+        resetEncoders();
         cartesianDrive(x, y, turn);
 
         while (linearOpMode.opModeIsActive()) {
@@ -84,7 +105,28 @@ public class MecanumDrive implements Subsystem {
         stop();
     }
 
-    public List<Integer> getWheelPositions() {
+    public void turnToAngle(double turn, double angle) {
+        double target = getHeading() + angle;
+        boolean targetAbove;
+        targetAbove = !(target - angle >= 0);
+
+        LinearOpMode linearOpMode = (LinearOpMode) opMode;
+        cartesianDrive(0, 0, turn);
+
+        while (linearOpMode.opModeIsActive()) {
+            if (!targetAbove && getHeading() < target) {
+                stop();
+                break;
+            } else if (targetAbove && getHeading() > target) {
+                stop();
+                break;
+            }
+        }
+
+
+    }
+
+    private List<Integer> getWheelPositions() {
         List<Integer> positions = new ArrayList<>();
         positions.add(leftFront.getCurrentPosition());
         positions.add(rightFront.getCurrentPosition());
@@ -98,7 +140,7 @@ public class MecanumDrive implements Subsystem {
         setMotorPowers(0 , 0, 0, 0);
     }
 
-    void updateIntegratedZAxis() {
+    private void updateIntegratedZAxis() {
         double newHeading = imu.getAngularOrientation().firstAngle;
         double deltaHeading = newHeading - lastHeading;
         if (deltaHeading < -180) {
@@ -129,5 +171,6 @@ public class MecanumDrive implements Subsystem {
         telemetry.addData("FR", rightFront.getCurrentPosition());
         telemetry.addData("BL", leftRear.getCurrentPosition());
         telemetry.addData("BR", rightRear.getCurrentPosition());
+        telemetry.addData("IMU", getHeading());
     }
 }

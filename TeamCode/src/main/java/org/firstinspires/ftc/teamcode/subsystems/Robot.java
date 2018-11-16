@@ -32,7 +32,7 @@ public class Robot {
         latchingLift = new LatchingLift(opMode);
         intake = new Intake(opMode);
         outtake = new Outtake(opMode);
-        vision = new Vision(opMode);
+        vision = new Vision(opMode, auto);
 
         subsystems.add(mecanumDrive);
         subsystems.add(latchingLift);

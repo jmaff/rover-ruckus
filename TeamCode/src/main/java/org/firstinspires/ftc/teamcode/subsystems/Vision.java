@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.transition.Transition;
+
 import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraException;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -27,6 +30,14 @@ public class Vision implements Subsystem {
     private TFObjectDetector tfod;
 
     private OpMode opMode;
+    public enum GoldPostion {
+        LEFT,
+        CENTER,
+        RIGHT,
+        UNKNOWN
+    }
+
+    private GoldPostion goldPostion = GoldPostion.UNKNOWN;
 
     public Vision(OpMode opMode, boolean auto) {
         this.opMode = opMode;
@@ -55,6 +66,8 @@ public class Vision implements Subsystem {
         tfod.activate();
     }
 
+    public GoldPostion getGoldPostion() { return goldPostion; }
+
     @Override
     public void update() {
         if (tfod != null) {
@@ -79,15 +92,16 @@ public class Vision implements Subsystem {
                     if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
                         if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
                             opMode.telemetry.addData("Gold Mineral Position", "Left");
+                            goldPostion = GoldPostion.LEFT;
                         } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
                             opMode.telemetry.addData("Gold Mineral Position", "Right");
+                            goldPostion = GoldPostion.RIGHT;
                         } else {
                             opMode.telemetry.addData("Gold Mineral Position", "Center");
+                            goldPostion = GoldPostion.CENTER;
                         }
                     }
                 }
-
-                opMode.telemetry.update();
             }
         }
     }
