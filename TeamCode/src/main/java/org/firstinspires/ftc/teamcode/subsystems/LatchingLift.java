@@ -59,6 +59,5 @@ public class LatchingLift implements Subsystem {
     @Override
     public void update() {
         liftMotor.setPower(liftPower);
-        opMode.telemetry.addData("Lift Count", getEncoderCounts());
     }
 }

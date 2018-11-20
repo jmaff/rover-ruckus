@@ -51,9 +51,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
+@TeleOp(name = "Tensorflow Test", group = "Concept")
 
-public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
+public class TensorflowTest extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
@@ -71,7 +71,6 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY = "AfqJicT/////AAABmV0Cv8mz10n/joVc93wk6uxXh5eJuApDAXck9Oc1MWCIiRkjrE47UP6ODjidREdy5b3zc1HGJT3/B82inSlLRCa4WpjzbZvHl5FOslDg1EfWtHJH7BhXW8hVVXZJvSSwwmEP8jRWXFudvIMF5QxvVUxcj60RaL1amo00qbROMK5OOJrfDIj4Knbox6pJX17d0WDwJ66XqPbtCQstlPyHSr/iGH81fxLa0cr2Gvk5YiWHNUI4drOz7yPvFzR5Ja7J+MUagIbqtCWmWeUjgEcKqIZw0C4rfJbBsVAJ+Zx58q96hng3GgbXqZLJMcnK1kqOgNXm874Mm+XUQLMWsIIhwBMoMzg0hp5jlDxI0+2XDYGL";
-
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -115,28 +114,25 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
                       telemetry.addData("# Object Detected", updatedRecognitions.size());
-                      if (updatedRecognitions.size() == 3) {
+                      if (updatedRecognitions.size() == 2) {
                         int goldMineralX = -1;
                         int silverMineral1X = -1;
-                        int silverMineral2X = -1;
                         for (Recognition recognition : updatedRecognitions) {
                           if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                             goldMineralX = (int) recognition.getLeft();
                           } else if (silverMineral1X == -1) {
                             silverMineral1X = (int) recognition.getLeft();
-                          } else {
-                            silverMineral2X = (int) recognition.getLeft();
                           }
                         }
-                        
-                        if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                          if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                            telemetry.addData("Gold Mineral Position", "Left");
-                          } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                            telemetry.addData("Gold Mineral Position", "Right");
-                          } else {
-                            telemetry.addData("Gold Mineral Position", "Center");
-                          }
+
+                        if (goldMineralX == -1) {
+                            telemetry.addData("Gold", "Left");
+                        } else if (silverMineral1X != -1) {
+                            if (goldMineralX < silverMineral1X) {
+                                telemetry.addData("Gold", "Center");
+                            } else {
+                                telemetry.addData("Gold", "Right");
+                            }
                         }
                       }
                       telemetry.update();

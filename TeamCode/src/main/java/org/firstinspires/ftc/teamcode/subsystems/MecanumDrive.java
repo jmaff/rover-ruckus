@@ -106,7 +106,7 @@ public class MecanumDrive implements Subsystem {
     }
 
     public void turnToAngle(double turn, double angle) {
-        double target = getHeading() + angle;
+        double target = angle;
         boolean targetAbove;
         targetAbove = !(target - angle >= 0);
 
@@ -165,12 +165,5 @@ public class MecanumDrive implements Subsystem {
         rightRear.setPower(powers[3]);
 
         updateIntegratedZAxis();
-
-        Telemetry telemetry = opMode.telemetry;
-        telemetry.addData("FL", leftFront.getCurrentPosition());
-        telemetry.addData("FR", rightFront.getCurrentPosition());
-        telemetry.addData("BL", leftRear.getCurrentPosition());
-        telemetry.addData("BR", rightRear.getCurrentPosition());
-        telemetry.addData("IMU", getHeading());
     }
 }

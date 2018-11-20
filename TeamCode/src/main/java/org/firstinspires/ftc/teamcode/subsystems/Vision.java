@@ -37,6 +37,8 @@ public class Vision implements Subsystem {
         UNKNOWN
     }
 
+    private int numMinerals = 0;
+
     private GoldPostion goldPostion = GoldPostion.UNKNOWN;
 
     public Vision(OpMode opMode, boolean auto) {
@@ -75,35 +77,35 @@ public class Vision implements Subsystem {
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
-                opMode.telemetry.addData("# Object Detected", updatedRecognitions.size());
-                if (updatedRecognitions.size() == 3) {
+                numMinerals = updatedRecognitions.size();
+                if (updatedRecognitions.size() == 2) {
                     int goldMineralX = -1;
                     int silverMineral1X = -1;
-                    int silverMineral2X = -1;
                     for (Recognition recognition : updatedRecognitions) {
                         if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                             goldMineralX = (int) recognition.getLeft();
                         } else if (silverMineral1X == -1) {
                             silverMineral1X = (int) recognition.getLeft();
-                        } else {
-                            silverMineral2X = (int) recognition.getLeft();
                         }
                     }
-                    if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                        if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                            opMode.telemetry.addData("Gold Mineral Position", "Left");
-                            goldPostion = GoldPostion.LEFT;
-                        } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                            opMode.telemetry.addData("Gold Mineral Position", "Right");
-                            goldPostion = GoldPostion.RIGHT;
-                        } else {
-                            opMode.telemetry.addData("Gold Mineral Position", "Center");
+
+                    if (goldMineralX == -1) {
+                        goldPostion = GoldPostion.LEFT;
+                    } else if (silverMineral1X != -1) {
+                        if (goldMineralX < silverMineral1X) {
                             goldPostion = GoldPostion.CENTER;
+                        } else {
+                            goldPostion = GoldPostion.RIGHT;
                         }
                     }
                 }
+
             }
         }
+    }
+
+    public int getNumMinerals() {
+        return numMinerals;
     }
 
     public void disable() {

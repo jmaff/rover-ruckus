@@ -51,8 +51,6 @@ public class Robot {
                 if (subsystem == null) continue;
                 try {
                     subsystem.update();
-                    opMode.telemetry.update();
-
                 } catch (Throwable t) {
                     Log.w(TAG, "Subsystem update failed for " + subsystem.toString());
                     Log.w(TAG, t);
