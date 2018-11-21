@@ -12,16 +12,16 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 public class DepotAuto extends LinearOpMode {
     public static int LIFT_DOWN = 14200;
     // strafe off hook
-    public static int LEG_1 = 190;
+    public static int LEG_1 = 150;
     // move forward away from lander
-    public static int LEG_2 = 70;
+    public static int LEG_2 = 250;
 
-    public static double TURN_SPEED = -0.6;
+    public static double TURN_SPEED = 0.6;
 
     // turns based on gold position
-    public static double LEFT_TURN_SAMPLE = 20;
-    public static double CENTER_TURN_SAMPLE = 0;
-    public static double RIGHT_TURN_SAMPLE = -20;
+    public static int LEFT_STRAFE_SAMPLE = 300;
+    public static int CENTER_STRAFE_SAMPLE = 200;
+    public static int RIGHT_STRAFE_SAMPLE = 600;
 
     public static int LEG_3_LEFT = 400;
     public static int LEG_3_CENTER = 900;
@@ -80,39 +80,49 @@ public class DepotAuto extends LinearOpMode {
 
         robot.mecanumDrive.brakeMode(true);
 
-
-
         robot.latchingLift.runLiftToPosition(1.0, LIFT_DOWN);
         sleep(300);
+
         robot.mecanumDrive.encoderDrive(0.8, 0, 0, LEG_1);
         sleep(300);
+
         robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_2);
         sleep(300);
 
         switch (goldPostion) {
             case LEFT:
-                robot.mecanumDrive.turnToAngle(-TURN_SPEED, LEFT_TURN_SAMPLE);
+                robot.mecanumDrive.encoderDrive(0.8, 0, 0, LEFT_STRAFE_SAMPLE);
                 sleep(300);
+
                 robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_3_LEFT);
                 sleep(300);
+
                 robot.mecanumDrive.turnToAngle(TURN_SPEED, LEFT_TURN_DEPOT);
                 sleep(300);
+
                 robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_4_LEFT);
+
                 break;
             default:
             case CENTER:
-                robot.mecanumDrive.turnToAngle(TURN_SPEED, CENTER_TURN_SAMPLE);
+                robot.mecanumDrive.encoderDrive(-0.8, 0, 0, CENTER_STRAFE_SAMPLE);
                 sleep(300);
+
                 robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_3_CENTER);
+
                 break;
             case RIGHT:
-                robot.mecanumDrive.turnToAngle(TURN_SPEED, RIGHT_TURN_SAMPLE);
+                robot.mecanumDrive.encoderDrive(-0.8, 0, 0, RIGHT_STRAFE_SAMPLE);
                 sleep(300);
+
                 robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_3_RIGHT);
                 sleep(300);
-                robot.mecanumDrive.turnToAngle(-TURN_SPEED, RIGHT_TURN_DEPOT);
+
+                robot.mecanumDrive.turnToAngle(TURN_SPEED, RIGHT_TURN_DEPOT);
                 sleep(300);
+
                 robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_4_RIGHT);
+
                 break;
         }
 

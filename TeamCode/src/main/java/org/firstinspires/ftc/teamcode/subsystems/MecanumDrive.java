@@ -111,7 +111,13 @@ public class MecanumDrive implements Subsystem {
         targetAbove = !(target - angle >= 0);
 
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
-        cartesianDrive(0, 0, turn);
+
+        if (!targetAbove) {
+            cartesianDrive(0, 0, -turn);
+        } else {
+            cartesianDrive(0, 0, turn);
+        }
+
 
         while (linearOpMode.opModeIsActive()) {
             if (!targetAbove && getHeading() < target) {
