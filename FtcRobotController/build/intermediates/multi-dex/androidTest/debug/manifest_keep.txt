@@ -1,6 +1,0 @@
-# Referenced at /Users/21maffetone/Documents/GitHub/rover-ruckus/FtcRobotController/build/intermediates/manifest/androidTest/debug/AndroidManifest.xml:9
--keep class com.android.test.runner.MultiDexTestRunner { <init>(...); }
-
-# Referenced at /Users/21maffetone/Documents/GitHub/rover-ruckus/FtcRobotController/build/intermediates/manifest/androidTest/debug/AndroidManifest.xml:82
--keep class org.firstinspires.ftc.robotcore.internal.system.RobotApplication { <init>(...); }
-

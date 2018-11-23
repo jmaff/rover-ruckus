@@ -101,14 +101,13 @@ public class MecanumDrive implements Subsystem {
                 }
             }
         }
-
         stop();
     }
 
     public void turnToAngle(double turn, double angle) {
         double target = angle;
         boolean targetAbove;
-        targetAbove = !(target - angle >= 0);
+        targetAbove = (target >= getHeading());
 
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
 
@@ -117,7 +116,6 @@ public class MecanumDrive implements Subsystem {
         } else {
             cartesianDrive(0, 0, turn);
         }
-
 
         while (linearOpMode.opModeIsActive()) {
             if (!targetAbove && getHeading() < target) {
@@ -128,7 +126,6 @@ public class MecanumDrive implements Subsystem {
                 break;
             }
         }
-
 
     }
 

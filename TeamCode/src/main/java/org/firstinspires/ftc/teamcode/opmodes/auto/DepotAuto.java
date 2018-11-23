@@ -12,29 +12,38 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 public class DepotAuto extends LinearOpMode {
     public static int LIFT_DOWN = 14200;
     // strafe off hook
-    public static int LEG_1 = 150;
+    public static int LEG_1 = 140;
     // move forward away from lander
     public static int LEG_2 = 250;
 
-    public static double TURN_SPEED = 0.6;
+    public static double TURN_SPEED = 0.4;
 
     // turns based on gold position
-    public static int LEFT_STRAFE_SAMPLE = 300;
+    public static int LEFT_STRAFE_SAMPLE = 250;
     public static int CENTER_STRAFE_SAMPLE = 200;
-    public static int RIGHT_STRAFE_SAMPLE = 600;
+    public static int RIGHT_STRAFE_SAMPLE = 700;
 
     public static int LEG_3_LEFT = 400;
     public static int LEG_3_CENTER = 900;
     public static int LEG_3_RIGHT = 400;
 
     // turn to face depot
-    public static double LEFT_TURN_DEPOT = 0;
-    public static double RIGHT_TURN_DEPOT = 0;
+    public static double LEFT_TURN_DEPOT = -20;
+    public static double RIGHT_TURN_DEPOT = 30;
 
     // drive into depot
     public static int LEG_4_LEFT = 400;
-    public static int LEG_4_CENTER = 0;
     public static int LEG_4_RIGHT = 400;
+
+    // turn towards crater
+    public static double LEFT_TURN_CRATER = 0;
+    public static double CENTER_TURN_CRATER = 0;
+    public static double RIGHT_TURN_CENTER = 0;
+
+    // drive to crater
+    public static int LEG_5_LEFT = 0;
+    public static int LEG_5_CENTER = 0;
+    public static int LEG_5_RIGHT = 0;
 
     public static double FORWARD_SPEED = -0.8;
 
@@ -44,6 +53,8 @@ public class DepotAuto extends LinearOpMode {
     private Runnable updateRunnable = () -> {
         while (opModeIsActive()) {
             robot.update();
+            telemetry.addData("Heading", robot.mecanumDrive.getHeading());
+            telemetry.update();
         }
     };
 
@@ -102,7 +113,13 @@ public class DepotAuto extends LinearOpMode {
 
                 robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_4_LEFT);
 
+                robot.intake.dumpMarker();
+
+                robot.mecanumDrive.turnToAngle(TURN_SPEED, LEFT_TURN_CRATER);
+
+                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_5_LEFT);
                 break;
+
             default:
             case CENTER:
                 robot.mecanumDrive.encoderDrive(-0.8, 0, 0, CENTER_STRAFE_SAMPLE);
@@ -110,7 +127,13 @@ public class DepotAuto extends LinearOpMode {
 
                 robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_3_CENTER);
 
+                robot.intake.dumpMarker();
+
+                robot.mecanumDrive.turnToAngle(TURN_SPEED, CENTER_TURN_CRATER);
+
+                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_5_CENTER);
                 break;
+
             case RIGHT:
                 robot.mecanumDrive.encoderDrive(-0.8, 0, 0, RIGHT_STRAFE_SAMPLE);
                 sleep(300);
@@ -123,9 +146,13 @@ public class DepotAuto extends LinearOpMode {
 
                 robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_4_RIGHT);
 
+                robot.intake.dumpMarker();
+
+                robot.mecanumDrive.turnToAngle(TURN_SPEED, RIGHT_TURN_CENTER);
+
+                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_5_RIGHT);
                 break;
         }
-
 
         while (opModeIsActive()) {
             // pass to display telemetry

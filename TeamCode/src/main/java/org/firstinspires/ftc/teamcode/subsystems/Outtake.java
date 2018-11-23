@@ -16,6 +16,7 @@ public class Outtake implements Subsystem {
     public Outtake(OpMode opMode) {
         mineralLift = opMode.hardwareMap.get(DcMotor.class, "MINERAL_LIFT");
         outtakePivot = opMode.hardwareMap.get(Servo.class, "OUTTAKE");
+        mineralLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void setLiftPower(double liftPower) {
