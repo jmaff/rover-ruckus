@@ -28,7 +28,8 @@ public class Intake implements Subsystem {
     public static double RIGHT_STOW = 0.00;
     public static double RIGHT_DEPLOY = 1.00;
 
-    public static double MIDDLE = 0.50;
+    public static double LEFT_MIDDLE = 0.30;
+    public static double RIGHT_MIDDLE = 0.70;
 
     public enum PivotPosition {
         STOW,
@@ -75,8 +76,8 @@ public class Intake implements Subsystem {
                 setRightPosition(RIGHT_STOW);
                 break;
             case MIDDLE:
-                setLeftPosition(MIDDLE);
-                setRightPosition(MIDDLE);
+                setLeftPosition(LEFT_MIDDLE);
+                setRightPosition(RIGHT_MIDDLE);
                 break;
             case DEPLOY:
                 setLeftPosition(LEFT_DEPLOY);
@@ -89,8 +90,6 @@ public class Intake implements Subsystem {
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
         setIntakePivotPosition(PivotPosition.MIDDLE);
         linearOpMode.sleep(900);
-        setIntakePivotPosition(PivotPosition.DEPLOY);
-        linearOpMode.sleep(500);
         setIntakePivotPosition(PivotPosition.STOW);
     }
 

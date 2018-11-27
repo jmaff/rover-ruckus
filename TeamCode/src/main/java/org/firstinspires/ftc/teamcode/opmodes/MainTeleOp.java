@@ -15,6 +15,10 @@ public class MainTeleOp extends OpMode {
     private static double OUTTAKE_UP = 1.0;
     private static double OUTTAKE_DOWN = 0.0;
 
+
+    private boolean bPrev = false;
+    private boolean xPrev = false;
+
     private Robot robot;
 
     @Override
@@ -58,18 +62,26 @@ public class MainTeleOp extends OpMode {
 
         // intake state controls
         if (gamepad2.b) {
-            if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.MIDDLE) {
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DEPLOY);
-            } else if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.STOW) {
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
-            }
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.DEPLOY);
         } else if (gamepad2.x) {
-            if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.MIDDLE) {
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.STOW);
-            } else if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.DEPLOY) {
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
-            }
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.STOW);
+        } else if (gamepad2.start) {
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
         }
+
+//        if (gamepad2.b && !bPrev) {
+//            if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.MIDDLE) {
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DEPLOY);
+//            } else if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.STOW) {
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+//            }
+//        } else if (gamepad2.x && !xPrev) {
+//            if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.MIDDLE) {
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.STOW);
+//            } else if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.DEPLOY) {
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+//            }
+//        }
 
         // outtake controls
         if (gamepad2.dpad_up) {
@@ -88,5 +100,8 @@ public class MainTeleOp extends OpMode {
         }
 
         robot.update();
+
+        bPrev = gamepad1.b;
+        xPrev = gamepad1.x;
     }
 }
