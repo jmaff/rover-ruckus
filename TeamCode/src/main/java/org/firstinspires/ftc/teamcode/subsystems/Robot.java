@@ -28,7 +28,7 @@ public class Robot {
         this.auto = auto;
         subsystems = new ArrayList<>();
 
-        mecanumDrive = new MecanumDrive(opMode);
+        mecanumDrive = new MecanumDrive(opMode, auto);
         latchingLift = new LatchingLift(opMode);
         intake = new Intake(opMode);
         outtake = new Outtake(opMode);

@@ -4,16 +4,16 @@ import com.acmerobotics.dashboard.config.Config;
 import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 public class Intake implements Subsystem {
 
     private DcMotor extenderMotor;
     private DcMotor intakeMotor;
-    public Servo pivotServoLeft;
-    public Servo pivotServoRight;
+    public CRServo pivotServoLeft;
+    public CRServo pivotServoRight;
 
     private double extenderPower;
     private double intakePower;
@@ -21,7 +21,7 @@ public class Intake implements Subsystem {
     private double rightPosition;
 
     private OpMode opMode;
-    private PivotPosition currentPivotPosition = PivotPosition.STOW;
+    private PivotPosition currentPivotPosition = PivotPosition.UP;
 
     public static double LEFT_STOW = 1.00;
     public static double LEFT_DEPLOY= 0.00;
@@ -32,9 +32,9 @@ public class Intake implements Subsystem {
     public static double RIGHT_MIDDLE = 0.70;
 
     public enum PivotPosition {
-        STOW,
-        MIDDLE,
-        DEPLOY
+        UP,
+        OFF,
+        DOWN
     }
 
     public Intake(OpMode opMode) {
@@ -42,10 +42,10 @@ public class Intake implements Subsystem {
 
         extenderMotor = opMode.hardwareMap.get(DcMotor.class, "EXTENDER");
         intakeMotor = opMode.hardwareMap.get(DcMotor.class, "INTAKE");
-        pivotServoLeft = opMode.hardwareMap.get(Servo.class, "PIVOT_LEFT");
-        pivotServoRight = opMode.hardwareMap.get(Servo.class, "PIVOT_RIGHT");
+        pivotServoLeft = opMode.hardwareMap.get(CRServo.class, "PIVOT_LEFT");
+        pivotServoRight = opMode.hardwareMap.get(CRServo.class, "PIVOT_RIGHT");
 
-        setIntakePivotPosition(PivotPosition.STOW);
+        setIntakePivotPosition(PivotPosition.UP);
     }
 
     public void setExtenderPower(double extenderPower) {
@@ -71,26 +71,28 @@ public class Intake implements Subsystem {
     public void setIntakePivotPosition(PivotPosition pivotPosition) {
         currentPivotPosition = pivotPosition;
         switch (pivotPosition) {
-            case STOW:
-                setLeftPosition(LEFT_STOW);
-                setRightPosition(RIGHT_STOW);
+            case UP:
+                setLeftPosition(1.00);
+                setRightPosition(-1.00);
                 break;
-            case MIDDLE:
-                setLeftPosition(LEFT_MIDDLE);
-                setRightPosition(RIGHT_MIDDLE);
+            case OFF:
+                setLeftPosition(0);
+                setRightPosition(0);
                 break;
-            case DEPLOY:
-                setLeftPosition(LEFT_DEPLOY);
-                setRightPosition(RIGHT_DEPLOY);
+            case DOWN:
+                setLeftPosition(-1.00);
+                setRightPosition(1.00);
                 break;
         }
     }
 
     public void dumpMarker() {
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
-        setIntakePivotPosition(PivotPosition.MIDDLE);
+        setIntakePivotPosition(PivotPosition.DOWN);
         linearOpMode.sleep(900);
-        setIntakePivotPosition(PivotPosition.STOW);
+        setIntakePivotPosition(PivotPosition.UP);
+        linearOpMode.sleep(900);
+        setIntakePivotPosition(PivotPosition.OFF);
     }
 
 
@@ -99,7 +101,7 @@ public class Intake implements Subsystem {
         extenderMotor.setPower(extenderPower);
         intakeMotor.setPower(intakePower);
 
-        pivotServoLeft.setPosition(leftPosition);
-        pivotServoRight.setPosition(rightPosition);
+        pivotServoLeft.setPower(leftPosition);
+        pivotServoRight.setPower(rightPosition);
     }
 }

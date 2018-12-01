@@ -4,15 +4,17 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 @Config
 @Autonomous(name = "Crater Auto", group = "COMPETITION")
 public class CraterAuto extends LinearOpMode {
-
     public static double TURN_SPEED = 0.4;
-    public static double FORWARD_SPEED = -0.8;
+    public static double TURN_AROUND_SPEED = 0.4;
+    public static double FORWARD_SPEED = -0.7;
+    public static double X_OFFSET_SPEED = 0.2;
 
     /*
      * DEPLOYING
@@ -20,53 +22,38 @@ public class CraterAuto extends LinearOpMode {
 
     public static int LIFT_DOWN = 14200;
     // strafe off hook
-    public static int LEG_1 = 140;
+    public static int STRAFE_OFF_HOOK = 100;
     // move forward away from lander
-    public static int LEG_2 = 250;
+    public static int TO_TAPE = 250;
 
     /*
      * SAMPLING
      */
 
     // turns based on gold position
-    public static int LEFT_STRAFE_SAMPLE = 250;
+    public static int LEFT_STRAFE_SAMPLE = 400;
     public static int CENTER_STRAFE_SAMPLE = 200;
-    public static int RIGHT_STRAFE_SAMPLE = 700;
+    public static int RIGHT_STRAFE_SAMPLE = 650;
 
-    // knock off gold
-    public static int LEG_3_LEFT = 0;
-    public static int LEG_3_CENTER = 0;
-    public static int LEG_3_RIGHT = 0;
+    public static int LEFT_KNOCK_OFF = 300;
+    public static int CENTER_KNOCK_OFF = 300;
+    public static int RIGHT_KNOCK_OFF = 300;
 
-    // knock off gold
-    public static int LEG_3_LEFT_BACK = 0;
-    public static int LEG_3_CENTER_BACK = 0;
-    public static int LEG_3_RIGHT_BACK = 0;
+    public static int LEFT_BACK_UP = 300;
+    public static int CENTER_BACK_UP = 300;
+    public static int RIGHT_BACK_UP = 0;
 
-    /*
-     * TEAM MARKER
-     */
+    public static double TURN_TO_WALL = 0;
 
-    // turn towards field wall after sampling
-    public static double TURN_WALL = 0;
+    public static int LEFT_TO_WALL = 0;
+    public static int CENTER_TO_WALL = 0;
+    public static int RIGHT_TO_WALL = 0;
 
-    // drive to same position
-    public static int LEG_4_LEFT = 0;
-    public static int LEG_4_CENTER = 0;
-    public static int LEG_4_RIGHT = 0;
+    public static double TURN_TO_DEPOT = 0;
 
-    // turn to face depot
-    public static int TURN_DEPOT = 0;
+    public static int TO_DEPOT = 0;
 
-    // drive to depot to dump marker
-    public static int LEG_5 = 0;
-
-    /*
-     * PARK
-     */
-
-    // return to crater and park
-    public static int LEG_6 = 0;
+    public static int TO_CRATER = 0;
 
     private Robot robot;
     private Vision.GoldPostion goldPostion;
@@ -115,82 +102,109 @@ public class CraterAuto extends LinearOpMode {
         robot.latchingLift.runLiftToPosition(1.0, LIFT_DOWN);
         sleep(300);
 
-        robot.mecanumDrive.encoderDrive(0.8, 0, 0, LEG_1);
+        robot.mecanumDrive.encoderDrive(0.8, 0, 0, STRAFE_OFF_HOOK);
         sleep(300);
 
-        robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_2);
+        robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_TAPE);
         sleep(300);
 
         switch (goldPostion) {
             case LEFT:
-                robot.mecanumDrive.encoderDrive(-0.8, 0, 0, LEFT_STRAFE_SAMPLE);
+                robot.mecanumDrive.encoderDrive(0.8, 0, 0, LEFT_STRAFE_SAMPLE);
                 sleep(300);
 
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_3_LEFT);
+                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEFT_KNOCK_OFF);
                 sleep(300);
 
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_3_LEFT_BACK);
-                sleep(300);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+                sleep(1000);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
 
-                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_WALL);
-                sleep(300);
-
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_4_LEFT);
-                sleep(300);
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, LEFT_BACK_UP);
+//                sleep(300);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_WALL);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, LEFT_TO_WALL);
+//                sleep(300);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_DEPOT);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_DEPOT);
+//                sleep(300);
+//
+//                robot.intake.dumpMarker();
+//
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, TO_CRATER);
+//                sleep(300);
 
                 break;
-
             default:
             case CENTER:
-                robot.mecanumDrive.encoderDrive(0.8, 0, 0, CENTER_STRAFE_SAMPLE);
+                robot.mecanumDrive.encoderDrive(-0.8, 0, 0, CENTER_STRAFE_SAMPLE);
                 sleep(300);
 
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_3_CENTER);
+                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CENTER_KNOCK_OFF);
                 sleep(300);
 
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_3_CENTER_BACK);
-                sleep(300);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+                sleep(1000);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
 
-                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_WALL);
-                sleep(300);
-
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_4_CENTER);
-                sleep(300);
-
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, CENTER_BACK_UP);
+//                sleep(300);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_WALL);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, CENTER_TO_WALL);
+//                sleep(300);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_DEPOT);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_DEPOT);
+//                sleep(300);
+//
+//                robot.intake.dumpMarker();
+//
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, TO_CRATER);
+//                sleep(300);
                 break;
-
 
             case RIGHT:
-                robot.mecanumDrive.encoderDrive(0.8, 0, 0, RIGHT_STRAFE_SAMPLE);
+                robot.mecanumDrive.encoderDrive(-0.8, 0, 0, RIGHT_STRAFE_SAMPLE);
                 sleep(300);
 
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_3_RIGHT);
+                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, RIGHT_KNOCK_OFF);
                 sleep(300);
 
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_3_RIGHT_BACK);
-                sleep(300);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+                sleep(1000);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
 
-                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_WALL);
-                sleep(300);
-
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_4_RIGHT);
-                sleep(300);
-
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, RIGHT_BACK_UP);
+//                sleep(300);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_WALL);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, RIGHT_TO_WALL);
+//                sleep(300);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_DEPOT);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_DEPOT);
+//                sleep(300);
+//
+//                robot.intake.dumpMarker();
+//
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, TO_CRATER);
+//                sleep(300);
                 break;
-        }
-
-        robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_DEPOT);
-        sleep(300);
-
-        robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_5);
-        sleep(300);
-
-        robot.intake.dumpMarker();
-
-        robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEG_6);
-
-        while (opModeIsActive()) {
-            // pass to display telemetry
         }
     }
 }

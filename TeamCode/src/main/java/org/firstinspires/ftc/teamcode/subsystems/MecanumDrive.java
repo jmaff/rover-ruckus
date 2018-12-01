@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.util.Log;
+
 import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
@@ -30,7 +32,7 @@ public class MecanumDrive implements Subsystem {
     private double lastHeading = 0;
     private double integratedZAxis = 0;
 
-    public MecanumDrive(OpMode opMode) {
+    public MecanumDrive(OpMode opMode, boolean auto) {
         this.opMode = opMode;
 
         leftFront = opMode.hardwareMap.get(DcMotor.class, "FL");
@@ -38,11 +40,15 @@ public class MecanumDrive implements Subsystem {
         rightRear = opMode.hardwareMap.get(DcMotor.class, "BR");
         rightFront = opMode.hardwareMap.get(DcMotor.class, "FR");
 
-        imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
+        try {
+            imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        imu.initialize(parameters);
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            imu.initialize(parameters);
+        } catch (Exception e) {
+            Log.w("MECANUM DRIVE", e);
+        }
 
         resetEncoders();
 

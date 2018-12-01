@@ -22,7 +22,7 @@ import java.util.List;
 public class SplineFollowTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive drive = new MecanumDrive(this);
+        MecanumDrive drive = new MecanumDrive(this, false);
         Trajectory trajectory;
         try {
             trajectory = AssetsTrajectoryLoader.load("test");

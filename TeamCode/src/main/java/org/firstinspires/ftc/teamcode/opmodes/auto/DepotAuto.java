@@ -22,7 +22,7 @@ public class DepotAuto extends LinearOpMode {
 
     public static int LIFT_DOWN = 14200;
     // strafe off hook
-    public static int STRAFE_OFF_HOOK = 125;
+    public static int STRAFE_OFF_HOOK = 100;
     // move forward away from lander
     public static int TO_TAPE = 250;
 
@@ -33,27 +33,27 @@ public class DepotAuto extends LinearOpMode {
     // turns based on gold position
     public static int LEFT_STRAFE_SAMPLE = 335;
     public static int CENTER_STRAFE_SAMPLE = 200;
-    public static int RIGHT_STRAFE_SAMPLE = 700;
+    public static int RIGHT_STRAFE_SAMPLE = 650;
 
     public static int LEFT_KNOCK_OFF = 700;
     public static int CENTER_KNOCK_OFF = 850;
-    public static int RIGHT_KNOCK_OFF = 400;
+    public static int RIGHT_KNOCK_OFF = 800;
 
     /*
      * TEAM MARKER
      */
-    public static int LEFT_STRAFE_TO_WALL = 0;
+    public static int LEFT_STRAFE_TO_WALL = 100;
     public static int CENTER_STRAFE_TO_WALL = 450;
-    public static int RIGHT_STRAFE_TO_WALL = 0;
+    public static int RIGHT_STRAFE_TO_WALL = 1100;
 
-    public static int LEFT__TO_DUMP = 100;
+    public static int LEFT__TO_DUMP = 150;
     public static int CENTER_TO_DUMP = 150;
-    public static int RIGHT_TO_DUMP = 0;
+    public static int RIGHT_TO_DUMP = 200;
 
     public static double TURN_TO_DUMP = -25;
 
-    public static int LEFT_BACK_UP = 200;
-    public static int CENTER_BACK_UP = 0;
+    public static int LEFT_BACK_UP = 300;
+    public static int CENTER_BACK_UP = 300;
     public static int RIGHT_BACK_UP = 0;
 
     /*
@@ -62,8 +62,8 @@ public class DepotAuto extends LinearOpMode {
 
     public static double TURN_AROUND = 115;
 
-    public static int LEFT_TO_CRATER = 1450;
-    public static int CENTER_TO_CRATER = 1550;
+    public static int LEFT_TO_CRATER = 1250;
+    public static int CENTER_TO_CRATER = 1250;
     public static int RIGHT_TO_CRATER = 1550;
 
     private Robot robot;
@@ -142,7 +142,9 @@ public class DepotAuto extends LinearOpMode {
 
                 robot.mecanumDrive.encoderDrive(X_OFFSET_SPEED, FORWARD_SPEED, 0, LEFT_TO_CRATER);
 
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+                sleep(1000);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
                 break;
 
             default:
@@ -168,17 +170,19 @@ public class DepotAuto extends LinearOpMode {
 
                 robot.mecanumDrive.encoderDrive(X_OFFSET_SPEED, FORWARD_SPEED, 0, CENTER_TO_CRATER);
 
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+                sleep(1000);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
                 break;
 
             case RIGHT:
-                robot.mecanumDrive.encoderDrive(-0.8, 0, 0, CENTER_STRAFE_SAMPLE);
+                robot.mecanumDrive.encoderDrive(-0.8, 0, 0, RIGHT_STRAFE_SAMPLE);
                 sleep(300);
 
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CENTER_KNOCK_OFF);
+                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, RIGHT_KNOCK_OFF);
                 sleep(300);
 
-                robot.mecanumDrive.encoderDrive(0.8, 0, 0, CENTER_STRAFE_TO_WALL);
+                robot.mecanumDrive.encoderDrive(0.8, 0, 0, RIGHT_STRAFE_TO_WALL);
                 sleep(300);
 
                 robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_DUMP);
@@ -193,12 +197,10 @@ public class DepotAuto extends LinearOpMode {
 
                 robot.mecanumDrive.encoderDrive(X_OFFSET_SPEED, FORWARD_SPEED, 0, RIGHT_TO_CRATER);
 
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+                sleep(1000);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
                 break;
-        }
-
-        while (opModeIsActive()) {
-            // pass to display telemetry
         }
     }
 }

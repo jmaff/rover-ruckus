@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.ftc12835.library.util.StickyGamepad;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,7 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Robot;
 @TeleOp(name = "Main TeleOp", group = "COMPETITION")
 public class MainTeleOp extends OpMode {
 
-    private static double OUTTAKE_UP = 1.0;
+    private static double OUTTAKE_UP = 0.7;
     private static double OUTTAKE_DOWN = 0.0;
 
 
@@ -31,13 +30,13 @@ public class MainTeleOp extends OpMode {
     @Override
     public void loop() {
         // drive
-        robot.mecanumDrive.cartesianDrive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+        robot.mecanumDrive.cartesianDrive(gamepad1.left_stick_x, -gamepad1.left_stick_y, 0.6 * gamepad1.right_stick_x);
 
         // intake extender controls
         if (gamepad2.dpad_left) {
-            robot.intake.setExtenderPower(-1.0);
-        } else if (gamepad2.dpad_right) {
             robot.intake.setExtenderPower(1.0);
+        } else if (gamepad2.dpad_right) {
+            robot.intake.setExtenderPower(-1.0);
         } else {
             robot.intake.setExtenderPower(0.0);
         }
@@ -47,39 +46,39 @@ public class MainTeleOp extends OpMode {
             robot.intake.setIntakePower(-1.0);
         } else if (gamepad2.right_bumper) {
             robot.intake.setIntakePower(1.0);
-        } else {
+        } else if (gamepad2.start){
             robot.intake.setIntakePower(0.0);
         }
 
         // mineral lift controls
-        if (gamepad2.y) {
+        if (gamepad1.left_trigger != 0) {
            robot.outtake.setLiftPower(1.0);
-        } else if (gamepad2.a) {
+        } else if (gamepad1.right_trigger != 0) {
             robot.outtake.setLiftPower(-1.0);
         } else {
             robot.outtake.setLiftPower(0.0);
         }
 
         // intake state controls
-        if (gamepad2.b) {
-            robot.intake.setIntakePivotPosition(Intake.PivotPosition.DEPLOY);
-        } else if (gamepad2.x) {
-            robot.intake.setIntakePivotPosition(Intake.PivotPosition.STOW);
-        } else if (gamepad2.start) {
-            robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+        if (gamepad2.x) {
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+        } else if (gamepad2.b) {
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
+        } else {
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
         }
 
 //        if (gamepad2.b && !bPrev) {
-//            if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.MIDDLE) {
-//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DEPLOY);
-//            } else if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.STOW) {
-//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+//            if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.OFF) {
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+//            } else if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.UP) {
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
 //            }
 //        } else if (gamepad2.x && !xPrev) {
-//            if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.MIDDLE) {
-//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.STOW);
-//            } else if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.DEPLOY) {
-//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+//            if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.OFF) {
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
+//            } else if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.DOWN) {
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
 //            }
 //        }
 
