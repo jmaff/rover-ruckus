@@ -1,19 +1,32 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.text.method.Touch;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Config
 public class Intake implements Subsystem {
 
     private DcMotor extenderMotor;
     private DcMotor intakeMotor;
-    public CRServo pivotServoLeft;
-    public CRServo pivotServoRight;
+    public Servo pivotServoLeft;
+    public Servo pivotServoRight;
+
+    private DigitalChannel intakeLimit;
+
+    DistanceSensor distance1;
+    DistanceSensor distance2;
 
     private double extenderPower;
     private double intakePower;
@@ -23,27 +36,39 @@ public class Intake implements Subsystem {
     private OpMode opMode;
     private PivotPosition currentPivotPosition = PivotPosition.UP;
 
-    public static double LEFT_STOW = 1.00;
-    public static double LEFT_DEPLOY= 0.00;
-    public static double RIGHT_STOW = 0.00;
-    public static double RIGHT_DEPLOY = 1.00;
+    public static double LEFT_DOWN = 1.00;
+    public static double LEFT_UP= 0.30;
+    public static double RIGHT_DOWN = 0.00;
+    public static double RIGHT_UP = 0.70;
 
-    public static double LEFT_MIDDLE = 0.30;
-    public static double RIGHT_MIDDLE = 0.70;
+    public static double LEFT_MIDDLE = 0.70;
+    public static double RIGHT_MIDDLE = 0.30;
 
     public enum PivotPosition {
         UP,
-        OFF,
+        MIDDLE,
         DOWN
+    }
+
+    public enum MineralStatus {
+        TWO,
+        ONE,
+        NONE
     }
 
     public Intake(OpMode opMode) {
         this.opMode = opMode;
 
         extenderMotor = opMode.hardwareMap.get(DcMotor.class, "EXTENDER");
+        extenderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         intakeMotor = opMode.hardwareMap.get(DcMotor.class, "INTAKE");
-        pivotServoLeft = opMode.hardwareMap.get(CRServo.class, "PIVOT_LEFT");
-        pivotServoRight = opMode.hardwareMap.get(CRServo.class, "PIVOT_RIGHT");
+        pivotServoLeft = opMode.hardwareMap.get(Servo.class, "PIVOT_LEFT");
+        pivotServoRight = opMode.hardwareMap.get(Servo.class, "PIVOT_RIGHT");
+        intakeLimit = opMode.hardwareMap.get(DigitalChannel.class, "INTAKE_LIMIT");
+
+        distance1 = opMode.hardwareMap.get(DistanceSensor.class, "MINERAL_1");
+        distance2 = opMode.hardwareMap.get(DistanceSensor.class, "MINERAL_2");
 
         setIntakePivotPosition(PivotPosition.UP);
     }
@@ -72,16 +97,16 @@ public class Intake implements Subsystem {
         currentPivotPosition = pivotPosition;
         switch (pivotPosition) {
             case UP:
-                setLeftPosition(1.00);
-                setRightPosition(-1.00);
+                setLeftPosition(LEFT_UP);
+                setRightPosition(RIGHT_UP);
                 break;
-            case OFF:
-                setLeftPosition(0);
-                setRightPosition(0);
+            case MIDDLE:
+                setLeftPosition(LEFT_MIDDLE);
+                setRightPosition(RIGHT_MIDDLE);
                 break;
             case DOWN:
-                setLeftPosition(-1.00);
-                setRightPosition(1.00);
+                setLeftPosition(LEFT_DOWN);
+                setRightPosition(RIGHT_DOWN);
                 break;
         }
     }
@@ -91,8 +116,28 @@ public class Intake implements Subsystem {
         setIntakePivotPosition(PivotPosition.DOWN);
         linearOpMode.sleep(900);
         setIntakePivotPosition(PivotPosition.UP);
-        linearOpMode.sleep(900);
-        setIntakePivotPosition(PivotPosition.OFF);
+    }
+
+    public boolean getIntakeLimit() {
+        return !intakeLimit.getState();
+    }
+
+    public double getUpperDistance() {
+        return distance1.getDistance(DistanceUnit.CM);
+    }
+
+    public double getLowerDistance() {
+        return distance2.getDistance(DistanceUnit.CM);
+    }
+
+    public MineralStatus getMineralStatus() {
+        if (getLowerDistance() < 5.7 && getUpperDistance() < 5.7) {
+            return MineralStatus.TWO;
+        } else if (getLowerDistance() < 5.7 || getUpperDistance() < 5.7) {
+            return MineralStatus.ONE;
+        } else {
+            return MineralStatus.NONE;
+        }
     }
 
 
@@ -101,7 +146,7 @@ public class Intake implements Subsystem {
         extenderMotor.setPower(extenderPower);
         intakeMotor.setPower(intakePower);
 
-        pivotServoLeft.setPower(leftPosition);
-        pivotServoRight.setPower(rightPosition);
+        pivotServoLeft.setPosition(leftPosition);
+        pivotServoRight.setPosition(rightPosition);
     }
 }

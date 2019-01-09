@@ -20,7 +20,7 @@ public class CraterAuto extends LinearOpMode {
      * DEPLOYING
      */
 
-    public static int LIFT_DOWN = 14200;
+    public static int LIFT_DOWN = 14700;
     // strafe off hook
     public static int STRAFE_OFF_HOOK = 100;
     // move forward away from lander
@@ -118,7 +118,7 @@ public class CraterAuto extends LinearOpMode {
 
                 robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
                 sleep(1000);
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
 
 //                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, LEFT_BACK_UP);
 //                sleep(300);
@@ -151,7 +151,7 @@ public class CraterAuto extends LinearOpMode {
 
                 robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
                 sleep(1000);
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
 
 //                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, CENTER_BACK_UP);
 //                sleep(300);
@@ -183,7 +183,7 @@ public class CraterAuto extends LinearOpMode {
 
                 robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
                 sleep(1000);
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
 
 //                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, RIGHT_BACK_UP);
 //                sleep(300);

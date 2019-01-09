@@ -14,9 +14,17 @@ public class MainTeleOp extends OpMode {
     private static double OUTTAKE_UP = 0.7;
     private static double OUTTAKE_DOWN = 0.0;
 
-
     private boolean bPrev = false;
     private boolean xPrev = false;
+
+    // automatic dumping variables
+    private boolean intakePrev = false;
+    private long timeIntakeDumped = 0;
+    private boolean dumping = false;
+
+    // mineral detection variables
+    private Intake.MineralStatus prevMineralStatus = Intake.MineralStatus.NONE;
+    long timeDetected = 0;
 
     private Robot robot;
 
@@ -59,14 +67,46 @@ public class MainTeleOp extends OpMode {
             robot.outtake.setLiftPower(0.0);
         }
 
+        if (!gamepad2.x && !gamepad2.b) {
+            if (robot.intake.getIntakeLimit() && !intakePrev) {
+                dumping = true;
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
+                timeIntakeDumped = System.currentTimeMillis();
+            }
+
+            if (dumping && System.currentTimeMillis() - timeIntakeDumped >= 900) {
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+                dumping = false;
+                timeIntakeDumped = 0;
+            }
+        }
+
+        intakePrev = robot.intake.getIntakeLimit();
+
         // intake state controls
         if (gamepad2.x) {
-            robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
-        } else if (gamepad2.b) {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
-        } else {
-            robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
+        } else if (gamepad2.b) {
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+            robot.intake.setIntakePower(-1.0);
+        } else if (gamepad2.dpad_left && !dumping) {
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+            robot.intake.setIntakePower(0.0);
         }
+
+        Intake.MineralStatus status = robot.intake.getMineralStatus();
+
+        if (status != prevMineralStatus && status == Intake.MineralStatus.TWO) {
+            timeDetected = System.currentTimeMillis();
+        }
+
+        if (timeDetected != 0 && System.currentTimeMillis() - timeDetected >= 600) {
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+            robot.intake.setIntakePower(0.0);
+            timeDetected = 0;
+        }
+
+        prevMineralStatus = status;
 
 //        if (gamepad2.b && !bPrev) {
 //            if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.OFF) {
@@ -97,6 +137,8 @@ public class MainTeleOp extends OpMode {
         } else {
             robot.latchingLift.setLiftPower(0.0);
         }
+
+        telemetry.addData("Intake Limit: ", robot.intake.getIntakeLimit());
 
         robot.update();
 

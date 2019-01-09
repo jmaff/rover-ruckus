@@ -20,7 +20,7 @@ public class DepotAuto extends LinearOpMode {
      * DEPLOYING
      */
 
-    public static int LIFT_DOWN = 14200;
+    public static int LIFT_DOWN = 14700;
     // strafe off hook
     public static int STRAFE_OFF_HOOK = 100;
     // move forward away from lander
@@ -60,11 +60,11 @@ public class DepotAuto extends LinearOpMode {
      * PARK
      */
 
-    public static double TURN_AROUND = 115;
+    public static double TURN_AROUND = 110;
 
-    public static int LEFT_TO_CRATER = 1250;
-    public static int CENTER_TO_CRATER = 1250;
-    public static int RIGHT_TO_CRATER = 1550;
+    public static int LEFT_TO_CRATER = 1100;
+    public static int CENTER_TO_CRATER = 1110;
+    public static int RIGHT_TO_CRATER = 1400;
 
     private Robot robot;
     private Vision.GoldPostion goldPostion;
@@ -144,7 +144,7 @@ public class DepotAuto extends LinearOpMode {
 
                 robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
                 sleep(1000);
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
                 break;
 
             default:
@@ -172,7 +172,7 @@ public class DepotAuto extends LinearOpMode {
 
                 robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
                 sleep(1000);
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
                 break;
 
             case RIGHT:
@@ -199,7 +199,7 @@ public class DepotAuto extends LinearOpMode {
 
                 robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
                 sleep(1000);
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
                 break;
         }
     }
