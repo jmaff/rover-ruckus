@@ -20,11 +20,13 @@ public class DepotAuto extends LinearOpMode {
      * DEPLOYING
      */
 
-    public static int LIFT_DOWN = 14700;
+    public static int LIFT_DOWN = 14200;
     // strafe off hook
     public static int STRAFE_OFF_HOOK = 100;
     // move forward away from lander
     public static int TO_TAPE = 250;
+
+    public static int EXTEND_TO_DEPOT = 2400;
 
     /*
      * SAMPLING
@@ -119,88 +121,92 @@ public class DepotAuto extends LinearOpMode {
         robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_TAPE);
         sleep(300);
 
-        switch (goldPostion) {
-            case LEFT:
-                robot.mecanumDrive.encoderDrive(0.8, 0, 0, LEFT_STRAFE_SAMPLE);
-                sleep(300);
+        robot.intake.runExtenderToPosition(-1.0, EXTEND_TO_DEPOT);
 
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEFT_KNOCK_OFF);
-                sleep(300);
+        robot.intake.dumpMarker();
 
-                robot.mecanumDrive.encoderDrive(0.8, 0, 0, LEFT_STRAFE_TO_WALL);
-                sleep(300);
-
-                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_DUMP);
-
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEFT__TO_DUMP);
-
-                robot.intake.dumpMarker();
-
-                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, LEFT_BACK_UP);
-
-                robot.mecanumDrive.turnToAngle(TURN_AROUND_SPEED, TURN_AROUND);
-
-                robot.mecanumDrive.encoderDrive(X_OFFSET_SPEED, FORWARD_SPEED, 0, LEFT_TO_CRATER);
-
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
-                sleep(1000);
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
-                break;
-
-            default:
-            case CENTER:
-                robot.mecanumDrive.encoderDrive(-0.8, 0, 0, CENTER_STRAFE_SAMPLE);
-                sleep(300);
-
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CENTER_KNOCK_OFF);
-                sleep(300);
-
-                robot.mecanumDrive.encoderDrive(0.8, 0, 0, CENTER_STRAFE_TO_WALL);
-                sleep(300);
-
-                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_DUMP);
-
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CENTER_TO_DUMP);
-
-                robot.intake.dumpMarker();
-
-                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, CENTER_BACK_UP);
-
-                robot.mecanumDrive.turnToAngle(TURN_AROUND_SPEED, TURN_AROUND);
-
-                robot.mecanumDrive.encoderDrive(X_OFFSET_SPEED, FORWARD_SPEED, 0, CENTER_TO_CRATER);
-
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
-                sleep(1000);
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
-                break;
-
-            case RIGHT:
-                robot.mecanumDrive.encoderDrive(-0.8, 0, 0, RIGHT_STRAFE_SAMPLE);
-                sleep(300);
-
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, RIGHT_KNOCK_OFF);
-                sleep(300);
-
-                robot.mecanumDrive.encoderDrive(0.8, 0, 0, RIGHT_STRAFE_TO_WALL);
-                sleep(300);
-
-                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_DUMP);
-
-                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, RIGHT_TO_DUMP);
-
-                robot.intake.dumpMarker();
-
-                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, RIGHT_BACK_UP);
-
-                robot.mecanumDrive.turnToAngle(TURN_AROUND_SPEED, TURN_AROUND);
-
-                robot.mecanumDrive.encoderDrive(X_OFFSET_SPEED, FORWARD_SPEED, 0, RIGHT_TO_CRATER);
-
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
-                sleep(1000);
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
-                break;
-        }
+//        switch (goldPostion) {
+//            case LEFT:
+//                robot.mecanumDrive.encoderDrive(0.8, 0, 0, LEFT_STRAFE_SAMPLE);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEFT_KNOCK_OFF);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0.8, 0, 0, LEFT_STRAFE_TO_WALL);
+//                sleep(300);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_DUMP);
+//
+//                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, LEFT__TO_DUMP);
+//
+//                robot.intake.dumpMarker();
+//
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, LEFT_BACK_UP);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_AROUND_SPEED, TURN_AROUND);
+//
+//                robot.mecanumDrive.encoderDrive(X_OFFSET_SPEED, FORWARD_SPEED, 0, LEFT_TO_CRATER);
+//
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+//                sleep(1000);
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+//                break;
+//
+//            default:
+//            case CENTER:
+//                robot.mecanumDrive.encoderDrive(-0.8, 0, 0, CENTER_STRAFE_SAMPLE);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CENTER_KNOCK_OFF);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0.8, 0, 0, CENTER_STRAFE_TO_WALL);
+//                sleep(300);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_DUMP);
+//
+//                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CENTER_TO_DUMP);
+//
+//                robot.intake.dumpMarker();
+//
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, CENTER_BACK_UP);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_AROUND_SPEED, TURN_AROUND);
+//
+//                robot.mecanumDrive.encoderDrive(X_OFFSET_SPEED, FORWARD_SPEED, 0, CENTER_TO_CRATER);
+//
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+//                sleep(1000);
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+//                break;
+//
+//            case RIGHT:
+//                robot.mecanumDrive.encoderDrive(-0.8, 0, 0, RIGHT_STRAFE_SAMPLE);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, RIGHT_KNOCK_OFF);
+//                sleep(300);
+//
+//                robot.mecanumDrive.encoderDrive(0.8, 0, 0, RIGHT_STRAFE_TO_WALL);
+//                sleep(300);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_SPEED, TURN_TO_DUMP);
+//
+//                robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, RIGHT_TO_DUMP);
+//
+//                robot.intake.dumpMarker();
+//
+//                robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, RIGHT_BACK_UP);
+//
+//                robot.mecanumDrive.turnToAngle(TURN_AROUND_SPEED, TURN_AROUND);
+//
+//                robot.mecanumDrive.encoderDrive(X_OFFSET_SPEED, FORWARD_SPEED, 0, RIGHT_TO_CRATER);
+//
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+//                sleep(1000);
+//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+//                break;
+//        }
     }
 }

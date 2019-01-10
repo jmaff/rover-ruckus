@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -24,7 +25,7 @@ public class MecanumDrive implements Subsystem {
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
     private DcMotor leftFront, leftRear, rightRear, rightFront;
-    private BNO055IMU imu;
+    private ModernRoboticsI2cGyro gyro;
     private double[] powers = new double[4];
 
     private OpMode opMode;
@@ -40,15 +41,8 @@ public class MecanumDrive implements Subsystem {
         rightRear = opMode.hardwareMap.get(DcMotor.class, "BR");
         rightFront = opMode.hardwareMap.get(DcMotor.class, "FR");
 
-        try {
-            imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
-
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-            imu.initialize(parameters);
-        } catch (Exception e) {
-            Log.w("MECANUM DRIVE", e);
-        }
+        gyro = opMode.hardwareMap.get(ModernRoboticsI2cGyro.class, "GYRO");
+        gyro.calibrate();
 
         resetEncoders();
 
@@ -150,21 +144,21 @@ public class MecanumDrive implements Subsystem {
         setMotorPowers(0 , 0, 0, 0);
     }
 
-    private void updateIntegratedZAxis() {
-        double newHeading = imu.getAngularOrientation().firstAngle;
-        double deltaHeading = newHeading - lastHeading;
-        if (deltaHeading < -180) {
-            deltaHeading += 360;
-        } else if(deltaHeading >= 180) {
-            deltaHeading -= 360;
-        }
-
-        integratedZAxis += deltaHeading;
-        lastHeading = newHeading;
-    }
+//    private void updateIntegratedZAxis() {
+//        double newHeading = imu.getAngularOrientation().firstAngle;
+//        double deltaHeading = newHeading - lastHeading;
+//        if (deltaHeading < -180) {
+//            deltaHeading += 360;
+//        } else if(deltaHeading >= 180) {
+//            deltaHeading -= 360;
+//        }
+//
+//        integratedZAxis += deltaHeading;
+//        lastHeading = newHeading;
+//    }
 
     public double getHeading() {
-        return integratedZAxis;
+        return gyro.getHeading();
     }
 
     @Override
@@ -174,6 +168,6 @@ public class MecanumDrive implements Subsystem {
         leftRear.setPower(powers[2]);
         rightRear.setPower(powers[3]);
 
-        updateIntegratedZAxis();
+//        updateIntegratedZAxis();
     }
 }

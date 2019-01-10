@@ -62,6 +62,8 @@ public class Intake implements Subsystem {
         extenderMotor = opMode.hardwareMap.get(DcMotor.class, "EXTENDER");
         extenderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        resetExtenderEncoder();
+
         intakeMotor = opMode.hardwareMap.get(DcMotor.class, "INTAKE");
         pivotServoLeft = opMode.hardwareMap.get(Servo.class, "PIVOT_LEFT");
         pivotServoRight = opMode.hardwareMap.get(Servo.class, "PIVOT_RIGHT");
@@ -71,6 +73,11 @@ public class Intake implements Subsystem {
         distance2 = opMode.hardwareMap.get(DistanceSensor.class, "MINERAL_2");
 
         setIntakePivotPosition(PivotPosition.UP);
+    }
+
+    public void resetExtenderEncoder() {
+        extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setExtenderPower(double extenderPower) {
@@ -111,11 +118,28 @@ public class Intake implements Subsystem {
         }
     }
 
+    public int getExtenderPosition() {
+        return extenderMotor.getCurrentPosition();
+    }
+
     public void dumpMarker() {
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
         setIntakePivotPosition(PivotPosition.DOWN);
         linearOpMode.sleep(900);
         setIntakePivotPosition(PivotPosition.UP);
+    }
+
+    public void runExtenderToPosition(double power, int counts) {
+        LinearOpMode linearOpMode = (LinearOpMode) opMode;
+        setExtenderPower(power);
+
+        while (linearOpMode.opModeIsActive()) {
+            if (Math.abs(getExtenderPosition()) > counts) {
+                break;
+            }
+        }
+
+        setExtenderPower(0.0);
     }
 
     public boolean getIntakeLimit() {

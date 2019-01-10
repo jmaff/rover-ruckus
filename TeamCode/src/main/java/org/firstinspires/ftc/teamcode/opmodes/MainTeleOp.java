@@ -41,9 +41,9 @@ public class MainTeleOp extends OpMode {
         robot.mecanumDrive.cartesianDrive(gamepad1.left_stick_x, -gamepad1.left_stick_y, 0.6 * gamepad1.right_stick_x);
 
         // intake extender controls
-        if (gamepad2.dpad_left) {
+        if (gamepad2.dpad_right) {
             robot.intake.setExtenderPower(1.0);
-        } else if (gamepad2.dpad_right) {
+        } else if (gamepad2.dpad_left) {
             robot.intake.setExtenderPower(-1.0);
         } else {
             robot.intake.setExtenderPower(0.0);
@@ -68,14 +68,16 @@ public class MainTeleOp extends OpMode {
         }
 
         if (!gamepad2.x && !gamepad2.b) {
-            if (robot.intake.getIntakeLimit() && !intakePrev) {
+            if (robot.intake.getIntakeLimit() && !intakePrev && !dumping) {
                 dumping = true;
+                robot.intake.setIntakePower(-1.0);
                 robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
                 timeIntakeDumped = System.currentTimeMillis();
             }
 
             if (dumping && System.currentTimeMillis() - timeIntakeDumped >= 900) {
                 robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+                robot.intake.setIntakePower(0.0);
                 dumping = false;
                 timeIntakeDumped = 0;
             }
@@ -84,12 +86,12 @@ public class MainTeleOp extends OpMode {
         intakePrev = robot.intake.getIntakeLimit();
 
         // intake state controls
-        if (gamepad2.x) {
+        if (gamepad2.b) {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
-        } else if (gamepad2.b) {
+        } else if (gamepad2.x) {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
             robot.intake.setIntakePower(-1.0);
-        } else if (gamepad2.dpad_left && !dumping) {
+        } else if (gamepad2.dpad_right && !dumping) {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
             robot.intake.setIntakePower(0.0);
         }
@@ -100,9 +102,8 @@ public class MainTeleOp extends OpMode {
             timeDetected = System.currentTimeMillis();
         }
 
-        if (timeDetected != 0 && System.currentTimeMillis() - timeDetected >= 600) {
+        if (timeDetected != 0 && System.currentTimeMillis() - timeDetected >= 900) {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
-            robot.intake.setIntakePower(0.0);
             timeDetected = 0;
         }
 
@@ -138,7 +139,7 @@ public class MainTeleOp extends OpMode {
             robot.latchingLift.setLiftPower(0.0);
         }
 
-        telemetry.addData("Intake Limit: ", robot.intake.getIntakeLimit());
+        telemetry.addData("Extender Position: ", robot.intake.getExtenderPosition());
 
         robot.update();
 
