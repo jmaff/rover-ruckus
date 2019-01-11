@@ -140,6 +140,7 @@ public class MainTeleOp extends OpMode {
         }
 
         telemetry.addData("Extender Position: ", robot.intake.getExtenderPosition());
+        telemetry.addData("Heading: ", robot.mecanumDrive.getHeading());
 
         robot.update();
 

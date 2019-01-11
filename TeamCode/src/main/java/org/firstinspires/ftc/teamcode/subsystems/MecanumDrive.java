@@ -11,7 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -43,6 +45,10 @@ public class MecanumDrive implements Subsystem {
 
         gyro = opMode.hardwareMap.get(ModernRoboticsI2cGyro.class, "GYRO");
         gyro.calibrate();
+
+        while (gyro.isCalibrating())  {
+          // pass
+        }
 
         resetEncoders();
 
@@ -158,7 +164,7 @@ public class MecanumDrive implements Subsystem {
 //    }
 
     public double getHeading() {
-        return gyro.getHeading();
+        return gyro.getIntegratedZValue();
     }
 
     @Override

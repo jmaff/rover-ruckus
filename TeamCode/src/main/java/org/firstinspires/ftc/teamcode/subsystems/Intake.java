@@ -142,6 +142,19 @@ public class Intake implements Subsystem {
         setExtenderPower(0.0);
     }
 
+    public void retractIntakeExtender() {
+        LinearOpMode linearOpMode = (LinearOpMode) opMode;
+        setExtenderPower(1.0);
+
+        while (linearOpMode.opModeIsActive()) {
+            if (getIntakeLimit()) {
+                break;
+            }
+        }
+
+        setExtenderPower(0.0);
+    }
+
     public boolean getIntakeLimit() {
         return !intakeLimit.getState();
     }

@@ -24,9 +24,13 @@ public class DepotAuto extends LinearOpMode {
     // strafe off hook
     public static int STRAFE_OFF_HOOK = 100;
     // move forward away from lander
-    public static int TO_TAPE = 250;
+    public static int TO_TAPE = 220;
 
     public static int EXTEND_TO_DEPOT = 2400;
+
+    public static double LEFT_TURN_SAMPLE = 5;
+    public static double CENTER_TURN_SAMPLE = 0;
+    public static double RIGHT_TURN_SAMPLE = 0;
 
     /*
      * SAMPLING
@@ -124,6 +128,27 @@ public class DepotAuto extends LinearOpMode {
         robot.intake.runExtenderToPosition(-1.0, EXTEND_TO_DEPOT);
 
         robot.intake.dumpMarker();
+
+        robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+
+
+        robot.intake.retractIntakeExtender();
+
+
+        switch (goldPostion) {
+            case LEFT:
+                robot.mecanumDrive.turnToAngle(TURN_SPEED, LEFT_TURN_SAMPLE);
+                break;
+            default:
+            case CENTER:
+                robot.mecanumDrive.turnToAngle(TURN_SPEED, CENTER_TURN_SAMPLE);
+                break;
+            case RIGHT:
+                robot.mecanumDrive.turnToAngle(TURN_SPEED, RIGHT_TURN_SAMPLE);
+                break;
+        }
+
+
 
 //        switch (goldPostion) {
 //            case LEFT:
