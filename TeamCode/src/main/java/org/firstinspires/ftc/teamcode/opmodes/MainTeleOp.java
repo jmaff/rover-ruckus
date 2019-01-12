@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 @Config
@@ -125,9 +126,9 @@ public class MainTeleOp extends OpMode {
 
         // outtake controls
         if (gamepad2.dpad_up) {
-            robot.outtake.setOuttakePosition(OUTTAKE_UP);
+            robot.outtake.setOuttakePosition(Outtake.OuttakePosition.UP);
         } else if (gamepad2.dpad_down) {
-            robot.outtake.setOuttakePosition(OUTTAKE_DOWN);
+            robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
         }
 
         // latching lift controls

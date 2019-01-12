@@ -146,8 +146,14 @@ public class Intake implements Subsystem {
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
         setExtenderPower(1.0);
 
+        long start = System.currentTimeMillis();
+
         while (linearOpMode.opModeIsActive()) {
             if (getIntakeLimit()) {
+                break;
+            }
+
+            if (System.currentTimeMillis() - start >= 2500) {
                 break;
             }
         }
