@@ -124,7 +124,7 @@ public class Intake implements Subsystem {
 
     public void dumpMarker() {
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
-        setIntakePivotPosition(PivotPosition.DOWN);
+        setIntakePivotPosition(PivotPosition.MIDDLE);
         linearOpMode.sleep(900);
         setIntakePivotPosition(PivotPosition.UP);
     }
@@ -135,6 +135,19 @@ public class Intake implements Subsystem {
 
         while (linearOpMode.opModeIsActive()) {
             if (Math.abs(getExtenderPosition()) > counts) {
+                break;
+            }
+        }
+
+        setExtenderPower(0.0);
+    }
+
+    public void retractExtenderToPosition(double power, int counts) {
+        LinearOpMode linearOpMode = (LinearOpMode) opMode;
+        setExtenderPower(power);
+
+        while (linearOpMode.opModeIsActive()) {
+            if (Math.abs(getExtenderPosition()) < counts) {
                 break;
             }
         }

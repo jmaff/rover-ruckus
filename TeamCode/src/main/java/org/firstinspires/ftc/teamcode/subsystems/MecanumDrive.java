@@ -6,6 +6,7 @@ import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -28,6 +29,7 @@ public class MecanumDrive implements Subsystem {
 
     private DcMotor leftFront, leftRear, rightRear, rightFront;
     private ModernRoboticsI2cGyro gyro;
+    private RevBlinkinLedDriver blinkin;
     private double[] powers = new double[4];
 
     private OpMode opMode;
@@ -42,6 +44,9 @@ public class MecanumDrive implements Subsystem {
         leftRear = opMode.hardwareMap.get(DcMotor.class, "BL");
         rightRear = opMode.hardwareMap.get(DcMotor.class, "BR");
         rightFront = opMode.hardwareMap.get(DcMotor.class, "FR");
+
+        blinkin = opMode.hardwareMap.get(RevBlinkinLedDriver.class, "BLINKIN");
+        setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_BREATH_SLOW);
 
         gyro = opMode.hardwareMap.get(ModernRoboticsI2cGyro.class, "GYRO");
         gyro.calibrate();
@@ -167,6 +172,9 @@ public class MecanumDrive implements Subsystem {
         return gyro.getIntegratedZValue();
     }
 
+    public void setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
+        blinkin.setPattern(pattern);
+    }
     @Override
     public void update() {
         leftFront.setPower(powers[0]);

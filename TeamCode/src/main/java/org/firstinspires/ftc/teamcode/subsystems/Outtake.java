@@ -18,8 +18,8 @@ public class Outtake implements Subsystem {
 
     private OpMode opMode;
 
-    public static double UP = 0.50;
-    public static double DOWN = 0.90;
+    public static double UP = 0.51;
+    public static double DOWN = 0.95;
     private double pivotPosition;
 
     public enum OuttakePosition {

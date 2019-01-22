@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -22,6 +23,7 @@ public class MainTeleOp extends OpMode {
     private boolean intakePrev = false;
     private long timeIntakeDumped = 0;
     private boolean dumping = false;
+    private boolean twoMinerals = false;
 
     // mineral detection variables
     private Intake.MineralStatus prevMineralStatus = Intake.MineralStatus.NONE;
@@ -39,7 +41,7 @@ public class MainTeleOp extends OpMode {
     @Override
     public void loop() {
         // drive
-        robot.mecanumDrive.cartesianDrive(gamepad1.left_stick_x, -gamepad1.left_stick_y, 0.6 * gamepad1.right_stick_x);
+        robot.mecanumDrive.cartesianDrive(gamepad1.left_stick_x, -gamepad1.left_stick_y, 0.5 * gamepad1.right_stick_x);
 
         // intake extender controls
         if (gamepad2.dpad_right) {
@@ -62,6 +64,8 @@ public class MainTeleOp extends OpMode {
         // mineral lift controls
         if (gamepad1.left_trigger != 0) {
            robot.outtake.setLiftPower(1.0);
+           robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
+           robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         } else if (gamepad1.right_trigger != 0) {
             robot.outtake.setLiftPower(-1.0);
         } else {
@@ -89,12 +93,15 @@ public class MainTeleOp extends OpMode {
         // intake state controls
         if (gamepad2.b) {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
+            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         } else if (gamepad2.x) {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
             robot.intake.setIntakePower(-1.0);
+            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         } else if (gamepad2.dpad_right && !dumping) {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
             robot.intake.setIntakePower(0.0);
+            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         }
 
         Intake.MineralStatus status = robot.intake.getMineralStatus();
@@ -105,6 +112,7 @@ public class MainTeleOp extends OpMode {
 
         if (timeDetected != 0 && System.currentTimeMillis() - timeDetected >= 900) {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_BREATH_FAST);
             timeDetected = 0;
         }
 
@@ -127,8 +135,10 @@ public class MainTeleOp extends OpMode {
         // outtake controls
         if (gamepad2.dpad_up) {
             robot.outtake.setOuttakePosition(Outtake.OuttakePosition.UP);
+            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
         } else if (gamepad2.dpad_down) {
             robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
+            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         }
 
         // latching lift controls
@@ -136,12 +146,13 @@ public class MainTeleOp extends OpMode {
             robot.latchingLift.setLiftPower(1.0);
         } else if (gamepad1.left_bumper) {
             robot.latchingLift.setLiftPower(-1.0);
+            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER);
         } else {
             robot.latchingLift.setLiftPower(0.0);
         }
 
-        telemetry.addData("Extender Position: ", robot.intake.getExtenderPosition());
-        telemetry.addData("Heading: ", robot.mecanumDrive.getHeading());
+        telemetry.addData("Latching Lift Position: ", robot.latchingLift.getEncoderCounts());
+        telemetry.addData("Extension Position: ", robot.intake.getExtenderPosition());
 
         robot.update();
 

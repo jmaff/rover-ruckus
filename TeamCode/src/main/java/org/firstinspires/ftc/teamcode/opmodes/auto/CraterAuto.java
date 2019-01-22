@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -13,56 +14,64 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 @Autonomous(name = "Crater Auto", group = "COMPETITION")
 public class CraterAuto extends LinearOpMode {
     public static double TURN_SPEED_FAST = 0.37;
-    public static double TURN_SPEED_ADJUST = 0.27;
+    public static double TURN_SPEED_ADJUST = 0.23;
     public static double TURN_AROUND_SPEED = 0.4;
-    public static double FORWARD_SPEED = -0.7;
+    public static double FORWARD_SPEED = -0.85;
     public static double X_OFFSET_SPEED = 0.2;
 
     /*
      * DEPLOYING
      */
 
-    public static int LIFT_DOWN = 14200;
+    public static int LIFT_DOWN = 9200;
     // strafe off hook
     public static int STRAFE_OFF_HOOK = 100;
     // move forward away from lander
-    public static int TO_TAPE = 180;
+    public static int TO_TAPE = 160;
 
     /*
      * TEAM MARKER
      */
-    public static double TURN_TO_WALL = 90;
+    public static double TURN_TO_WALL = 67;
 
-    public static int TO_WALL = 400;
+    public static int TO_WALL = 900;
 
-    public static double TURN_TO_DEPOT = 110;
+    public static double TURN_TO_DEPOT = 140;
 
-    public static int TO_DEPOT = 100;
+    public static int TO_DEPOT = 400;
 
     public static int EXTEND_TO_DEPOT = 2400;
+
+    public static int BACK_DEPOT = 350;
+
+    public static double TURN_TO_RETURN = 62;
+
+    public static int TO_SAMPLE = 900;
 
     /*
      * SAMPLING
      */
-    public static double LEFT_TURN_SAMPLE = 35;
-    public static double CENTER_TURN_SAMPLE = -12;
-    public static double RIGHT_TURN_SAMPLE = -41;
+    public static double LEFT_TURN_SAMPLE = 30;
+    public static double CENTER_TURN_SAMPLE = -3;
+    public static double RIGHT_TURN_SAMPLE = -39;
 
-    public static int EXTEND_TO_SAMPLE = 1000;
+    public static int EXTEND_TO_SAMPLE = 1200;
 
-    public static double TURN_TO_SCORE = 4;
+    public static double TURN_TO_SCORE = -2;
 
     public static int BACK_TO_LANDER = 140;
 
-    public static int STRAFE_TO_SCORE = 200;
+    public static int STRAFE_TO_SCORE = 170;
 
-    public static int RAISE_TO_SCORE = 1900;
+    public static int RAISE_TO_SCORE = 1800;
 
     public static int LOWER = 70;
 
     /*
      * PARK
      */
+
+    public static int EXTEND_TO_CRATER = 2200;
 
 
     private Robot robot;
@@ -109,8 +118,11 @@ public class CraterAuto extends LinearOpMode {
 
         robot.mecanumDrive.brakeMode(true);
 
+        robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.CONFETTI);
         robot.latchingLift.runLiftToPosition(1.0, LIFT_DOWN);
         sleep(300);
+
+        robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
 
         robot.mecanumDrive.encoderDrive(0.8, 0, 0, STRAFE_OFF_HOOK);
         sleep(300);
@@ -142,14 +154,14 @@ public class CraterAuto extends LinearOpMode {
 
         robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
 
-        robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, TO_DEPOT);
+        robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, BACK_DEPOT);
         sleep(300);
 
-        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_WALL);
-        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_WALL);
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_RETURN);
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_RETURN);
         sleep(300);
 
-        robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, TO_WALL);
+        robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, TO_SAMPLE);
         sleep(300);
 
         robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
@@ -196,18 +208,21 @@ public class CraterAuto extends LinearOpMode {
 
         robot.outtake.runLiftToPosition(-1.0, RAISE_TO_SCORE);
 
+        robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
+
         robot.outtake.setOuttakePosition(Outtake.OuttakePosition.UP);
-        sleep(900);
+        sleep(1300);
 
-        robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
-        sleep(600);
+//        robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
+//        sleep(600);
+//[]
+//        robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+//
+//        robot.outtake.lowerLiftToPosition(1.0, LOWER);
+//        sleep(300);
 
-        robot.outtake.lowerLiftToPosition(1.0, LOWER);
-        sleep(300);
+        robot.intake.runExtenderToPosition(-1.0, EXTEND_TO_CRATER);
 
-
-        while (opModeIsActive()) {}
-
-
+//        robot.outtake.lowerLiftToPosition(1.0, LOWER);
     }
 }

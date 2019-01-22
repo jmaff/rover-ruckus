@@ -11,12 +11,13 @@ import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 @Config
-@Autonomous(name = "Depot Auto", group = "COMPETITION")
-public class DepotAuto extends LinearOpMode {
+@Autonomous(name = "Crater (DOUBLE) Auto", group = "COMPETITION")
+
+public class DoubleGoldAuto extends LinearOpMode {
     public static double TURN_SPEED_FAST = 0.37;
     public static double TURN_SPEED_ADJUST = 0.23;
     public static double TURN_AROUND_SPEED = 0.4;
-    public static double FORWARD_SPEED = -0.7;
+    public static double FORWARD_SPEED = -0.85;
     public static double X_OFFSET_SPEED = 0.2;
 
     /*
@@ -27,44 +28,56 @@ public class DepotAuto extends LinearOpMode {
     // strafe off hook
     public static int STRAFE_OFF_HOOK = 100;
     // move forward away from lander
-    public static int TO_TAPE = 240;
-    public static int BACK_UP = 55;
+    public static int TO_TAPE = 160;
 
     /*
      * TEAM MARKER
      */
+    public static double TURN_TO_WALL = 67;
+
+    public static int TO_WALL = 900;
+
+    public static double TURN_TO_DEPOT = 140;
+
+    public static int TO_DEPOT = 400;
+
     public static int EXTEND_TO_DEPOT = 2400;
+
+    /*
+     * DEPOT SAMPLING
+     */
+    public static int LEFT_RETRACT = 2300;
+
+    public static int CENTER_RETRACT = 1800;
+
+    public static int RIGHT_RETRACT = 700;
+
+    public static int TURN_TO_OTHER_SAMPLE = 210;
 
     /*
      * SAMPLING
      */
-    public static double LEFT_TURN_SAMPLE = 30;
+    public static double LEFT_TURN_SAMPLE = 35;
     public static double CENTER_TURN_SAMPLE = -12;
-    public static double RIGHT_TURN_SAMPLE = -41;
+    public static double RIGHT_TURN_SAMPLE = -39;
 
-    public static int EXTEND_TO_SAMPLE = 1300;
+    public static int EXTEND_TO_SAMPLE = 1200;
 
-    public static double TURN_TO_SCORE = 4;
+    public static double TURN_TO_SCORE = -2;
 
     public static int BACK_TO_LANDER = 140;
 
-    public static int RAISE_TO_SCORE = 1900;
+    public static int STRAFE_TO_SCORE = 170;
+
+    public static int RAISE_TO_SCORE = 1800;
 
     public static int LOWER = 70;
-
-    public static int CRATER_1 = 100;
-
-    public static double TURN_TO_WALL = 80;
-
-    public static int CRATER_2 = 850;
-
-    public static double TURN_TO_CRATER = 125;
-
-    public static int EXTEND_TO_CRATER = 1200;
 
     /*
      * PARK
      */
+
+    public static int EXTEND_TO_CRATER = 2200;
 
 
     private Robot robot;
@@ -123,15 +136,64 @@ public class DepotAuto extends LinearOpMode {
         robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_TAPE);
         sleep(300);
 
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_WALL);
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_WALL);
+        sleep(300);
+
+        robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_WALL);
+        sleep(300);
+
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_DEPOT);
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_DEPOT);
+        sleep(300);
+
+        robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_DEPOT);
+        sleep(300);
+
         robot.intake.runExtenderToPosition(-1.0, EXTEND_TO_DEPOT);
 
         robot.intake.dumpMarker();
 
         robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
 
+        switch (goldPosition) {
+            case LEFT:
+                robot.intake.retractExtenderToPosition(1.0, LEFT_RETRACT);
+                break;
+            default:
+            case CENTER:
+                robot.intake.retractExtenderToPosition(1.0, CENTER_RETRACT);
+                break;
+            case RIGHT:
+                robot.intake.retractExtenderToPosition(1.0, RIGHT_RETRACT);
+                break;
+        }
+
+        robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_OTHER_SAMPLE);
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_OTHER_SAMPLE);
+
+        robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
         robot.intake.retractIntakeExtender();
 
-        robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, BACK_UP);
+        robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
+
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_DEPOT);
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_DEPOT);
+        sleep(300);
+
+        robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, TO_DEPOT);
+        sleep(300);
+
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_WALL);
+        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_WALL);
+        sleep(300);
+
+        robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, TO_WALL);
+        sleep(300);
+
+        robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
 
         switch (goldPosition) {
             case LEFT:
@@ -170,35 +232,26 @@ public class DepotAuto extends LinearOpMode {
         robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, BACK_TO_LANDER);
         sleep(300);
 
+        robot.mecanumDrive.encoderDrive(0.8, 0, 0, STRAFE_TO_SCORE);
+        sleep(300);
+
         robot.outtake.runLiftToPosition(-1.0, RAISE_TO_SCORE);
 
         robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
 
         robot.outtake.setOuttakePosition(Outtake.OuttakePosition.UP);
-        sleep(1200);
+        sleep(1300);
 
-        robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
-        sleep(600);
-
-        robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-
-        robot.outtake.lowerLiftToPosition(1.0, LOWER);
-        sleep(300);
-
-        robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CRATER_1);
-        sleep(300);
-
-        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_WALL);
-        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_WALL);
-        sleep(300);
-
-        robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CRATER_2);
-        sleep(300);
-
-        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_CRATER);
-        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_CRATER);
-        sleep(300);
+//        robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
+//        sleep(600);
+//[]
+//        robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+//
+//        robot.outtake.lowerLiftToPosition(1.0, LOWER);
+//        sleep(300);
 
         robot.intake.runExtenderToPosition(-1.0, EXTEND_TO_CRATER);
+
+//        robot.outtake.lowerLiftToPosition(1.0, LOWER);
     }
 }
