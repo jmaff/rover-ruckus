@@ -81,7 +81,7 @@ public class DoubleGoldAuto extends LinearOpMode {
 
 
     private Robot robot;
-    private Vision.GoldPostion goldPosition;
+    private Vision.GoldPosition goldPosition;
 
     private Runnable updateRunnable = () -> {
         while (opModeIsActive()) {
@@ -100,7 +100,7 @@ public class DoubleGoldAuto extends LinearOpMode {
 
         while (!opModeIsActive()) {
             robot.vision.update();
-            switch (robot.vision.getGoldPostion()) {
+            switch (robot.vision.getGoldPosition()) {
                 case LEFT:
                     telemetry.addData("Gold Position", "LEFT");
                     break;
@@ -118,7 +118,7 @@ public class DoubleGoldAuto extends LinearOpMode {
         }
 
         waitForStart();
-        goldPosition = robot.vision.getGoldPostion();
+        goldPosition = robot.vision.getGoldPosition();
         robot.start();
         updateThread.start();
 

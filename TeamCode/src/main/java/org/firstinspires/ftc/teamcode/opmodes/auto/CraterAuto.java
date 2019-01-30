@@ -23,7 +23,7 @@ public class CraterAuto extends LinearOpMode {
      * DEPLOYING
      */
 
-    public static int LIFT_DOWN = 9200;
+    public static int LIFT_DOWN = 9800;
     // strafe off hook
     public static int STRAFE_OFF_HOOK = 100;
     // move forward away from lander
@@ -38,11 +38,11 @@ public class CraterAuto extends LinearOpMode {
 
     public static double TURN_TO_DEPOT = 140;
 
-    public static int TO_DEPOT = 400;
+    public static int TO_DEPOT = 300;
 
     public static int EXTEND_TO_DEPOT = 2400;
 
-    public static int BACK_DEPOT = 350;
+    public static int BACK_DEPOT = 250;
 
     public static double TURN_TO_RETURN = 62;
 
@@ -59,9 +59,11 @@ public class CraterAuto extends LinearOpMode {
 
     public static double TURN_TO_SCORE = -2;
 
-    public static int BACK_TO_LANDER = 140;
+    // 140
+    public static int BACK_TO_LANDER = 180;
 
-    public static int STRAFE_TO_SCORE = 170;
+    // 170
+    public static int STRAFE_TO_SCORE = 250;
 
     public static int RAISE_TO_SCORE = 1800;
 
@@ -75,7 +77,7 @@ public class CraterAuto extends LinearOpMode {
 
 
     private Robot robot;
-    private Vision.GoldPostion goldPosition;
+    private Vision.GoldPosition goldPosition;
 
     private Runnable updateRunnable = () -> {
         while (opModeIsActive()) {
@@ -94,7 +96,7 @@ public class CraterAuto extends LinearOpMode {
 
         while (!opModeIsActive()) {
             robot.vision.update();
-            switch (robot.vision.getGoldPostion()) {
+            switch (robot.vision.getGoldPosition()) {
                 case LEFT:
                     telemetry.addData("Gold Position", "LEFT");
                     break;
@@ -112,7 +114,7 @@ public class CraterAuto extends LinearOpMode {
         }
 
         waitForStart();
-        goldPosition = robot.vision.getGoldPostion();
+        goldPosition = robot.vision.getGoldPosition();
         robot.start();
         updateThread.start();
 

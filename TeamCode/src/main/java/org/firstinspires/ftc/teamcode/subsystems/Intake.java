@@ -124,7 +124,7 @@ public class Intake implements Subsystem {
 
     public void dumpMarker() {
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
-        setIntakePivotPosition(PivotPosition.MIDDLE);
+        setIntakePivotPosition(PivotPosition.DOWN);
         linearOpMode.sleep(900);
         setIntakePivotPosition(PivotPosition.UP);
     }

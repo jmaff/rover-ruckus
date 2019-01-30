@@ -23,7 +23,7 @@ public class DepotAuto extends LinearOpMode {
      * DEPLOYING
      */
 
-    public static int LIFT_DOWN = 9200;
+    public static int LIFT_DOWN = 9800;
     // strafe off hook
     public static int STRAFE_OFF_HOOK = 100;
     // move forward away from lander
@@ -68,7 +68,7 @@ public class DepotAuto extends LinearOpMode {
 
 
     private Robot robot;
-    private Vision.GoldPostion goldPosition;
+    private Vision.GoldPosition goldPosition;
 
     private Runnable updateRunnable = () -> {
         while (opModeIsActive()) {
@@ -87,7 +87,7 @@ public class DepotAuto extends LinearOpMode {
 
         while (!opModeIsActive()) {
             robot.vision.update();
-            switch (robot.vision.getGoldPostion()) {
+            switch (robot.vision.getGoldPosition()) {
                 case LEFT:
                     telemetry.addData("Gold Position", "LEFT");
                     break;
@@ -105,7 +105,7 @@ public class DepotAuto extends LinearOpMode {
         }
 
         waitForStart();
-        goldPosition = robot.vision.getGoldPostion();
+        goldPosition = robot.vision.getGoldPosition();
         robot.start();
         updateThread.start();
 

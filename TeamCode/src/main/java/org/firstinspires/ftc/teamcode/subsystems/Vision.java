@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import android.transition.Transition;
-
+import com.acmerobotics.dashboard.config.Config;
 import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraException;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -17,7 +15,7 @@ import java.util.List;
 /**
  * Created by 21maffetone on 11/13/18.
  */
-
+@Config
 public class Vision implements Subsystem {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -29,17 +27,27 @@ public class Vision implements Subsystem {
 
     private TFObjectDetector tfod;
 
+    public static int CENTER_THRESHOLD = 500;
+
     private OpMode opMode;
-    public enum GoldPostion {
+    public enum GoldPosition {
         LEFT,
         CENTER,
         RIGHT,
         UNKNOWN
     }
 
+    private double goldWidth = 0;
+    private double goldTop = 0;
+    private double imageHeight = 0;
+    private double goldPos;
     private int numMinerals = 0;
 
-    private GoldPostion goldPostion = GoldPostion.UNKNOWN;
+    private int leftCount = 0;
+    private int centerCount = 0;
+    private int rightCount = 0;
+
+    private GoldPosition goldPosition = GoldPosition.UNKNOWN;
 
     public Vision(OpMode opMode, boolean auto) {
         this.opMode = opMode;
@@ -56,8 +64,10 @@ public class Vision implements Subsystem {
                 int tfodMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier(
                         "tfodMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
                 TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+                tfodParameters.minimumConfidence = 0.46;
                 tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
                 tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+
             } else {
                 opMode.telemetry.addData("Sorry!", "This device is not compatible with TFOD");
             }
@@ -68,7 +78,7 @@ public class Vision implements Subsystem {
         tfod.activate();
     }
 
-    public GoldPostion getGoldPostion() { return goldPostion; }
+    public GoldPosition getGoldPosition() { return goldPosition; }
 
     @Override
     public void update() {
@@ -78,30 +88,67 @@ public class Vision implements Subsystem {
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
                 numMinerals = updatedRecognitions.size();
-                if (updatedRecognitions.size() == 2) {
+                if (updatedRecognitions.size() >= 0) {
                     int goldMineralX = -1;
                     int silverMineral1X = -1;
                     for (Recognition recognition : updatedRecognitions) {
                         if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                             goldMineralX = (int) recognition.getLeft();
-                        } else if (silverMineral1X == -1) {
-                            silverMineral1X = (int) recognition.getLeft();
+                            goldWidth = recognition.getRight() - recognition.getLeft();
+                            goldTop = recognition.getTop();
+                            imageHeight = recognition.getImageHeight();
+                            if (goldWidth < 250 && goldTop < imageHeight/2.0) {
+                                goldPos = (int) ((double) recognition.getLeft()+(double)recognition.getRight()) / 2.0;
+                            }
                         }
                     }
 
-                    if (goldMineralX == -1) {
-                        goldPostion = GoldPostion.LEFT;
-                    } else if (silverMineral1X != -1) {
-                        if (goldMineralX < silverMineral1X) {
-                            goldPostion = GoldPostion.CENTER;
+                    if (goldPos != -1) {
+                        if (goldPos < CENTER_THRESHOLD) {
+                            centerCount++;
                         } else {
-                            goldPostion = GoldPostion.RIGHT;
+                            rightCount++;
                         }
+                    } else {
+                        leftCount++;
                     }
+
+                    if (leftCount > rightCount && leftCount > centerCount) {
+                        goldPosition = GoldPosition.LEFT;
+                    } else if (rightCount > leftCount && rightCount > centerCount) {
+                        goldPosition = GoldPosition.RIGHT;
+                    } else {
+                        goldPosition = GoldPosition.CENTER;
+                    }
+
+
+//                    for (Recognition recognition : updatedRecognitions) {
+//                        if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+//                            goldMineralX = (int) recognition.getLeft();
+//                        } else if (silverMineral1X == -1) {
+//                            silverMineral1X = (int) recognition.getLeft();
+//                        }
+//                    }
+
+
+//
+//                    if (goldMineralX == -1) {
+//                        goldPosition = GoldPosition.LEFT;
+//                    } else if (silverMineral1X != -1) {
+//                        if (goldMineralX < silverMineral1X) {
+//                            goldPosition = GoldPosition.CENTER;
+//                        } else {
+//                            goldPosition = GoldPosition.RIGHT;
+//                        }
+//                    }
                 }
 
             }
         }
+    }
+
+    public double getGoldPos() {
+        return goldPos;
     }
 
     public int getNumMinerals() {

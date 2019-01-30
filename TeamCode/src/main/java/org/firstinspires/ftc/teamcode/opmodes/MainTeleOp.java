@@ -13,21 +13,14 @@ import org.firstinspires.ftc.teamcode.subsystems.Robot;
 @TeleOp(name = "Main TeleOp", group = "COMPETITION")
 public class MainTeleOp extends OpMode {
 
-    private static double OUTTAKE_UP = 0.7;
-    private static double OUTTAKE_DOWN = 0.0;
-
-    private boolean bPrev = false;
-    private boolean xPrev = false;
-
     // automatic dumping variables
     private boolean intakePrev = false;
     private long timeIntakeDumped = 0;
     private boolean dumping = false;
-    private boolean twoMinerals = false;
 
     // mineral detection variables
     private Intake.MineralStatus prevMineralStatus = Intake.MineralStatus.NONE;
-    long timeDetected = 0;
+    private long timeDetected = 0;
 
     private Robot robot;
 
@@ -36,6 +29,11 @@ public class MainTeleOp extends OpMode {
         robot = new Robot(this);
         robot.start();
         robot.mecanumDrive.brakeMode(false);
+    }
+
+    @Override
+    public void start() {
+        robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }
 
     @Override
@@ -80,7 +78,7 @@ public class MainTeleOp extends OpMode {
                 timeIntakeDumped = System.currentTimeMillis();
             }
 
-            if (dumping && System.currentTimeMillis() - timeIntakeDumped >= 900) {
+            if (dumping && System.currentTimeMillis() - timeIntakeDumped >= 1100) {
                 robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
                 robot.intake.setIntakePower(0.0);
                 dumping = false;
@@ -111,26 +109,11 @@ public class MainTeleOp extends OpMode {
         }
 
         if (timeDetected != 0 && System.currentTimeMillis() - timeDetected >= 900) {
-            robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
             robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_BREATH_FAST);
             timeDetected = 0;
         }
 
         prevMineralStatus = status;
-
-//        if (gamepad2.b && !bPrev) {
-//            if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.OFF) {
-//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
-//            } else if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.UP) {
-//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
-//            }
-//        } else if (gamepad2.x && !xPrev) {
-//            if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.OFF) {
-//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
-//            } else if (robot.intake.getCurrentPivotPosition() == Intake.PivotPosition.DOWN) {
-//                robot.intake.setIntakePivotPosition(Intake.PivotPosition.OFF);
-//            }
-//        }
 
         // outtake controls
         if (gamepad2.dpad_up) {
@@ -155,8 +138,5 @@ public class MainTeleOp extends OpMode {
         telemetry.addData("Extension Position: ", robot.intake.getExtenderPosition());
 
         robot.update();
-
-        bPrev = gamepad1.b;
-        xPrev = gamepad1.x;
     }
 }
