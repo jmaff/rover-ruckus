@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
+@Disabled
 @TeleOp(name = "Drivetrain Testing", group = "TEST")
 public class DrivetrainTest extends OpMode {
     private DcMotor frontLeft;

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.vision;
 
 import com.ftc12835.library.vision.VuforiaCamera;
 import com.ftc12835.roverruckus.vision.SamplingPipeline;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.vuforia.PIXEL_FORMAT;
@@ -11,7 +12,7 @@ import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
-
+@Disabled
 @TeleOp(name = "GoldVision", group = "VISION")
 public class GoldVision extends OpMode {
     private VuforiaCamera camera;

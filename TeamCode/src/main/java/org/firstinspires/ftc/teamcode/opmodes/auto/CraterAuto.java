@@ -96,6 +96,7 @@ public class CraterAuto extends LinearOpMode {
 
         while (!opModeIsActive()) {
             robot.vision.update();
+            telemetry.addData("Gold Pos", robot.vision.getGoldPos());
             switch (robot.vision.getGoldPosition()) {
                 case LEFT:
                     telemetry.addData("Gold Position", "LEFT");

@@ -64,7 +64,6 @@ public class Vision implements Subsystem {
                 int tfodMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier(
                         "tfodMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
                 TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-                tfodParameters.minimumConfidence = 0.46;
                 tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
                 tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
 
@@ -105,20 +104,12 @@ public class Vision implements Subsystem {
 
                     if (goldPos != -1) {
                         if (goldPos < CENTER_THRESHOLD) {
-                            centerCount++;
+                            goldPosition = GoldPosition.CENTER;
                         } else {
-                            rightCount++;
+                            goldPosition = GoldPosition.RIGHT;
                         }
                     } else {
-                        leftCount++;
-                    }
-
-                    if (leftCount > rightCount && leftCount > centerCount) {
                         goldPosition = GoldPosition.LEFT;
-                    } else if (rightCount > leftCount && rightCount > centerCount) {
-                        goldPosition = GoldPosition.RIGHT;
-                    } else {
-                        goldPosition = GoldPosition.CENTER;
                     }
 
 
