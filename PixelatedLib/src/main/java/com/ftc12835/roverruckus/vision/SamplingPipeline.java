@@ -30,10 +30,10 @@ public class SamplingPipeline extends VuforiaPipeline {
     private BlurType blurType = BlurType.get("Gaussian Blur");
     private double blurRadius = 7.547169811320756;
 
-    public static double hueMin = 80;
-    public static double hueMax = 110;
+    public static double hueMin = 60;
+    public static double hueMax = 100;
 
-    public static double satMin = 200;
+    public static double satMin = 140;
     public static double satMax = 255;
 
     public static double valueMin = 100;

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.ftc12835.library.control.PIDController;
 import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -24,16 +25,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Config
 public class MecanumDrive implements Subsystem {
     public static final MotorConfigurationType MOTOR_CONFIG = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
+
+    public static double ERROR_THRESHOLD = 3;
+
+    public static double kP = 0.03;
+    public static double kI = 0;
+    public static double kD = 0.08;
+
+    public static double TIME = 200;
 
     private DcMotor leftFront, leftRear, rightRear, rightFront;
     private ModernRoboticsI2cGyro gyro;
     private RevBlinkinLedDriver blinkin;
     private double[] powers = new double[4];
 
-    private PIDController turnController = new PIDController(0.04, 0, 0.2);
+    private PIDController turnController = new PIDController(kP, kI, kD);
 
     private OpMode opMode;
 
@@ -106,7 +116,7 @@ public class MecanumDrive implements Subsystem {
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
         resetEncoders();
         cartesianDrive(x, y, turn);
-
+        linearOpMode.sleep(10);
         while (linearOpMode.opModeIsActive()) {
 
             for (int position : getWheelPositions()) {
@@ -120,26 +130,20 @@ public class MecanumDrive implements Subsystem {
     }
 
     public void turnToAngle(double turn, double angle) {
-        double target = angle;
-        boolean targetAbove;
-        targetAbove = (target >= getHeading());
-
-        LinearOpMode linearOpMode = (LinearOpMode) opMode;
-        double speed;
-
-        if (!targetAbove) {
-            speed = -turn;
-        } else {
-            speed = turn;
-        }
-
         turnController.setSetpoint(angle);
 
         double output;
+        long withinThresholdStart = -1;
         do {
             output = -turnController.update(getHeading());
             cartesianDrive(0, 0, output);
-        } while (!turnController.isDone() && ((LinearOpMode) opMode).opModeIsActive());
+
+            if (Math.abs(turnController.getError(getHeading())) <= ERROR_THRESHOLD && withinThresholdStart == -1) {
+                withinThresholdStart = System.currentTimeMillis();
+            } else if (!(Math.abs(turnController.getError(getHeading())) <= ERROR_THRESHOLD)) {
+                withinThresholdStart = -1;
+            }
+        } while (!(System.currentTimeMillis() - withinThresholdStart >= TIME && withinThresholdStart != -1) && ((LinearOpMode) opMode).opModeIsActive());
 
         stop();
     }
