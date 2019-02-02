@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import android.util.Log;
 
+import com.ftc12835.library.control.PIDController;
 import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
@@ -31,6 +32,8 @@ public class MecanumDrive implements Subsystem {
     private ModernRoboticsI2cGyro gyro;
     private RevBlinkinLedDriver blinkin;
     private double[] powers = new double[4];
+
+    private PIDController turnController = new PIDController(0.04, 0, 0.2);
 
     private OpMode opMode;
 
@@ -122,23 +125,23 @@ public class MecanumDrive implements Subsystem {
         targetAbove = (target >= getHeading());
 
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
+        double speed;
 
         if (!targetAbove) {
-            cartesianDrive(0, 0, -turn);
+            speed = -turn;
         } else {
-            cartesianDrive(0, 0, turn);
+            speed = turn;
         }
 
-        while (linearOpMode.opModeIsActive()) {
-            if (!targetAbove && getHeading() < target) {
-                stop();
-                break;
-            } else if (targetAbove && getHeading() > target) {
-                stop();
-                break;
-            }
-        }
+        turnController.setSetpoint(angle);
 
+        double output;
+        do {
+            output = -turnController.update(getHeading());
+            cartesianDrive(0, 0, output);
+        } while (!turnController.isDone() && ((LinearOpMode) opMode).opModeIsActive());
+
+        stop();
     }
 
     private List<Integer> getWheelPositions() {

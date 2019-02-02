@@ -9,6 +9,7 @@ public class PIDController {
 
     private double rollingError = 0;
     private double prevError;
+    private double deltaError = 0;
 
     public PIDController(double kP, double kI, double kD) {
         this.kP = kP;
@@ -32,10 +33,14 @@ public class PIDController {
         rollingError += error;
         double iOutput = kI * rollingError;
 
-        double deltaError = error - prevError;
+        deltaError = error - prevError;
         prevError = error;
         double dOutput = kD * deltaError;
 
         return pOutput + iOutput + dOutput;
+    }
+
+    public boolean isDone() {
+        return Math.abs(deltaError) < 0.1;
     }
 }

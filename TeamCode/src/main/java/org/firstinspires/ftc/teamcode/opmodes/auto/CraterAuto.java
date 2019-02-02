@@ -96,7 +96,7 @@ public class CraterAuto extends LinearOpMode {
 
         while (!opModeIsActive()) {
             robot.vision.update();
-            telemetry.addData("Gold Pos", robot.vision.getGoldPos());
+
             switch (robot.vision.getGoldPosition()) {
                 case LEFT:
                     telemetry.addData("Gold Position", "LEFT");
@@ -118,6 +118,8 @@ public class CraterAuto extends LinearOpMode {
         goldPosition = robot.vision.getGoldPosition();
         robot.start();
         updateThread.start();
+
+        robot.vision.camera.disable();
 
         robot.mecanumDrive.brakeMode(true);
 
