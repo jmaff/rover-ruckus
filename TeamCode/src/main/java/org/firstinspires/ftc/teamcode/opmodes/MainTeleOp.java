@@ -24,6 +24,8 @@ public class MainTeleOp extends OpMode {
 
     private Robot robot;
 
+    public static double SLOW_INTAKE_SPEED = -0.2;
+
     @Override
     public void init() {
         robot = new Robot(this);
@@ -98,7 +100,7 @@ public class MainTeleOp extends OpMode {
             robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         } else if (gamepad2.dpad_right && !dumping) {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
-            robot.intake.setIntakePower(0.0);
+            robot.intake.setIntakePower(SLOW_INTAKE_SPEED);
             robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         }
 

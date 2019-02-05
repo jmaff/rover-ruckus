@@ -25,7 +25,7 @@ public class CraterAuto extends LinearOpMode {
 
     public static int LIFT_DOWN = 9800;
     // strafe off hook
-    public static int STRAFE_OFF_HOOK = 100;
+    public static int STRAFE_OFF_HOOK = 200;
     // move forward away from lander
     public static int TO_TAPE = 160;
 
@@ -36,13 +36,13 @@ public class CraterAuto extends LinearOpMode {
 
     public static int TO_WALL = 900;
 
-    public static double TURN_TO_DEPOT = 140;
+    public static double TURN_TO_DEPOT = 135;
 
     public static int TO_DEPOT = 300;
 
     public static int EXTEND_TO_DEPOT = 2400;
 
-    public static int BACK_DEPOT = 250;
+    public static int BACK_DEPOT = 275;
 
     public static double TURN_TO_RETURN = 62;
 
@@ -53,7 +53,7 @@ public class CraterAuto extends LinearOpMode {
      */
     public static double LEFT_TURN_SAMPLE = 26;
     public static double CENTER_TURN_SAMPLE = -3;
-    public static double RIGHT_TURN_SAMPLE = -34;
+    public static double RIGHT_TURN_SAMPLE = -32;
 
     public static int EXTEND_TO_SAMPLE = 1200;
 
@@ -65,7 +65,7 @@ public class CraterAuto extends LinearOpMode {
     // 170
     public static int STRAFE_TO_SCORE = 250;
 
-    public static int RAISE_TO_SCORE = 1800;
+    public static int RAISE_TO_SCORE = 2000;
 
     public static int LOWER = 70;
 
@@ -83,6 +83,7 @@ public class CraterAuto extends LinearOpMode {
         while (opModeIsActive()) {
             robot.update();
             telemetry.addData("Heading", robot.mecanumDrive.getHeading());
+
             telemetry.update();
         }
     };
@@ -120,7 +121,7 @@ public class CraterAuto extends LinearOpMode {
         double centerCount = 0;
         double rightCount = 0;
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             if (robot.vision.getGoldPosition() == Vision.GoldPosition.LEFT) {
                 leftCount++;
             } else if (robot.vision.getGoldPosition() == Vision.GoldPosition.CENTER) {
@@ -144,25 +145,25 @@ public class CraterAuto extends LinearOpMode {
 
         robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.CONFETTI);
         robot.latchingLift.runLiftToPosition(1.0, LIFT_DOWN);
-        sleep(50);
+        sleep(500);
 
         robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
 
-        robot.mecanumDrive.encoderDrive(0.8, 0, 0, STRAFE_OFF_HOOK);
-        sleep(50);
+        robot.mecanumDrive.epicDrive(1.0, 0.5, 0, STRAFE_OFF_HOOK);
+        sleep(100);
 
         robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_TAPE);
-        sleep(50);
+        sleep(100);
 
         robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_WALL);
 
         robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_WALL);
-        sleep(50);
+        sleep(100);
 
         robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_DEPOT);
 
         robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_DEPOT);
-        sleep(50);
+        sleep(100);
 
         robot.intake.runExtenderToPosition(-1.0, EXTEND_TO_DEPOT);
 
@@ -175,12 +176,12 @@ public class CraterAuto extends LinearOpMode {
         robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
 
         robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, BACK_DEPOT);
-        sleep(50);
+        sleep(100);
 
         robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_RETURN);
 
         robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, TO_SAMPLE);
-        sleep(50);
+        sleep(100);
 
         robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
 
@@ -219,10 +220,10 @@ public class CraterAuto extends LinearOpMode {
         robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_SCORE);
 
         robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, BACK_TO_LANDER);
-        sleep(50);
+        sleep(100);
 
         robot.mecanumDrive.encoderDrive(0.8, 0, 0, STRAFE_TO_SCORE);
-        sleep(50);
+        sleep(100);
 
         robot.outtake.runLiftToPosition(-1.0, RAISE_TO_SCORE);
 

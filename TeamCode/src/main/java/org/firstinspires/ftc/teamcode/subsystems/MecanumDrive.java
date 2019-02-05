@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -30,9 +31,9 @@ public class MecanumDrive implements Subsystem {
     public static final MotorConfigurationType MOTOR_CONFIG = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
-    public static double ERROR_THRESHOLD = 3;
+    public static double ERROR_THRESHOLD = 4;
 
-    public static double kP = 0.03;
+    public static double kP = 0.035;
     public static double kI = 0;
     public static double kD = 0.08;
 
@@ -43,7 +44,7 @@ public class MecanumDrive implements Subsystem {
     private RevBlinkinLedDriver blinkin;
     private double[] powers = new double[4];
 
-    private PIDController turnController = new PIDController(kP, kI, kD);
+    private PIDController turnController = new PIDController(kP, kI, kD, -1.0, 1.0);
 
     private OpMode opMode;
 
@@ -61,11 +62,14 @@ public class MecanumDrive implements Subsystem {
         blinkin = opMode.hardwareMap.get(RevBlinkinLedDriver.class, "BLINKIN");
         setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_BREATH_SLOW);
 
-        gyro = opMode.hardwareMap.get(ModernRoboticsI2cGyro.class, "GYRO");
-        gyro.calibrate();
+        if (auto) {
+            gyro = opMode.hardwareMap.get(ModernRoboticsI2cGyro.class, "GYRO");
+            
+            gyro.calibrate();
 
-        while (gyro.isCalibrating())  {
-          // pass
+            while (gyro.isCalibrating()) {
+                // pass
+            }
         }
 
         resetEncoders();
@@ -116,7 +120,6 @@ public class MecanumDrive implements Subsystem {
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
         resetEncoders();
         cartesianDrive(x, y, turn);
-        linearOpMode.sleep(10);
         while (linearOpMode.opModeIsActive()) {
 
             for (int position : getWheelPositions()) {
@@ -129,20 +132,35 @@ public class MecanumDrive implements Subsystem {
         stop();
     }
 
-    public void turnToAngle(double turn, double angle) {
-        turnController.setSetpoint(angle);
+    public void epicDrive(double x, double y, double turn, int counts) {
+        LinearOpMode linearOpMode = (LinearOpMode) opMode;
+        resetEncoders();
+        cartesianDrive(x, y, turn);
 
+        while (linearOpMode.opModeIsActive()) {
+            if (getWheelPositions().get(0) > counts) {
+                break;
+            }
+        }
+        stop();
+    }
+
+    public void turnToAngle(double turn, double angle) {
         double output;
         long withinThresholdStart = -1;
+
         do {
-            output = -turnController.update(getHeading());
+            double error = angle - getHeading();
+            output = PIDController.clampValue(kP * error, -0.7, 0.7);
+
             cartesianDrive(0, 0, output);
 
-            if (Math.abs(turnController.getError(getHeading())) <= ERROR_THRESHOLD && withinThresholdStart == -1) {
+            if (Math.abs(error) <= ERROR_THRESHOLD && withinThresholdStart == -1) {
                 withinThresholdStart = System.currentTimeMillis();
-            } else if (!(Math.abs(turnController.getError(getHeading())) <= ERROR_THRESHOLD)) {
+            } else if (!(Math.abs(error) <= ERROR_THRESHOLD)) {
                 withinThresholdStart = -1;
             }
+
         } while (!(System.currentTimeMillis() - withinThresholdStart >= TIME && withinThresholdStart != -1) && ((LinearOpMode) opMode).opModeIsActive());
 
         stop();

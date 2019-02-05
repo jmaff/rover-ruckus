@@ -20,11 +20,7 @@ public class TurnPIDTuning extends LinearOpMode {
     private Robot robot;
 
     private Runnable updateRunnable = () -> {
-        while (opModeIsActive()) {
-            robot.update();
-            telemetry.addData("Heading", robot.mecanumDrive.getHeading());
-            telemetry.update();
-        }
+
     };
 
     private Thread updateThread = new Thread(updateRunnable);
@@ -33,6 +29,11 @@ public class TurnPIDTuning extends LinearOpMode {
     public static double kI = 0;
     public static double kD = 0;
 
+    public static double thing = 1.0;
+
+    public static double ERROR_THRESHOLD = 2;
+    public static double TIME = 200;
+
     public static double setpoint = 90.0;
 
     private PIDController pidController;
@@ -40,15 +41,14 @@ public class TurnPIDTuning extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot = new Robot(this, true);
-        pidController = new PIDController(kP, kI, kD);
-        pidController.setSetpoint(setpoint);
+        pidController = new PIDController(kP, kI, kD,-1.0, 1.0);
 
         Telemetry dashboardTelemetry = RobotDashboard.getInstance().getTelemetry();
         ElapsedTime timer = new ElapsedTime();
 
-        File logRoot = LoggingUtil.getLogRoot(this);
-        String prefix = "Turn_Tuning" + System.currentTimeMillis();
-        CSVWriter writer = new CSVWriter(new File(logRoot, prefix + ".csv"));
+//        File logRoot = LoggingUtil.getLogRoot(this);
+//        String prefix = "Turn_Tuning" + System.currentTimeMillis();
+//        CSVWriter writer = new CSVWriter(new File(logRoot, prefix + ".csv"));
 
         waitForStart();
         timer.reset();
@@ -58,15 +58,29 @@ public class TurnPIDTuning extends LinearOpMode {
 
         robot.mecanumDrive.brakeMode(true);
 
-        while (opModeIsActive()) {
-            robot.mecanumDrive.cartesianDrive(0, 0, -pidController.update(robot.mecanumDrive.getHeading()));
-            dashboardTelemetry.addData("heading", robot.mecanumDrive.getHeading());
+        double output;
+        long withinThresholdStart = -1;
+        ElapsedTime atimer = new ElapsedTime();
 
-            writer.put("timer", timer.seconds());
-            writer.put("heading", robot.mecanumDrive.getHeading());
-            writer.write();
-        }
+        timer.reset();
+        do {
+            double error = setpoint - robot.mecanumDrive.getHeading();
+            output = PIDController.clampValue(kP * error, -0.7, 0.7);
 
-        writer.close();
+            robot.mecanumDrive.cartesianDrive(0, 0, output);
+
+            if (Math.abs(error) <= ERROR_THRESHOLD && withinThresholdStart == -1) {
+                withinThresholdStart = System.currentTimeMillis();
+            } else if (!(Math.abs(error) <= ERROR_THRESHOLD)) {
+                withinThresholdStart = -1;
+            }
+
+            telemetry.addData("output", output);
+            telemetry.addData("error", error);
+
+
+        } while (!(System.currentTimeMillis() - withinThresholdStart >= TIME && withinThresholdStart != -1) && opModeIsActive());
+
+        stop();
     }
 }
