@@ -69,6 +69,12 @@ public class Vision implements Subsystem {
         active = true;
     }
 
+    public void disable() {
+        active = false;
+        camera.disable();
+        pipeline.disable();
+    }
+
     public GoldPosition getGoldPosition() { return goldPosition; }
 
     @Override

@@ -19,6 +19,9 @@ public class CraterAuto extends LinearOpMode {
     public static double FORWARD_SPEED = -0.7;
     public static double X_OFFSET_SPEED = 0.2;
 
+    public static double STRAFE_X_SPEED = 0.8;
+    public static double STRAFE_Y_SPEED = 0.1;
+
     /*
      * DEPLOYING
      */
@@ -42,7 +45,7 @@ public class CraterAuto extends LinearOpMode {
 
     public static int EXTEND_TO_DEPOT = 2400;
 
-    public static int BACK_DEPOT = 275;
+    public static int BACK_DEPOT = 210;
 
     public static double TURN_TO_RETURN = 62;
 
@@ -139,7 +142,7 @@ public class CraterAuto extends LinearOpMode {
         robot.start();
         updateThread.start();
 
-        robot.vision.camera.disable();
+        robot.vision.disable();
 
         robot.mecanumDrive.brakeMode(true);
 
@@ -149,7 +152,7 @@ public class CraterAuto extends LinearOpMode {
 
         robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
 
-        robot.mecanumDrive.epicDrive(1.0, 0.5, 0, STRAFE_OFF_HOOK);
+        robot.mecanumDrive.singleEncoderDrive(STRAFE_X_SPEED, STRAFE_Y_SPEED, 0, STRAFE_OFF_HOOK);
         sleep(100);
 
         robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_TAPE);
@@ -206,6 +209,18 @@ public class CraterAuto extends LinearOpMode {
 
         robot.intake.runExtenderToPosition(-1.0, EXTEND_TO_SAMPLE);
         sleep(900);
+        switch (goldPosition) {
+            case LEFT:
+                robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, LEFT_TURN_SAMPLE + 7);
+                break;
+            default:
+            case CENTER:
+                robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, CENTER_TURN_SAMPLE + 7);
+                break;
+            case RIGHT:
+                robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, RIGHT_TURN_SAMPLE + 7);
+                break;
+        }
         robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
         robot.intake.retractIntakeExtender();
         robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
@@ -217,7 +232,6 @@ public class CraterAuto extends LinearOpMode {
         robot.intake.setIntakePower(0.0);
 
         robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_SCORE);
-        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_SCORE);
 
         robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, BACK_TO_LANDER);
         sleep(100);

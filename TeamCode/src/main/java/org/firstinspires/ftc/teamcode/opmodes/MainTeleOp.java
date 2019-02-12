@@ -99,9 +99,11 @@ public class MainTeleOp extends OpMode {
             robot.intake.setIntakePower(-1.0);
             robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         } else if (gamepad2.dpad_right && !dumping) {
-            robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
-            robot.intake.setIntakePower(SLOW_INTAKE_SPEED);
-            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            if (!(gamepad2.left_trigger > 0.0)) {
+                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+                robot.intake.setIntakePower(SLOW_INTAKE_SPEED);
+                robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }
         }
 
         Intake.MineralStatus status = robot.intake.getMineralStatus();

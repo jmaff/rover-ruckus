@@ -25,7 +25,7 @@ public class DepotAuto extends LinearOpMode {
 
     public static int LIFT_DOWN = 9800;
     // strafe off hook
-    public static int STRAFE_OFF_HOOK = 100;
+    public static int STRAFE_OFF_HOOK = 200;
     // move forward away from lander
     public static int TO_TAPE = 240;
     public static int BACK_UP = 55;
@@ -38,11 +38,11 @@ public class DepotAuto extends LinearOpMode {
     /*
      * SAMPLING
      */
-    public static double LEFT_TURN_SAMPLE = 30;
-    public static double CENTER_TURN_SAMPLE = -12;
-    public static double RIGHT_TURN_SAMPLE = -41;
+    public static double LEFT_TURN_SAMPLE = 28;
+    public static double CENTER_TURN_SAMPLE = -10;
+    public static double RIGHT_TURN_SAMPLE = -34;
 
-    public static int EXTEND_TO_SAMPLE = 1300;
+    public static int EXTEND_TO_SAMPLE = 1400;
 
     public static double TURN_TO_SCORE = 4;
 
@@ -52,15 +52,15 @@ public class DepotAuto extends LinearOpMode {
 
     public static int LOWER = 70;
 
-    public static int CRATER_1 = 100;
+    public static int CRATER_1 = 250;
 
     public static double TURN_TO_WALL = 80;
 
-    public static int CRATER_2 = 850;
+    public static int CRATER_2 = 775;
 
     public static double TURN_TO_CRATER = 125;
 
-    public static int EXTEND_TO_CRATER = 1200;
+    public static int EXTEND_TO_CRATER = 1900;
 
     /*
      * PARK
@@ -105,7 +105,26 @@ public class DepotAuto extends LinearOpMode {
         }
 
         waitForStart();
-        goldPosition = robot.vision.getGoldPosition();
+
+        double leftCount = 0;
+        double centerCount = 0;
+        double rightCount = 0;
+
+        for (int i = 0; i < 10; i++) {
+            if (robot.vision.getGoldPosition() == Vision.GoldPosition.LEFT) {
+                leftCount++;
+            } else if (robot.vision.getGoldPosition() == Vision.GoldPosition.CENTER) {
+                centerCount++;
+            } else {
+                rightCount++;
+            }
+            sleep(50);
+        }
+
+        goldPosition = (leftCount > centerCount && leftCount > rightCount) ? Vision.GoldPosition.LEFT :
+                (centerCount > rightCount && centerCount > leftCount) ? Vision.GoldPosition.CENTER :
+                        (rightCount > leftCount && rightCount > centerCount) ? Vision.GoldPosition.RIGHT : Vision.GoldPosition.CENTER;
+
         robot.start();
         updateThread.start();
 
@@ -113,11 +132,11 @@ public class DepotAuto extends LinearOpMode {
 
         robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.CONFETTI);
         robot.latchingLift.runLiftToPosition(1.0, LIFT_DOWN);
-        sleep(300);
+        sleep(500);
 
         robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
 
-        robot.mecanumDrive.encoderDrive(0.8, 0, 0, STRAFE_OFF_HOOK);
+        robot.mecanumDrive.singleEncoderDrive(0.8, 0.1, 0, STRAFE_OFF_HOOK);
         sleep(300);
 
         robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, TO_TAPE);
@@ -136,16 +155,13 @@ public class DepotAuto extends LinearOpMode {
         switch (goldPosition) {
             case LEFT:
                 robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, LEFT_TURN_SAMPLE);
-                robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, LEFT_TURN_SAMPLE);
                 break;
             default:
             case CENTER:
                 robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, CENTER_TURN_SAMPLE);
-                robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, CENTER_TURN_SAMPLE);
                 break;
             case RIGHT:
                 robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, RIGHT_TURN_SAMPLE);
-                robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, RIGHT_TURN_SAMPLE);
                 break;
         }
 
@@ -165,7 +181,6 @@ public class DepotAuto extends LinearOpMode {
         robot.intake.setIntakePower(0.0);
 
         robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_SCORE);
-        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_SCORE);
 
         robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, BACK_TO_LANDER);
         sleep(300);
@@ -189,14 +204,12 @@ public class DepotAuto extends LinearOpMode {
         sleep(300);
 
         robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_WALL);
-        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_WALL);
         sleep(300);
 
         robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CRATER_2);
         sleep(300);
 
         robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_CRATER);
-        robot.mecanumDrive.turnToAngle(TURN_SPEED_ADJUST, TURN_TO_CRATER);
         sleep(300);
 
         robot.intake.runExtenderToPosition(-1.0, EXTEND_TO_CRATER);

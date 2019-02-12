@@ -24,6 +24,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 
 @Config
@@ -64,7 +65,7 @@ public class MecanumDrive implements Subsystem {
 
         if (auto) {
             gyro = opMode.hardwareMap.get(ModernRoboticsI2cGyro.class, "GYRO");
-            
+
             gyro.calibrate();
 
             while (gyro.isCalibrating()) {
@@ -132,13 +133,18 @@ public class MecanumDrive implements Subsystem {
         stop();
     }
 
-    public void epicDrive(double x, double y, double turn, int counts) {
+    public void singleEncoderDrive(double x, double y, double turn, int counts) {
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
         resetEncoders();
+        double start = System.currentTimeMillis();
         cartesianDrive(x, y, turn);
 
         while (linearOpMode.opModeIsActive()) {
             if (getWheelPositions().get(0) > counts) {
+                break;
+            }
+
+            if (System.currentTimeMillis() - start >= 5000) {
                 break;
             }
         }
@@ -146,12 +152,16 @@ public class MecanumDrive implements Subsystem {
     }
 
     public void turnToAngle(double turn, double angle) {
+        turnToAngle(turn, angle, 0.7);
+    }
+
+    public void turnToAngle(double turn, double angle, double clamp) {
         double output;
         long withinThresholdStart = -1;
 
         do {
             double error = angle - getHeading();
-            output = PIDController.clampValue(kP * error, -0.7, 0.7);
+            output = PIDController.clampValue(kP * error, -clamp, clamp);
 
             cartesianDrive(0, 0, output);
 
@@ -165,6 +175,8 @@ public class MecanumDrive implements Subsystem {
 
         stop();
     }
+
+
 
     private List<Integer> getWheelPositions() {
         List<Integer> positions = new ArrayList<>();
