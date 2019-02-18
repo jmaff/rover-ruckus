@@ -56,7 +56,7 @@ public class Intake implements Subsystem {
         NONE
     }
 
-    public Intake(OpMode opMode) {
+    public Intake(OpMode opMode, boolean auto) {
         this.opMode = opMode;
 
         extenderMotor = opMode.hardwareMap.get(DcMotor.class, "EXTENDER");
@@ -72,7 +72,12 @@ public class Intake implements Subsystem {
         distance1 = opMode.hardwareMap.get(DistanceSensor.class, "MINERAL_1");
         distance2 = opMode.hardwareMap.get(DistanceSensor.class, "MINERAL_2");
 
-        setIntakePivotPosition(PivotPosition.UP);
+        if (auto) {
+            setIntakePivotPosition(PivotPosition.UP);
+        } else {
+            setIntakePivotPosition(PivotPosition.DOWN);
+            setIntakePower(-1.0);
+        }
     }
 
     public void resetExtenderEncoder() {

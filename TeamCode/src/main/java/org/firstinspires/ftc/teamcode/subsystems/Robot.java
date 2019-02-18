@@ -30,7 +30,7 @@ public class Robot {
 
         mecanumDrive = new MecanumDrive(opMode, auto);
         latchingLift = new LatchingLift(opMode);
-        intake = new Intake(opMode);
+        intake = new Intake(opMode, auto);
         outtake = new Outtake(opMode);
         vision = new Vision(opMode, auto);
 

@@ -35,7 +35,8 @@ public class Vision implements Subsystem {
         LEFT,
         CENTER,
         RIGHT,
-        UNKNOWN
+        UNKNOWN,
+        ERROR
     }
 
     private boolean active = false;
@@ -79,14 +80,18 @@ public class Vision implements Subsystem {
 
     @Override
     public void update() {
-        if (active) {
-            if (pipeline.getGoldPoint().x == 0) {
-                goldPosition = GoldPosition.LEFT;
-            } else if (pipeline.getGoldPoint().x < CENTER_THRESHOLD) {
-                goldPosition = GoldPosition.CENTER;
-            } else {
-                goldPosition = GoldPosition.RIGHT;
+        try {
+            if (active) {
+                if (pipeline.getGoldPoint().x == 0) {
+                    goldPosition = GoldPosition.LEFT;
+                } else if (pipeline.getGoldPoint().x < CENTER_THRESHOLD) {
+                    goldPosition = GoldPosition.CENTER;
+                } else {
+                    goldPosition = GoldPosition.RIGHT;
+                }
             }
+        } catch(Exception e) {
+            goldPosition = GoldPosition.ERROR;
         }
     }
 }

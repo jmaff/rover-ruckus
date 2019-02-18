@@ -178,7 +178,7 @@ public class MecanumDrive implements Subsystem {
 
 
 
-    private List<Integer> getWheelPositions() {
+    public List<Integer> getWheelPositions() {
         List<Integer> positions = new ArrayList<>();
         positions.add(leftFront.getCurrentPosition());
         positions.add(rightFront.getCurrentPosition());

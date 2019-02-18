@@ -18,6 +18,7 @@ public class DepotAuto extends LinearOpMode {
     public static double TURN_AROUND_SPEED = 0.4;
     public static double FORWARD_SPEED = -0.7;
     public static double X_OFFSET_SPEED = 0.2;
+    public static double COLLECT_DRIVE_SPEED = -0.3;
 
     /*
      * DEPLOYING
@@ -38,11 +39,14 @@ public class DepotAuto extends LinearOpMode {
     /*
      * SAMPLING
      */
-    public static double LEFT_TURN_SAMPLE = 28;
-    public static double CENTER_TURN_SAMPLE = -10;
-    public static double RIGHT_TURN_SAMPLE = -34;
+    public static double LEFT_TURN_SAMPLE = 20;
+    public static double CENTER_TURN_SAMPLE = -14;
+    public static double RIGHT_TURN_SAMPLE = -38;
 
-    public static int EXTEND_TO_SAMPLE = 1400;
+    public static double WIGGLE_THRESHOLD = 12;
+    public static double WIGGLE_TURN_CLAMP = 0.5;
+
+    public static int EXTEND_TO_SAMPLE = 1000;
 
     public static double TURN_TO_SCORE = 4;
 
@@ -52,6 +56,7 @@ public class DepotAuto extends LinearOpMode {
 
     public static int LOWER = 70;
 
+    public static int CRATER_1_NO_SCORE = 40;
     public static int CRATER_1 = 250;
 
     public static double TURN_TO_WALL = 80;
@@ -62,10 +67,13 @@ public class DepotAuto extends LinearOpMode {
 
     public static int EXTEND_TO_CRATER = 1900;
 
+    public static int FORWARD_TO_SEARCH = 300;
+
+    public static int MAX_EXTEND = 3000;
+
     /*
      * PARK
      */
-
 
     private Robot robot;
     private Vision.GoldPosition goldPosition;
@@ -99,6 +107,9 @@ public class DepotAuto extends LinearOpMode {
                     break;
                 case UNKNOWN:
                     telemetry.addData("Gold Position", "UNKNOWN");
+                    break;
+                case ERROR:
+                    telemetry.addData("Gold Position", "ERROR! ERROR! ERROR! Call the FTA's! RUN!!!");
                     break;
             }
             telemetry.update();
@@ -165,43 +176,84 @@ public class DepotAuto extends LinearOpMode {
                 break;
         }
 
+        robot.intake.setIntakePower(-1.0);
         robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
         sleep(300);
+
         robot.intake.setIntakePower(-1.0);
+
         robot.intake.runExtenderToPosition(-1.0, EXTEND_TO_SAMPLE);
-        sleep(900);
-        robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
-        robot.intake.retractIntakeExtender();
-        robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
+        if (goldPosition == Vision.GoldPosition.RIGHT) {
+            robot.intake.runExtenderToPosition(-1.0, EXTEND_TO_SAMPLE + 200);
+        }
+        sleep(700);
 
-        sleep(900);
+        boolean mineralCollected = false;
+        for (int i = 0; i < 5; i++) {
+            if (robot.intake.getMineralStatus() != Intake.MineralStatus.NONE) {
+                mineralCollected = true;
+                break;
+            }
+            sleep(75);
+        }
 
-        robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
-        sleep(300);
-        robot.intake.setIntakePower(0.0);
+        if (!mineralCollected) {
+            switch (goldPosition) {
+                case LEFT:
+                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, LEFT_TURN_SAMPLE + WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, LEFT_TURN_SAMPLE - WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                    break;
+                default:
+                case CENTER:
+                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, CENTER_TURN_SAMPLE + WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, CENTER_TURN_SAMPLE - WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                    break;
+                case RIGHT:
+                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, RIGHT_TURN_SAMPLE + WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, RIGHT_TURN_SAMPLE - WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                    break;
+            }
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+            robot.intake.retractIntakeExtender();
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
+            sleep(500);
+            robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_SCORE);
+            robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CRATER_1_NO_SCORE);
+        } else {
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+            robot.intake.retractIntakeExtender();
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
 
-        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_SCORE);
+            sleep(900);
 
-        robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, BACK_TO_LANDER);
-        sleep(300);
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+            sleep(300);
+            robot.intake.setIntakePower(0.0);
 
-        robot.outtake.runLiftToPosition(-1.0, RAISE_TO_SCORE);
+            robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_SCORE);
 
-        robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
+            robot.mecanumDrive.encoderDrive(0, -FORWARD_SPEED, 0, BACK_TO_LANDER);
+            sleep(300);
 
-        robot.outtake.setOuttakePosition(Outtake.OuttakePosition.UP);
-        sleep(1200);
+            robot.outtake.runLiftToPosition(-1.0, RAISE_TO_SCORE);
 
-        robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
-        sleep(600);
+            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
 
-        robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            robot.outtake.setOuttakePosition(Outtake.OuttakePosition.UP);
+            sleep(1200);
 
-        robot.outtake.lowerLiftToPosition(1.0, LOWER);
-        sleep(300);
+            robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
+            sleep(600);
 
-        robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CRATER_1);
-        sleep(300);
+            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+
+            robot.outtake.lowerLiftToPosition(1.0, LOWER);
+            sleep(300);
+
+            robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CRATER_1);
+            sleep(300);
+
+        }
 
         robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_WALL);
         sleep(300);
@@ -212,6 +264,34 @@ public class DepotAuto extends LinearOpMode {
         robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_CRATER);
         sleep(300);
 
+        robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
         robot.intake.runExtenderToPosition(-1.0, EXTEND_TO_CRATER);
+
+        robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
+        robot.mecanumDrive.resetEncoders();
+        robot.intake.setIntakePower(-1.0);
+
+        boolean keepDriving = true;
+        while (opModeIsActive() && robot.intake.getMineralStatus() != Intake.MineralStatus.TWO) {
+            for (int position : robot.mecanumDrive.getWheelPositions()) {
+                if (Math.abs(position) > FORWARD_TO_SEARCH) {
+                    keepDriving = false;
+                    robot.mecanumDrive.stop();
+                }
+            }
+
+            if (keepDriving) {
+                robot.mecanumDrive.cartesianDrive(0, COLLECT_DRIVE_SPEED, 0);
+            }
+
+            if (robot.intake.getExtenderPosition() < MAX_EXTEND) {
+                robot.intake.setExtenderPower(-1.0);
+            } else {
+                robot.intake.setExtenderPower(0.0);
+            }
+        }
+
+        robot.stop();
+        robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
     }
 }
