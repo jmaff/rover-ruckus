@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -71,6 +72,8 @@ public class Intake implements Subsystem {
 
         distance1 = opMode.hardwareMap.get(DistanceSensor.class, "MINERAL_1");
         distance2 = opMode.hardwareMap.get(DistanceSensor.class, "MINERAL_2");
+
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         if (auto) {
             setIntakePivotPosition(PivotPosition.UP);
@@ -138,8 +141,9 @@ public class Intake implements Subsystem {
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
         setExtenderPower(power);
 
+        double realCounts = counts - 300;
         while (linearOpMode.opModeIsActive()) {
-            if (Math.abs(getExtenderPosition()) > counts) {
+            if (Math.abs(getExtenderPosition()) > realCounts) {
                 break;
             }
         }

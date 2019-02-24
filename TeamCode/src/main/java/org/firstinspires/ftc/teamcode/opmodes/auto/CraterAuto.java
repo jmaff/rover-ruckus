@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Outtake;
@@ -43,9 +44,9 @@ public class CraterAuto extends LinearOpMode {
 
     public static int TO_DEPOT = 300;
 
-    public static int EXTEND_TO_DEPOT = 2400;
+    public static int EXTEND_TO_DEPOT = 1900;
 
-    public static int BACK_DEPOT = 230;
+    public static int BACK_DEPOT = 285;
 
     public static double TURN_TO_RETURN = 62;
 
@@ -81,7 +82,7 @@ public class CraterAuto extends LinearOpMode {
 
     public static int EXTEND_TO_CRATER = 2200;
 
-    public static int FORWARD_TO_SEARCH = 300;
+    public static int FORWARD_TO_SEARCH = 150;
 
     public static int MAX_EXTEND = 3000;
 

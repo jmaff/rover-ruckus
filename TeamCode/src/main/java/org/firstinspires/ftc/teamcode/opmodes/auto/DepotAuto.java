@@ -26,7 +26,7 @@ public class DepotAuto extends LinearOpMode {
 
     public static int LIFT_DOWN = 9800;
     // strafe off hook
-    public static int STRAFE_OFF_HOOK = 200;
+    public static int STRAFE_OFF_HOOK = 120;
     // move forward away from lander
     public static int TO_TAPE = 240;
     public static int BACK_UP = 55;
@@ -34,21 +34,22 @@ public class DepotAuto extends LinearOpMode {
     /*
      * TEAM MARKER
      */
-    public static int EXTEND_TO_DEPOT = 2400;
+    public static int EXTEND_TO_DEPOT = 1900;
 
     /*
      * SAMPLING
      */
-    public static double LEFT_TURN_SAMPLE = 20;
-    public static double CENTER_TURN_SAMPLE = -14;
-    public static double RIGHT_TURN_SAMPLE = -38;
+    public static double LEFT_TURN_SAMPLE = 25;
+    public static double CENTER_TURN_SAMPLE = -8;
+    public static double RIGHT_TURN_SAMPLE = -37;
 
     public static double WIGGLE_THRESHOLD = 12;
     public static double WIGGLE_TURN_CLAMP = 0.5;
 
     public static int EXTEND_TO_SAMPLE = 1000;
 
-    public static double TURN_TO_SCORE = 4;
+    public static double TURN_TO_SCORE = 7;
+    public static double TURN_TO_LEAVE = 4;
 
     public static int BACK_TO_LANDER = 140;
 
@@ -56,8 +57,8 @@ public class DepotAuto extends LinearOpMode {
 
     public static int LOWER = 70;
 
-    public static int CRATER_1_NO_SCORE = 40;
-    public static int CRATER_1 = 250;
+    public static int CRATER_1_NO_SCORE = 60;
+    public static int CRATER_1 = 198;
 
     public static double TURN_TO_WALL = 80;
 
@@ -65,7 +66,7 @@ public class DepotAuto extends LinearOpMode {
 
     public static double TURN_TO_CRATER = 125;
 
-    public static int EXTEND_TO_CRATER = 1900;
+    public static int EXTEND_TO_CRATER = 1400;
 
     public static int FORWARD_TO_SEARCH = 300;
 
@@ -217,7 +218,7 @@ public class DepotAuto extends LinearOpMode {
             robot.intake.retractIntakeExtender();
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
             sleep(500);
-            robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_SCORE);
+            robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_LEAVE);
             robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CRATER_1_NO_SCORE);
         } else {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
@@ -248,6 +249,9 @@ public class DepotAuto extends LinearOpMode {
             robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
 
             robot.outtake.lowerLiftToPosition(1.0, LOWER);
+            sleep(300);
+
+            robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_LEAVE);
             sleep(300);
 
             robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CRATER_1);

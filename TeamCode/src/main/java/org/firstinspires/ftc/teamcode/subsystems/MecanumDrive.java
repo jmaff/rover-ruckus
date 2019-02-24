@@ -152,7 +152,7 @@ public class MecanumDrive implements Subsystem {
     }
 
     public void turnToAngle(double turn, double angle) {
-        turnToAngle(turn, angle, 0.7);
+        turnToAngle(turn, angle, 0.65);
     }
 
     public void turnToAngle(double turn, double angle, double clamp) {

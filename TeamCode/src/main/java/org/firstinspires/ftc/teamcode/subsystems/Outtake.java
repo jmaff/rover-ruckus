@@ -5,6 +5,7 @@ import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -14,12 +15,14 @@ public class Outtake implements Subsystem {
     private Servo leftPivot;
     private Servo rightPivot;
 
+    private DigitalChannel outtakeLimit;
+
     private double liftPower;
 
     private OpMode opMode;
 
-    public static double UP = 0.51;
-    public static double DOWN = 0.95;
+    public static double UP = 0.47;
+    public static double DOWN = 0.9;
     private double pivotPosition;
 
     public enum OuttakePosition {
@@ -31,6 +34,7 @@ public class Outtake implements Subsystem {
         mineralLift = opMode.hardwareMap.get(DcMotor.class, "MINERAL_LIFT");
         leftPivot = opMode.hardwareMap.get(Servo.class, "OUTTAKE_LEFT");
         rightPivot = opMode.hardwareMap.get(Servo.class, "OUTTAKE_RIGHT");
+        outtakeLimit = opMode.hardwareMap.get(DigitalChannel.class, "OUTTAKE_LIMIT");
         mineralLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         setOuttakePosition(OuttakePosition.DOWN);
@@ -92,6 +96,10 @@ public class Outtake implements Subsystem {
         }
 
         setLiftPower(0.0);
+    }
+
+    public boolean getOuttakeLimit() {
+        return !outtakeLimit.getState();
     }
 
     @Override

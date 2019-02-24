@@ -18,6 +18,9 @@ public class MainTeleOp extends OpMode {
     private long timeIntakeDumped = 0;
     private boolean dumping = false;
 
+    private long timeLowerTriggered = 0;
+    private boolean lowering = false;
+
     // mineral detection variables
     private Intake.MineralStatus prevMineralStatus = Intake.MineralStatus.NONE;
     private long timeDetected = 0;
@@ -63,17 +66,35 @@ public class MainTeleOp extends OpMode {
 
         // mineral lift controls
         if (gamepad1.left_trigger != 0) {
+           lowering = false;
            robot.outtake.setLiftPower(1.0);
            robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         } else if (gamepad1.right_trigger != 0) {
+            lowering = false;
             robot.outtake.setLiftPower(-1.0);
-        } else {
+        } else if (!lowering) {
             robot.outtake.setLiftPower(0.0);
         }
 
+        if (gamepad1.a) {
+            lowering = true;
+            robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
+            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            timeLowerTriggered = System.currentTimeMillis();
+        }
+
+        if (lowering) {
+            if (robot.outtake.getOuttakeLimit() || System.currentTimeMillis() - timeLowerTriggered >= 2000) {
+                robot.outtake.setLiftPower(0.0);
+                lowering = false;
+            } else {
+                robot.outtake.setLiftPower(1.0);
+            }
+        }
+
         if (!gamepad2.x && !gamepad2.b) {
-            if (robot.intake.getIntakeLimit() && !intakePrev && !dumping) {
+            if (((robot.intake.getIntakeLimit() && !intakePrev) || gamepad2.right_trigger != 0) && !dumping) {
                 dumping = true;
                 robot.intake.setIntakePower(-1.0);
                 robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);

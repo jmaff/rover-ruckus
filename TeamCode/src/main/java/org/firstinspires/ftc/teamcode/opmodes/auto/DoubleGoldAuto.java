@@ -42,9 +42,9 @@ public class DoubleGoldAuto extends LinearOpMode {
 
     public static int TO_DEPOT = 300;
 
-    public static int EXTEND_TO_DEPOT = 2400;
+    public static int EXTEND_TO_DEPOT = 1900;
 
-    public static int BACK_DEPOT = 230;
+    public static int BACK_DEPOT = 285;
 
     public static double TURN_TO_RETURN = 62;
 
@@ -54,24 +54,24 @@ public class DoubleGoldAuto extends LinearOpMode {
      * DEPOT SAMPLING
      */
     public static int LEFT_EXTEND = 2000;
-    public static int LEFT_FORWARD = 450;
-    public static int LEFT_BACKWARD = 710;
+    public static int LEFT_FORWARD = 350;
+    public static int LEFT_BACKWARD = 600;
 
-    public static int CENTER_RETRACT = 1800;
+    public static int CENTER_RETRACT = 1400;
 
-    public static int RIGHT_RETRACT = 700;
+    public static int RIGHT_RETRACT = 550;
 
     public static double WIGGLE_THRESHOLD = 12;
     public static double WIGGLE_TURN_CLAMP = 0.5;
 
     public static int TURN_TO_OTHER_SAMPLE = 185;
-    public static int TURN_TO_OTHER_SAMPLE_LEFT = 220;
+    public static int TURN_TO_OTHER_SAMPLE_LEFT = 200;
 
     /*
      * SAMPLING
      */
     public static double LEFT_TURN_SAMPLE = 26;
-    public static double CENTER_TURN_SAMPLE = -3;
+    public static double CENTER_TURN_SAMPLE = -6;
     public static double RIGHT_TURN_SAMPLE = -32;
 
     public static int EXTEND_TO_SAMPLE = 1200;
@@ -94,7 +94,7 @@ public class DoubleGoldAuto extends LinearOpMode {
 
     public static int EXTEND_TO_CRATER = 2200;
 
-    public static int FORWARD_TO_SEARCH = 300;
+    public static int FORWARD_TO_SEARCH = 150;
 
     public static int MAX_EXTEND = 3000;
 
@@ -275,21 +275,23 @@ public class DoubleGoldAuto extends LinearOpMode {
             sleep(75);
         }
 
-        if (!mineralCollected) {
-            switch (goldPosition) {
-                case LEFT:
-                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, LEFT_TURN_SAMPLE + WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
-                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, LEFT_TURN_SAMPLE - WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
-                    break;
-                default:
-                case CENTER:
-                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, CENTER_TURN_SAMPLE + WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
-                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, CENTER_TURN_SAMPLE - WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
-                    break;
-                case RIGHT:
-                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, RIGHT_TURN_SAMPLE + WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
-                    robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, RIGHT_TURN_SAMPLE - WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
-                    break;
+        if (!mineralCollected || goldPosition == Vision.GoldPosition.LEFT) {
+            if (!mineralCollected) {
+                switch (goldPosition) {
+                    case LEFT:
+                        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, LEFT_TURN_SAMPLE + WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, LEFT_TURN_SAMPLE - WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                        break;
+                    default:
+                    case CENTER:
+                        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, CENTER_TURN_SAMPLE + WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, CENTER_TURN_SAMPLE - WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                        break;
+                    case RIGHT:
+                        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, RIGHT_TURN_SAMPLE + WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                        robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, RIGHT_TURN_SAMPLE - WIGGLE_THRESHOLD, WIGGLE_TURN_CLAMP);
+                        break;
+                }
             }
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
             sleep(500);
