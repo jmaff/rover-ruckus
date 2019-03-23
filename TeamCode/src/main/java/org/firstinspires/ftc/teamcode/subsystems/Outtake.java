@@ -5,6 +5,7 @@ import com.ftc12835.library.hardware.management.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -36,6 +37,7 @@ public class Outtake implements Subsystem {
         rightPivot = opMode.hardwareMap.get(Servo.class, "OUTTAKE_RIGHT");
         outtakeLimit = opMode.hardwareMap.get(DigitalChannel.class, "OUTTAKE_LIMIT");
         mineralLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        mineralLift.setDirection(DcMotorSimple.Direction.REVERSE);
 
         setOuttakePosition(OuttakePosition.DOWN);
 

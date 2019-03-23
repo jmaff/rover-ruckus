@@ -21,6 +21,8 @@ public class MainTeleOp extends OpMode {
     private long timeLowerTriggered = 0;
     private boolean lowering = false;
 
+    private boolean retracting = false;
+
     // mineral detection variables
     private Intake.MineralStatus prevMineralStatus = Intake.MineralStatus.NONE;
     private long timeDetected = 0;
@@ -49,11 +51,23 @@ public class MainTeleOp extends OpMode {
         // intake extender controls
         if (gamepad2.dpad_right) {
             robot.intake.setExtenderPower(1.0);
+            retracting = false;
         } else if (gamepad2.dpad_left) {
             robot.intake.setExtenderPower(-1.0);
-        } else {
+            retracting = false;
+        } else if (!retracting) {
             robot.intake.setExtenderPower(0.0);
+        } else if (retracting) {
+            robot.intake.setExtenderPower(1.0);
         }
+
+//        if (gamepad2.right_trigger != 0) {
+//            robot.intake.setIntakePivotPosition(Intake.PivotPosition.HIGH);
+//            robot.intake.setIntakePower(SLOW_INTAKE_SPEED);
+//            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+//            robot.intake.setExtenderPower(1.0);
+//            retracting = true;
+//        }
 
         // intake motor controls
         if (gamepad2.left_bumper) {
@@ -111,6 +125,8 @@ public class MainTeleOp extends OpMode {
 
         intakePrev = robot.intake.getIntakeLimit();
 
+        if (dumping) retracting = false;
+
         // intake state controls
         if (gamepad2.b) {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
@@ -119,12 +135,10 @@ public class MainTeleOp extends OpMode {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.DOWN);
             robot.intake.setIntakePower(-1.0);
             robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-        } else if (gamepad2.dpad_right && !dumping) {
-            if (!(gamepad2.right_trigger > 0.0)) {
-                robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
-                robot.intake.setIntakePower(SLOW_INTAKE_SPEED);
-                robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-            }
+        } else if (gamepad2.dpad_right && !dumping && !retracting) {
+            robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
+            robot.intake.setIntakePower(SLOW_INTAKE_SPEED);
+            robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         }
 
         Intake.MineralStatus status = robot.intake.getMineralStatus();

@@ -46,14 +46,14 @@ public class DepotAuto extends LinearOpMode {
     public static double WIGGLE_THRESHOLD = 12;
     public static double WIGGLE_TURN_CLAMP = 0.5;
 
-    public static int EXTEND_TO_SAMPLE = 1000;
+    public static int EXTEND_TO_SAMPLE = 1050;
 
     public static double TURN_TO_SCORE = 7;
     public static double TURN_TO_LEAVE = 4;
 
     public static int BACK_TO_LANDER = 140;
 
-    public static int RAISE_TO_SCORE = 1900;
+    public static int RAISE_TO_SCORE = 1700;
 
     public static int LOWER = 70;
 
@@ -62,13 +62,13 @@ public class DepotAuto extends LinearOpMode {
 
     public static double TURN_TO_WALL = 80;
 
-    public static int CRATER_2 = 775;
+    public static int CRATER_2 = 850;
 
     public static double TURN_TO_CRATER = 125;
 
     public static int EXTEND_TO_CRATER = 1400;
 
-    public static int FORWARD_TO_SEARCH = 300;
+    public static int FORWARD_TO_SEARCH = 200;
 
     public static int MAX_EXTEND = 3000;
 

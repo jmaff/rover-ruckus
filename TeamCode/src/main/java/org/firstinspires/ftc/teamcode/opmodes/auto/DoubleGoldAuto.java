@@ -24,7 +24,6 @@ public class DoubleGoldAuto extends LinearOpMode {
     /*
      * DEPLOYING
      */
-
     public static int LIFT_DOWN = 9800;
     // strafe off hook
     public static int STRAFE_OFF_HOOK = 200;

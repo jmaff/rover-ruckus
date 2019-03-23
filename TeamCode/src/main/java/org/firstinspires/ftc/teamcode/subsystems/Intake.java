@@ -37,16 +37,20 @@ public class Intake implements Subsystem {
     private OpMode opMode;
     private PivotPosition currentPivotPosition = PivotPosition.UP;
 
-    public static double LEFT_DOWN = 1.00;
-    public static double LEFT_UP= 0.30;
-    public static double RIGHT_DOWN = 0.00;
-    public static double RIGHT_UP = 0.70;
+    public static double LEFT_DOWN = 0.96;
+    public static double LEFT_UP= 0.25;
+    public static double RIGHT_DOWN = 0.04;
+    public static double RIGHT_UP = 0.75;
 
-    public static double LEFT_MIDDLE = 0.70;
-    public static double RIGHT_MIDDLE = 0.30;
+    public static double LEFT_MIDDLE = 0.65;
+    public static double RIGHT_MIDDLE = 0.35;
+
+    public static double LEFT_HIGH = 0.6;
+    public static double RIGHT_HIGH = 0.4;
 
     public enum PivotPosition {
         UP,
+        HIGH,
         MIDDLE,
         DOWN
     }
@@ -114,6 +118,10 @@ public class Intake implements Subsystem {
             case UP:
                 setLeftPosition(LEFT_UP);
                 setRightPosition(RIGHT_UP);
+                break;
+            case HIGH:
+                setLeftPosition(LEFT_HIGH);
+                setRightPosition(RIGHT_HIGH);
                 break;
             case MIDDLE:
                 setLeftPosition(LEFT_MIDDLE);

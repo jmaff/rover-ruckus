@@ -56,13 +56,13 @@ public class CraterAuto extends LinearOpMode {
      * SAMPLING
      */
     public static double LEFT_TURN_SAMPLE = 26;
-    public static double CENTER_TURN_SAMPLE = -3;
-    public static double RIGHT_TURN_SAMPLE = -32;
+    public static double CENTER_TURN_SAMPLE = 0;
+    public static double RIGHT_TURN_SAMPLE = -34;
 
     public static double WIGGLE_THRESHOLD = 12;
     public static double WIGGLE_TURN_CLAMP = 0.5;
 
-    public static int EXTEND_TO_SAMPLE = 1200;
+    public static int EXTEND_TO_SAMPLE = 1000;
 
     public static double TURN_TO_SCORE = -2;
 
