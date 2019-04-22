@@ -21,6 +21,10 @@ public class MainTeleOp extends OpMode {
     private long timeLowerTriggered = 0;
     private boolean lowering = false;
 
+    private long timeOuttakeDumped = 0;
+    private boolean dumpingOuttake = false;
+    public static double TIME_TO_TILT = 500;
+
     private boolean retracting = false;
 
     // mineral detection variables
@@ -156,11 +160,21 @@ public class MainTeleOp extends OpMode {
 
         // outtake controls
         if (gamepad2.dpad_up) {
-            robot.outtake.setOuttakePosition(Outtake.OuttakePosition.UP);
+            robot.outtake.setOuttakePosition(Outtake.OuttakePosition.TILT);
             robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
+            timeOuttakeDumped = System.currentTimeMillis();
+            dumpingOuttake = true;
         } else if (gamepad2.dpad_down) {
             robot.outtake.setOuttakePosition(Outtake.OuttakePosition.DOWN);
             robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            dumpingOuttake = false;
+        }
+
+        if (dumpingOuttake) {
+            if (System.currentTimeMillis() - timeOuttakeDumped >= TIME_TO_TILT) {
+                robot.outtake.setOuttakePosition(Outtake.OuttakePosition.UP);
+                dumpingOuttake = false;
+            }
         }
 
         // latching lift controls

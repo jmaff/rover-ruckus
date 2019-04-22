@@ -217,6 +217,7 @@ public class DepotAuto extends LinearOpMode {
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.MIDDLE);
             robot.intake.retractIntakeExtender();
             robot.intake.setIntakePivotPosition(Intake.PivotPosition.UP);
+            robot.intake.setIntakePower(0.0);
             sleep(500);
             robot.mecanumDrive.turnToAngle(TURN_SPEED_FAST, TURN_TO_LEAVE);
             robot.mecanumDrive.encoderDrive(0, FORWARD_SPEED, 0, CRATER_1_NO_SCORE);

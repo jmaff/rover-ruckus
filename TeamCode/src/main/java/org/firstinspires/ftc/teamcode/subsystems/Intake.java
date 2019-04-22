@@ -38,12 +38,12 @@ public class Intake implements Subsystem {
     private PivotPosition currentPivotPosition = PivotPosition.UP;
 
     public static double LEFT_DOWN = 0.96;
-    public static double LEFT_UP= 0.25;
+    public static double LEFT_UP= 0.3;
     public static double RIGHT_DOWN = 0.04;
-    public static double RIGHT_UP = 0.75;
+    public static double RIGHT_UP = 0.7;
 
-    public static double LEFT_MIDDLE = 0.65;
-    public static double RIGHT_MIDDLE = 0.35;
+    public static double LEFT_MIDDLE = 0.7;
+    public static double RIGHT_MIDDLE = 0.3;
 
     public static double LEFT_HIGH = 0.6;
     public static double RIGHT_HIGH = 0.4;

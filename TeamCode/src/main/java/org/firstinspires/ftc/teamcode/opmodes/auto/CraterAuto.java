@@ -44,9 +44,9 @@ public class CraterAuto extends LinearOpMode {
 
     public static int TO_DEPOT = 300;
 
-    public static int EXTEND_TO_DEPOT = 1900;
+    public static int EXTEND_TO_DEPOT = 1650;
 
-    public static int BACK_DEPOT = 285;
+    public static int BACK_DEPOT = 265;
 
     public static double TURN_TO_RETURN = 62;
 
@@ -55,9 +55,9 @@ public class CraterAuto extends LinearOpMode {
     /*
      * SAMPLING
      */
-    public static double LEFT_TURN_SAMPLE = 26;
+    public static double LEFT_TURN_SAMPLE = 32;
     public static double CENTER_TURN_SAMPLE = 0;
-    public static double RIGHT_TURN_SAMPLE = -34;
+    public static double RIGHT_TURN_SAMPLE = -36;
 
     public static double WIGGLE_THRESHOLD = 12;
     public static double WIGGLE_TURN_CLAMP = 0.5;

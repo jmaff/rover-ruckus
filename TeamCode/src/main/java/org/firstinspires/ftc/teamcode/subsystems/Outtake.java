@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import kotlin.reflect.jvm.internal.impl.renderer.DescriptorRenderer;
 
 @Config
 public class Outtake implements Subsystem {
@@ -22,12 +25,17 @@ public class Outtake implements Subsystem {
 
     private OpMode opMode;
 
-    public static double UP = 0.47;
+    private ElapsedTime timer = new ElapsedTime();
+
+    public static double UP = 0.425;
+    public static double TILT = 0.6;
     public static double DOWN = 0.9;
+
     private double pivotPosition;
 
     public enum OuttakePosition {
         UP,
+        TILT,
         DOWN
     }
 
@@ -58,6 +66,9 @@ public class Outtake implements Subsystem {
         switch (outtakePosition) {
             case UP:
                 setRawOuttakePosition(UP);
+                break;
+            case TILT:
+                setRawOuttakePosition(TILT);
                 break;
             case DOWN:
                 setRawOuttakePosition(DOWN);
