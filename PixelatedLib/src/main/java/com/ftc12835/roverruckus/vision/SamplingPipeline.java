@@ -5,6 +5,7 @@ import com.ftc12835.library.vision.ColorBlobDetector;
 import com.ftc12835.library.vision.VuforiaPipeline;
 
 import org.corningrobotics.enderbots.endercv.OpenCVPipeline;
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.KeyPoint;

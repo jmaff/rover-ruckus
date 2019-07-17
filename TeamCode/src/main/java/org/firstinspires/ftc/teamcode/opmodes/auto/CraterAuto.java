@@ -23,15 +23,17 @@ public class CraterAuto extends LinearOpMode {
     public static double STRAFE_X_SPEED = 0.8;
     public static double STRAFE_Y_SPEED = 0.1;
 
+    public static int WAIT_TO_READ = 1200;
+
     /*
      * DEPLOYING
      */
 
     public static int LIFT_DOWN = 9800;
     // strafe off hook
-    public static int STRAFE_OFF_HOOK = 200;
+    public static int STRAFE_OFF_HOOK = 140;
     // move forward away from lander
-    public static int TO_TAPE = 160;
+    public static int TO_TAPE = 190;
 
     /*
      * TEAM MARKER
@@ -46,7 +48,7 @@ public class CraterAuto extends LinearOpMode {
 
     public static int EXTEND_TO_DEPOT = 1650;
 
-    public static int BACK_DEPOT = 265;
+    public static int BACK_DEPOT = 255;
 
     public static double TURN_TO_RETURN = 62;
 
@@ -72,7 +74,8 @@ public class CraterAuto extends LinearOpMode {
     // 170
     public static int STRAFE_TO_SCORE = 250;
 
-    public static int RAISE_TO_SCORE = 2000;
+    public static int RAISE_TO_SCORE = 2200;
+    public static double TIME_TO_TILT = 500;
 
     public static int LOWER = 70;
 
@@ -129,31 +132,37 @@ public class CraterAuto extends LinearOpMode {
             telemetry.update();
         }
 
+        boolean safeSample = false;
+
         waitForStart();
 
-        double leftCount = 0;
-        double centerCount = 0;
-        double rightCount = 0;
+        if (robot.vision.getGoldPosition() == Vision.GoldPosition.LEFT) safeSample = true;
 
-        for (int i = 0; i < 10; i++) {
-            if (robot.vision.getGoldPosition() == Vision.GoldPosition.LEFT) {
-                leftCount++;
-            } else if (robot.vision.getGoldPosition() == Vision.GoldPosition.CENTER) {
-                centerCount++;
-            } else {
-                rightCount++;
+        if (!safeSample) {
+            double leftCount = 0;
+            double centerCount = 0;
+            double rightCount = 0;
+
+            for (int i = 0; i < 10; i++) {
+                if (robot.vision.getGoldPosition() == Vision.GoldPosition.LEFT) {
+                    leftCount++;
+                } else if (robot.vision.getGoldPosition() == Vision.GoldPosition.CENTER) {
+                    centerCount++;
+                } else {
+                    rightCount++;
+                }
+                sleep(50);
             }
-            sleep(50);
-        }
 
-        goldPosition = (leftCount > centerCount && leftCount > rightCount) ? Vision.GoldPosition.LEFT :
-                (centerCount > rightCount && centerCount > leftCount) ? Vision.GoldPosition.CENTER :
-                (rightCount > leftCount && rightCount > centerCount) ? Vision.GoldPosition.RIGHT : Vision.GoldPosition.CENTER;
+            goldPosition = (leftCount > centerCount && leftCount > rightCount) ? Vision.GoldPosition.LEFT :
+                    (centerCount > rightCount && centerCount > leftCount) ? Vision.GoldPosition.CENTER :
+                            (rightCount > leftCount && rightCount > centerCount) ? Vision.GoldPosition.RIGHT : Vision.GoldPosition.CENTER;
+
+            robot.vision.disable();
+        }
 
         robot.start();
         updateThread.start();
-
-        robot.vision.disable();
 
         robot.mecanumDrive.brakeMode(true);
 
@@ -162,6 +171,30 @@ public class CraterAuto extends LinearOpMode {
         sleep(500);
 
         robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+
+        if (safeSample) {
+            sleep(WAIT_TO_READ);
+            double leftCount = 0;
+            double centerCount = 0;
+            double rightCount = 0;
+
+            for (int i = 0; i < 10; i++) {
+                if (robot.vision.getGoldPosition() == Vision.GoldPosition.LEFT) {
+                    leftCount++;
+                } else if (robot.vision.getGoldPosition() == Vision.GoldPosition.CENTER) {
+                    centerCount++;
+                } else {
+                    rightCount++;
+                }
+                sleep(50);
+            }
+
+            goldPosition = (leftCount > centerCount && leftCount > rightCount) ? Vision.GoldPosition.LEFT :
+                    (centerCount > rightCount && centerCount > leftCount) ? Vision.GoldPosition.CENTER :
+                            (rightCount > leftCount && rightCount > centerCount) ? Vision.GoldPosition.RIGHT : Vision.GoldPosition.CENTER;
+
+            robot.vision.disable();
+        }
 
         robot.mecanumDrive.singleEncoderDrive(STRAFE_X_SPEED, STRAFE_Y_SPEED, 0, STRAFE_OFF_HOOK);
         sleep(100);
@@ -275,6 +308,8 @@ public class CraterAuto extends LinearOpMode {
 
             robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
 
+            robot.outtake.setOuttakePosition(Outtake.OuttakePosition.TILT);
+            sleep((long)TIME_TO_TILT);
             robot.outtake.setOuttakePosition(Outtake.OuttakePosition.UP);
 
             sleep(800);

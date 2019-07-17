@@ -20,13 +20,15 @@ public class DepotAuto extends LinearOpMode {
     public static double X_OFFSET_SPEED = 0.2;
     public static double COLLECT_DRIVE_SPEED = -0.3;
 
+    public static int WAIT_TO_READ = 1200;
+
     /*
      * DEPLOYING
      */
 
     public static int LIFT_DOWN = 9800;
     // strafe off hook
-    public static int STRAFE_OFF_HOOK = 120;
+    public static int STRAFE_OFF_HOOK = 100;
     // move forward away from lander
     public static int TO_TAPE = 240;
     public static int BACK_UP = 55;
@@ -53,7 +55,7 @@ public class DepotAuto extends LinearOpMode {
 
     public static int BACK_TO_LANDER = 140;
 
-    public static int RAISE_TO_SCORE = 1700;
+    public static int RAISE_TO_SCORE = 2200;
 
     public static int LOWER = 70;
 
@@ -116,26 +118,34 @@ public class DepotAuto extends LinearOpMode {
             telemetry.update();
         }
 
+        boolean safeSample = false;
+
         waitForStart();
 
-        double leftCount = 0;
-        double centerCount = 0;
-        double rightCount = 0;
+        if (robot.vision.getGoldPosition() == Vision.GoldPosition.LEFT) safeSample = true;
 
-        for (int i = 0; i < 10; i++) {
-            if (robot.vision.getGoldPosition() == Vision.GoldPosition.LEFT) {
-                leftCount++;
-            } else if (robot.vision.getGoldPosition() == Vision.GoldPosition.CENTER) {
-                centerCount++;
-            } else {
-                rightCount++;
+        if (!safeSample) {
+            double leftCount = 0;
+            double centerCount = 0;
+            double rightCount = 0;
+
+            for (int i = 0; i < 10; i++) {
+                if (robot.vision.getGoldPosition() == Vision.GoldPosition.LEFT) {
+                    leftCount++;
+                } else if (robot.vision.getGoldPosition() == Vision.GoldPosition.CENTER) {
+                    centerCount++;
+                } else {
+                    rightCount++;
+                }
+                sleep(50);
             }
-            sleep(50);
-        }
 
-        goldPosition = (leftCount > centerCount && leftCount > rightCount) ? Vision.GoldPosition.LEFT :
-                (centerCount > rightCount && centerCount > leftCount) ? Vision.GoldPosition.CENTER :
-                        (rightCount > leftCount && rightCount > centerCount) ? Vision.GoldPosition.RIGHT : Vision.GoldPosition.CENTER;
+            goldPosition = (leftCount > centerCount && leftCount > rightCount) ? Vision.GoldPosition.LEFT :
+                    (centerCount > rightCount && centerCount > leftCount) ? Vision.GoldPosition.CENTER :
+                            (rightCount > leftCount && rightCount > centerCount) ? Vision.GoldPosition.RIGHT : Vision.GoldPosition.CENTER;
+
+            robot.vision.disable();
+        }
 
         robot.start();
         updateThread.start();
@@ -147,6 +157,30 @@ public class DepotAuto extends LinearOpMode {
         sleep(500);
 
         robot.mecanumDrive.setBlinkinPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+
+        if (safeSample) {
+            sleep(WAIT_TO_READ);
+            double leftCount = 0;
+            double centerCount = 0;
+            double rightCount = 0;
+
+            for (int i = 0; i < 10; i++) {
+                if (robot.vision.getGoldPosition() == Vision.GoldPosition.LEFT) {
+                    leftCount++;
+                } else if (robot.vision.getGoldPosition() == Vision.GoldPosition.CENTER) {
+                    centerCount++;
+                } else {
+                    rightCount++;
+                }
+                sleep(50);
+            }
+
+            goldPosition = (leftCount > centerCount && leftCount > rightCount) ? Vision.GoldPosition.LEFT :
+                    (centerCount > rightCount && centerCount > leftCount) ? Vision.GoldPosition.CENTER :
+                            (rightCount > leftCount && rightCount > centerCount) ? Vision.GoldPosition.RIGHT : Vision.GoldPosition.CENTER;
+
+            robot.vision.disable();
+        }
 
         robot.mecanumDrive.singleEncoderDrive(0.8, 0.1, 0, STRAFE_OFF_HOOK);
         sleep(300);
